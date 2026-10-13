@@ -52,8 +52,8 @@ Install the following before setting up the project
 npm init -y
 
 ### 3. INSTALL DEPENDENCIES
-npm install express ejs mysql2 express-session socket.io nodemon mutler connect-flash
-*Or you can just check the package.json file to check the dependencies installed*
+- npm install express ejs mysql2 express-session socket.io nodemon mutler connect-flash
+- *Or you can just check the package.json file to check the dependencies installed*
 
 ### 4. EXPORT DATABASE
 Look for the file with .sql in the folder
