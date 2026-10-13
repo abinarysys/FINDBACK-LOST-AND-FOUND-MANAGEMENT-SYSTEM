@@ -52,7 +52,7 @@ If package.json does not exist:
 npm init -y
 
 ### 3. INSTALL DEPENDENCIES
-npm install express ejs mysql2 express-session socket.io nodemon
+npm install express ejs mysql2 express-session socket.io nodemon mutler connect-flash
 
 ### 4. EXPORT DATABASE
 Look for the file with .sql in the folder
