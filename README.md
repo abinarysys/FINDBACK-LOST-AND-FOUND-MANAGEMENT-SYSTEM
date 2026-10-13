@@ -44,7 +44,7 @@ Install the following before setting up the project
 ## SETUP
 
 ### 1. CLONE THE REPOSITORY
-git clone <repo-url>
+git clone https://github.com/abinarysys/FINDBACK-LOST-AND-FOUND-SYSTEM.git
 cd FINDBACK-LOST-AND-FOUND-SYSTEM
 
 ### 2. INITIALIZE THE PROJECT
