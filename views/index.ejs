@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/index.css">
+    <title>FINDBACK</title>
+</head>
+<body>
+    <div class="categories">
+        <% categories.forEach(category => { %>
+            <img src="<%= category.category_icon %>" alt="<%= category.category_name %>">
+            <p><%= category.category_name %></p>
+        <% })%>
+    </div>
+</body>
+</html>
