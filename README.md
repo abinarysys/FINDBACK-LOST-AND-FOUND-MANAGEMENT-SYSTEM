@@ -57,3 +57,6 @@ npm init -y
 
 ### 4. EXPORT DATABASE
 Look for the file with .sql in the folder
+
+### 5. DATABASE PASSWORD
+Look for the /config/db.js file, if you have password, put your password in the db object
