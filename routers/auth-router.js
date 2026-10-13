@@ -53,26 +53,54 @@ router.get("/login", (req,res) =>{
     res.render("login")
 })
 
-router.post("/loginUser", (req,res) =>{
-    const {email,pw} = req.body;
-    const password = crypto.createHash("sha256").update(pw).digest("hex");
-    const loginUser = `SELECT * FROM users WHERE email = ? AND password_hash = ?`;
-    db.query(loginUser, [email, password], (err,result) =>{
-        if(err){
-            console.log("Login Failed: ", err);
-            res.send("Login Failed: ", err.message);
+router.post("/loginUser", (req, res) => {
+const { email, pw } = req.body;
+const password = crypto
+    .createHash("sha256")
+    .update(pw)
+    .digest("hex");
+
+const loginUser = `
+    SELECT * FROM users
+    WHERE email = ? AND password_hash = ?
+`;
+
+db.query(loginUser, [email, password], (err, result) => {
+    if (err) {
+        console.log("Login Failed:", err);
+        req.flash("error", "Login failed. Please try again.");
+        return res.redirect("/auth/login");
+    }
+
+    if (result.length === 0) {
+        req.flash("error", "Invalid email or password.");
+        return res.redirect("/auth/login");
+    }
+
+    const user = result[0];
+
+    req.session.user = {
+        id: user.user_id,
+        username: user.full_name,
+        full_name: user.full_name,
+        profile_image: user.profile_image
+    };
+
+    req.session.save((err) => {
+        if (err) {
+            console.log("Session save failed:", err);
+            return res.status(500).send("Could not save login session.");
         }
-        if (result.length>0){
-            console.log("Login Successful!")
-            req.session.user = {
-                id: result[0].user_id,
-                username: result[0].full_name,
-                profile_image: result[0].profile_image
-            };
-            res.redirect("/")
-        }
-    })
-})
+
+        console.log("Login Successful!");
+        console.log("Session user:", req.session.user);
+
+        return res.redirect("/");
+    });
+});
+
+});
+
 
 router.get("/logout", (req,res) =>{
     req.session.destroy((err) =>{

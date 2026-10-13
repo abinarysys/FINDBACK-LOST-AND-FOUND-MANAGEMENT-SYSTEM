@@ -39,7 +39,7 @@
         <% })%>
     </div>
     <h2>Help us make FINDBACK better. Share your ideas with us!</h2>
-    <form action="/feedback" method="POST">
+    <form action="/fb/feedback" method="POST">
         <div class="stars">
             <input type="radio" id="s5" name="rate" value="5" required>
             <label for="s5">&#9733;</label>
@@ -52,11 +52,20 @@
             <input type="radio" id="s1" name="rate" value="1">
             <label for="s1">&#9733;</label>
         </div>
-        <textarea name="feedback"
+        <textarea name="msg"
             placeholder="Enter your feedback here"
             required></textarea>
         <button type="submit">Submit Feedback</button>
     </form>
+    <div class="feedback-list">
+        <h3>Customer Feedback</h3>
+        <p>Know that your feedbacks are prioritized!</p>
+        <% feedbackList.forEach(fList => { %>
+            <p><b>Sender: </b><%= fList.full_name %></p>
+            <p><b>Rating: </b><%= fList.rating %></p>
+            <p><b>Message: </b><%= fList.message %></p>
+        <% })%>
+    </div>
     <% if (success && success.length > 0) { %>
         <div class="alert success">
             <%= success[0] %>
