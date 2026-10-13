@@ -4,14 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/index.css">
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <title>FINDBACK</title>
 </head>
 <body>
+    <div class="nav">
+        <div class="logo">
+            <img src="/img/logo.png" alt="FindBack Logo">
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href=#>Browse Items</a>
+            <a href=#>How It Works</a>
+            <a href=#>Contact Us</a>
+        </div>
+        <div class="right-buttons">
+            <% if (user) { %>
+                <div class="profilepic">
+                    <a href="/user/profile">
+                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
+                    </a>
+                    <a href="/auth/logout">Log Out</a>
+                </div>
+        <% } else { %>
+            <a href="/auth/login">Login</a>
+            <a href="/auth/register">Get Started</a>
+        <% } %>
+        </div>
+    </div>
     <div class="categories">
         <% categories.forEach(category => { %>
             <img src="<%= category.category_icon %>" alt="<%= category.category_name %>">
             <p><%= category.category_name %></p>
         <% })%>
     </div>
+    <h2>Help us make FINDBACK better. Share your ideas with us!</h2>
+    <form action="/feedback" method="POST">
+        <div class="stars">
+            <input type="radio" id="s5" name="rate" value="5" required>
+            <label for="s5">&#9733;</label>
+            <input type="radio" id="s4" name="rate" value="4">
+            <label for="s4">&#9733;</label>
+            <input type="radio" id="s3" name="rate" value="3">
+            <label for="s3">&#9733;</label>
+            <input type="radio" id="s2" name="rate" value="2">
+            <label for="s2">&#9733;</label>
+            <input type="radio" id="s1" name="rate" value="1">
+            <label for="s1">&#9733;</label>
+        </div>
+        <textarea name="feedback"
+            placeholder="Enter your feedback here"
+            required></textarea>
+        <button type="submit">Submit Feedback</button>
+    </form>
+    <% if (success && success.length > 0) { %>
+        <div class="alert success">
+            <%= success[0] %>
+        </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+        <div class="alert error">
+            <%= error[0] %>
+        </div>
+    <% } %>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        socket.on('connect', () => {
+            console.log('Connected to FINDBACK Socket.IO!');
+        });
+    </script>
 </body>
 </html>

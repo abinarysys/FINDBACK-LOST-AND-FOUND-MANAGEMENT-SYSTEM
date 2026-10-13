@@ -1,34 +1,57 @@
-const express = require('express')
-const db = require('./config/db.js')
-const session = require('express-session')
-const http = require('http')
-const { Server } = require('socket.io')
+const express = require('express');
+const session = require('express-session');
+const http = require('http');
+const { Server } = require('socket.io');
+const flash = require('connect-flash');
 
 const app = express();
-const server = http.createServer(app)
-const io = new Server (server)
+const server = http.createServer(app);
+const io = new Server(server);
 
-app.use(express.urlencoded({extended:true}))
-app.use(express.json())
+// middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use(session({
     secret: 's3cr3t',
     resave: false,
     saveUninitialized: false
-}))
-app.use(express.static('public'))
+}));
 
-app.set("view engine", "ejs")
+// flash 
+app.use(flash());
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+});
 
-app.get("/", (req,res) =>{
-    const getCategory = `SELECT * FROM item_categories`;
-    db.query(getCategory, (err, results) =>{
-        if(err){
-            console.log(err)
-            return res.status(500).send("DB error")
-        }else{
-            res.render("index", {categories: results})
-        }
-    })
-})
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
 
-server.listen(4000)
+app.set('io', io);
+
+// web socket
+io.on('connection', (socket) => {
+    console.log('A user connected:', socket.id);
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected:', socket.id);
+    });
+});
+
+// middlewares
+const authMiddleware = require('./middleware/auth-middleware.js')
+const userMiddleware = require('./middleware/user-middleware.js')
+const upload = require('./middleware/upload-middleware.js');
+
+//using the middleware
+app.use(userMiddleware);
+
+// routers
+app.use('/', require('./routers/landing-router'));
+app.use('/auth', require('./routers/auth-router'));
+
+server.listen(4000, () => {
+    console.log('FINDBACK running at http://localhost:4000');
+});
