@@ -97,6 +97,35 @@ LOCK TABLES `conversations` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `feedback`
+--
+
+DROP TABLE IF EXISTS `feedback`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `feedback` (
+  `feedback_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `rating` int NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`feedback_id`),
+  KEY `fk_feedback_user` (`user_id`),
+  CONSTRAINT `fk_feedback_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `feedback`
+--
+
+LOCK TABLES `feedback` WRITE;
+/*!40000 ALTER TABLE `feedback` DISABLE KEYS */;
+INSERT INTO `feedback` VALUES (1,3,4,'good','2026-10-13 13:21:20'),(2,3,4,'good','2026-10-13 13:27:01'),(3,3,3,'bad','2026-10-13 13:27:34'),(4,3,1,'need design','2026-10-14 06:30:56');
+/*!40000 ALTER TABLE `feedback` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `found_items`
 --
 
@@ -113,6 +142,7 @@ CREATE TABLE `found_items` (
   `date_found` date DEFAULT NULL,
   `status` varchar(30) DEFAULT 'available',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `photo_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`found_item_id`),
   KEY `user_id` (`user_id`),
   KEY `category_id` (`category_id`),
@@ -202,12 +232,13 @@ CREATE TABLE `lost_items` (
   `date_lost` date DEFAULT NULL,
   `status` varchar(30) DEFAULT 'lost',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `photo_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`lost_item_id`),
   KEY `user_id` (`user_id`),
   KEY `category_id` (`category_id`),
   CONSTRAINT `lost_items_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `lost_items_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `item_categories` (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,6 +247,7 @@ CREATE TABLE `lost_items` (
 
 LOCK TABLES `lost_items` WRITE;
 /*!40000 ALTER TABLE `lost_items` DISABLE KEYS */;
+INSERT INTO `lost_items` VALUES (2,3,1,'iphone 18 duo','rge','phinma ui comlab 3 3rd row left side near the aircon','2026-10-13','lost','2026-10-14 07:35:25','/uploads1791963325020-images.jpg'),(3,3,2,'makeup pouch','idiefbwdi','ml403','2026-10-14','lost','2026-10-14 07:37:58','/uploads1791963477965-pouch.jpg');
 /*!40000 ALTER TABLE `lost_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -265,9 +297,10 @@ CREATE TABLE `users` (
   `profile_image` varchar(255) DEFAULT NULL,
   `account_status` varchar(20) DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `contact_number` varchar(11) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,8 +309,13 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (3,'Omi Pangiters','omipangitsomuch@gmail.com','1e5ac8889a7c98edee709ecb2ad8e5b01f9044c5b67bfbc499c9acc6b1efe94d','user','/uploads/1791891302146-5edf02cc1f0adaa3aab8e907890a5cb3.jpg','active','2026-10-13 11:39:39','09123456789'),(4,'Abegail Lesley Joplo','alj@email.com','4346fcaf120e15f3d0248c92489e5a3e6f20027f6e387aba1f386c66e33d69cc','user','/uploads/1791969238573-anya.jpg','active','2026-10-14 09:13:58','09291559475');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'findback_db'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -288,4 +326,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-13 12:25:54
+-- Dump completed on 2026-10-14 17:51:39

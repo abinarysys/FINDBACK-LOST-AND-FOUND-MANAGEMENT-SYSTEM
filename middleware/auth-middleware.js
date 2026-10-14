@@ -1,6 +1,7 @@
 module.exports = (req, res, next) => {
     if (!req.session.user) {
-        return res.redirect('/login');
+        req.flash('error', "Please login first")
+        return res.redirect('/auth/login');
     }
 
     next();

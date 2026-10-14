@@ -14,9 +14,9 @@
         </div>
         <div class="nav-links">
             <a href="/">Home</a>
-            <a href=#>Browse Items</a>
-            <a href=#>How It Works</a>
-            <a href=#>Contact Us</a>
+            <a href="/browse">Browse Items</a>
+            <a href="/howitworks">How It Works</a>
+            <a href="/contacts">Contact Us</a>
         </div>
         <div class="right-buttons">
             <% if (user) { %>
@@ -26,51 +26,149 @@
                     </a>
                     <a href="/auth/logout">Log Out</a>
                 </div>
-        <% } else { %>
-            <a href="/auth/login">Login</a>
-            <a href="/auth/register">Get Started</a>
-        <% } %>
+            <% } else { %>
+                <a href="/auth/login">Login</a>
+                <a href="/auth/register">Get Started</a>
+            <% } %>
         </div>
     </div>
-    <div class="categories">
-        <% categories.forEach(category => { %>
-            <img src="<%= category.category_icon %>" alt="<%= category.category_name %>">
-            <p><%= category.category_name %></p>
-        <% })%>
-    </div>
-    <h2>Help us make FINDBACK better. Share your ideas with us!</h2>
-    <form action="/feedback" method="POST">
-        <div class="stars">
-            <input type="radio" id="s5" name="rate" value="5" required>
-            <label for="s5">&#9733;</label>
-            <input type="radio" id="s4" name="rate" value="4">
-            <label for="s4">&#9733;</label>
-            <input type="radio" id="s3" name="rate" value="3">
-            <label for="s3">&#9733;</label>
-            <input type="radio" id="s2" name="rate" value="2">
-            <label for="s2">&#9733;</label>
-            <input type="radio" id="s1" name="rate" value="1">
-            <label for="s1">&#9733;</label>
-        </div>
-        <textarea name="feedback"
-            placeholder="Enter your feedback here"
-            required></textarea>
-        <button type="submit">Submit Feedback</button>
-    </form>
+
     <% if (success && success.length > 0) { %>
-        <div class="alert success">
-            <%= success[0] %>
+        <div class="flash-message flash-success">
+            <span class="flash-icon">✓</span>
+            <span class="flash-text"><%= success[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
         </div>
     <% } %>
 
     <% if (error && error.length > 0) { %>
-        <div class="alert error">
-            <%= error[0] %>
+        <div class="flash-message flash-error">
+            <span class="flash-icon">!</span>
+            <span class="flash-text"><%= error[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
         </div>
     <% } %>
+
+    <div class="top-layer">
+        <div class="left">
+            <div class="header">
+                <h3>Lost something?</h3>
+                <h3>Let's find it back</h3>
+                <p>Report lost or found items and help reunite them with their owners.</p>
+            </div>
+            <div class="search">
+                <a href="#">Search</a>
+            </div>
+            <div class="lostFound-button">
+                <a href="/lost">
+                    <div class="lost-button">
+                        <div class="search-icon">
+                            <img src="/img/icon/search.png" alt="Search icon">
+                        </div>
+                        <div class="text">
+                            <h4>SUBMIT LOST ITEM</h4>
+                            <p>For users who lost an item<br>and want to report it.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="/found">
+                    <div class="found-button">
+                        <div class="search-icon">
+                            <img src="/img/icon/box.png" alt="Box icon">
+                        </div>
+                        <div class="text">
+                            <h4>SUBMIT FOUND ITEM</h4>
+                            <p>For users who found an item<br>and want to report it.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="right">
+            <img src="#" alt="Lost and Found Together Poster">
+        </div>
+    </div>
+
+    <div class="categories">
+        <% categories.forEach(category => { %>
+            <img src="<%= category.category_icon %>" alt="<%= category.category_name %>">
+            <p><%= category.category_name %></p>
+        <% }) %>
+    </div>
+
+    <div class="recent-items">
+        <h3>Recent Lost &amp; Found Items</h3>
+        <p>Check out the latest items reported by our users!</p>
+
+        <div class="items-container">
+            <% recentItems.forEach(item => { %>
+                <div class="item-card">
+                    <div class="item-picture">
+                        <% if (item.picture) { %>
+                            <img src="<%= item.picture %>" alt="<%= item.item_name %>">
+                        <% } %>
+
+                        <% if (item.type === 'lost') { %>
+                            <span class="item-label lost">LOST</span>
+                        <% } else { %>
+                            <span class="item-label found">FOUND</span>
+                        <% } %>
+                    </div>
+
+                    <div class="item-details">
+                        <h4><%= item.item_name %></h4>
+                        <p><b>Reported by:</b> <%= item.reporterName || 'Unknown' %></p>
+                        <p><b>Contact Number:</b> <%= item.reporterContact || 'Not provided' %></p>
+                        <p><b>Category:</b> <%= item.category_name || 'Not specified' %></p>
+                        <p><b>Description:</b> <%= item.description || 'No description provided' %></p>
+                        <p><b>Location Lost/Found:</b> <%= item.location || 'Not specified' %></p>
+                        <p><b>Date Lost/Found:</b> <%= item.itemDate || 'Not specified' %></p>
+                        <p><b>Date Posted:</b> <%= item.postedAt || 'Not specified' %></p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <h2>Help us make FINDBACK better. Share your ideas with us!</h2>
+
+    <form action="/fb/feedback" method="POST">
+        <div class="stars">
+            <input type="radio" id="s5" name="rate" value="5" required>
+            <label for="s5">&#9733;</label>
+
+            <input type="radio" id="s4" name="rate" value="4">
+            <label for="s4">&#9733;</label>
+
+            <input type="radio" id="s3" name="rate" value="3">
+            <label for="s3">&#9733;</label>
+
+            <input type="radio" id="s2" name="rate" value="2">
+            <label for="s2">&#9733;</label>
+
+            <input type="radio" id="s1" name="rate" value="1">
+            <label for="s1">&#9733;</label>
+        </div>
+
+        <textarea name="msg" placeholder="Enter your feedback here" required></textarea>
+        <button type="submit">Submit Feedback</button>
+    </form>
+
+    <div class="feedback-list">
+        <h3>Customer Feedback</h3>
+        <p>Know that your feedbacks are prioritized!</p>
+
+        <% feedbackList.forEach(fList => { %>
+            <p><b>Sender:</b> <%= fList.full_name %></p>
+            <p><b>Rating:</b> <%= fList.rating %></p>
+            <p><b>Message:</b> <%= fList.message %></p>
+        <% }) %>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+
         socket.on('connect', () => {
             console.log('Connected to FINDBACK Socket.IO!');
         });

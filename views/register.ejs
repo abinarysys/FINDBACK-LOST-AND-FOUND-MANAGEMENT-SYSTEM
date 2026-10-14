@@ -4,10 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
-    <link rel="styleshet" href="/css/register.css">
+    <link rel="stylesheet" href="/css/register.css">
     <title>REGISTER</title>
 </head>
 <body>
+    <div class="nav">
+        <div class="logo">
+            <img src="/img/logo.png" alt="FindBack Logo">
+        </div>
+        <div class="nav-links">
+             <a href="/">Home</a>
+            <a href="/browse">Browse Items</a>
+            <a href="/howitworks">How It Works</a>
+            <a href="/contacts">Contact Us</a>
+        </div>
+        <div class="right-buttons">
+            <% if (user) { %>
+                <div class="profilepic">
+                    <a href="/user/profile">
+                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
+                    </a>
+                    <a href="/auth/logout">Log Out</a>
+                </div>
+        <% } else { %>
+            <a href="/auth/login">Login</a>
+            <a href="/auth/register">Get Started</a>
+        <% } %>
+        </div>
+    </div>
+    <% if (success && success.length > 0) { %>
+        <div class="flash-message flash-success">
+            <span class="flash-icon">✓</span>
+            <span class="flash-text"><%= success[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+        <div class="flash-message flash-error">
+            <span class="flash-icon">!</span>
+            <span class="flash-text"><%= error[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %> 
     <img src="/img/logo.png" alt="FindBack Logo">
     <h2>Create Your Account</h2>
     <p>Join FindBack and help reunite lost items!</p>
@@ -18,22 +56,13 @@
         <input type="text" name="name" placeholder="ex. Juan De La Cruz" required>
         <label>Email Addresss</label>
         <input type="email" name="email" placeholder="ex. juandelacruz@email.com" required>
+        <label>Contact Number</label>
+        <input type="text" name="num" placeholder="ex. 09123456789" required>
         <label>Password</label>
         <input type="password" name="pw" placeholder="ex. x1w23WLm9" required>
         <button type="submit">Submit</button>
     </form>
     <p>Already have an account?<a href="/auth/login">Login Here</a></p>
-    <% if (success && success.length > 0) { %>
-        <div class="alert success">
-            <%= success[0] %>
-        </div>
-    <% } %>
-
-    <% if (error && error.length > 0) { %>
-        <div class="alert error">
-            <%= error[0] %>
-        </div>
-    <% } %>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();

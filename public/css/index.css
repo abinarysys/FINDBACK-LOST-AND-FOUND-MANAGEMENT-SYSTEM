@@ -96,3 +96,246 @@ button {
     width: 30px;
     border-radius: 50px;
 }
+
+/* Recent Lost & Found Items */
+.recent-items {
+    padding: 50px 8%;
+    background-color: #fff9fb;
+}
+
+.recent-items > h3 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.recent-items > p {
+    color: #777;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+/* Items Grid */
+.items-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+/* Item Card */
+.item-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    min-width: 0;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+/* Photo Area */
+.item-picture {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    overflow: hidden;
+    background: #f2edf0;
+}
+
+.item-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.item-card:hover .item-picture img {
+    transform: scale(1.04);
+}
+
+/* LOST / FOUND Badge */
+.item-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.item-label.lost {
+    background-color: #ffe0e5;
+    color: #c62845;
+}
+
+.item-label.found {
+    background-color: #d9f5e7;
+    color: #16794b;
+}
+
+/* Item Details */
+.item-details {
+    padding: 18px;
+}
+
+.item-details h4 {
+    color: #333;
+    font-size: 18px;
+    margin: 0 0 14px;
+    overflow-wrap: anywhere;
+}
+
+.item-details p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 8px 0;
+    overflow-wrap: anywhere;
+}
+
+.item-details p b {
+    color: #444;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .items-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .recent-items {
+        padding: 40px 5%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .items-container {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-items {
+        padding: 30px 5%;
+    }
+
+    .recent-items > h3 {
+        font-size: 23px;
+    }
+
+    .item-picture {
+        height: 230px;
+    }
+}
+
+.flash-message {
+    width: fit-content;
+    max-width: 90%;
+    min-width: 280px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px 18px;
+    margin: 20px auto;
+
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    animation: flashSlideIn 0.35s ease-out;
+}
+
+.flash-success {
+    background-color: #ecfdf3;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    border-left: 5px solid #22c55e;
+}
+
+.flash-error {
+    background-color: #fff1f2;
+    color: #9f1239;
+    border: 1px solid #fecdd3;
+    border-left: 5px solid #f43f5e;
+}
+
+.flash-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.flash-success .flash-icon {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.flash-error .flash-icon {
+    background-color: #ffe4e6;
+    color: #be123c;
+}
+
+.flash-text {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.flash-close {
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 23px;
+    cursor: pointer;
+    opacity: 0.65;
+    padding: 0 2px;
+}
+
+.flash-close:hover {
+    opacity: 1;
+}
+
+@keyframes flashSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .flash-message {
+        width: calc(100% - 30px);
+        min-width: 0;
+        max-width: none;
+        margin: 15px auto;
+        padding: 12px;
+    }
+}
