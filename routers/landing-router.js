@@ -79,4 +79,8 @@ router.get("/howitworks", (req,res) =>{
     res.render("howitworks")
 })
 
+router.get("/browse", (req,res) =>{
+    res.render("browseitems")
+})
+
 module.exports = router;
