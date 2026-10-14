@@ -52,6 +52,8 @@ app.use(userMiddleware);
 app.use('/', require('./routers/landing-router'));
 app.use('/auth', require('./routers/auth-router'));
 app.use('/fb', require('./routers/feedback-router.js'))
+app.use('/lost', require('./routers/lostItem-router.js'))
+app.use("/found", require("./routers/foundItem-router.js"))
 
 server.listen(4000, () => {
     console.log('FINDBACK running at http://localhost:4000');

@@ -32,6 +32,43 @@
         <% } %>
         </div>
     </div>
+    <div class="top-layer">
+        <div class="left">
+            <div class="header">
+                <h3>Lost something?</h3>
+                <h3>Let's find it back</h3>
+                <p>Report lost or found items and help reunite them with their owners.</p>
+            </div>
+            <div class="search">
+                <a href=#>Search</a>            
+            </div>
+            <div class="lostFound-button">
+                <a href="/lost">
+                    <div class="lost-button">
+                        <div class="search-icon">
+                            <img src="/img/icon/search.png" alt="Search icon">
+                        </div>
+                        <div class="text">
+                            <h4>SUBMIT LOST ITEM</h4>
+                            <p>For users who lost an item<br>and want to report it.</p>
+                        </div>
+                    </div>
+                    <div class="found-button">
+                        <div class="search-icon">
+                            <img src="/img/icon/box.png" alt="Box icon">
+                        </div>
+                        <div class="text">
+                            <h4>SUBMIT FOUND ITEM</h4>
+                            <p>For users who found an item<br>and want to report it.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="right">
+            <img src=# alt="Lost and Found Together Poster">
+        </div>
+    </div>
     <div class="categories">
         <% categories.forEach(category => { %>
             <img src="<%= category.category_icon %>" alt="<%= category.category_name %>">

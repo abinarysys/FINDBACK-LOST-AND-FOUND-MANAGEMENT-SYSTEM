@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <link rel="stylesheet" href="/css/submitLostItems.css">
+    <title>SUBMIT LOST ITEM</title>
+</head>
+<body>
+    <div class="nav">
+        <div class="logo">
+            <img src="/img/logo.png" alt="FindBack Logo">
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href=#>Browse Items</a>
+            <a href=#>How It Works</a>
+            <a href=#>Contact Us</a>
+        </div>
+        <div class="right-buttons">
+            <% if (user) { %>
+                <div class="profilepic">
+                    <a href="/user/profile">
+                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
+                    </a>
+                    <a href="/auth/logout">Log Out</a>
+                </div>
+        <% } else { %>
+            <a href="/auth/login">Login</a>
+            <a href="/auth/register">Get Started</a>
+        <% } %>
+        </div>
+    </div>
+    <div class="top">
+        <h4>REPORT AN ITEM</h4>
+        <h2>Submit a Lost Item</h2>
+        <p>Tell us about your lost item. The more details you<br>provide, the easier it will be found and returned.</p>
+    </div>
+    <div class="steps-and-form">
+        <div class="steps-and-tips">
+            <div class="steps">
+                <h4>Steps to Follow</h4>
+                <div class="step">
+                    <h3>1</h3>
+                    <p>Fill in the item details(name, description, etc.)</p>
+                </div>
+                <div class="step">
+                    <h3>2</h3>
+                    <p>Add a photo(clear and detailed)</p>
+                </div>
+                <div class="step">
+                    <h3>3</h3>
+                    <p>Provide the location and data (when it was lost)</p>
+                </div>
+                <div class="step">
+                    <h3>4</h3>
+                    <p>Submit the report and wait for a match</p>
+                </div>
+            </div>
+            <div class="tips">
+                <h4>Tips</h4>
+                <p>⚫ Use a clear photo of the item.</p>
+                <p>⚫ Be as detailed as possible in the description.</p>
+                <p>⚫ If you're unsure about the date, provide an estimated date.</p>
+            </div>
+            <h3>Together , we can help lost items find their way home.</h3>
+        </div>
+        <div class="lostItem-form">
+            <h2>Item information</h2>
+            <form action="/lost/submit" method="POST" enctype="multipart/form-data">
+                <label>Item Name *</label>
+                <input type="text" name="name" placeholder="e.g Backpack, Phone, Wallet" required>
+                <label>Category*</label>
+                <select name="category_id" id="category" required>
+                    <option value="">-- Select Category --</option>
+                    <option value="1">T-Electronics</option>
+                    <option value="2">Bags</option>
+                    <option value="3">IDs & Cards</option>
+                    <option value="4">Keys</option>
+                    <option value="5">Clothing</option>
+                    <option value="6">Wallet</option>
+                    <option value="7">Others</option>
+                </select>
+                <div class="description-and-photo">
+                    <label>Description</label>
+                    <textarea
+                    name="description"
+                    rows="4"
+                    placeholder="Enter description..."  
+                    ></textarea>
+                    <label>Photo</label>
+                    <input type="file" required>
+                </div>
+                <h4>Contact Information</h4>
+                <label>Name *</label>
+                <input type="text" name="foundername" placeholder="e.g Juan De La Cruz" reuired>
+                <input type="email" name="founderemail" placeholder="e.g juandelacruz@email.com" required>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

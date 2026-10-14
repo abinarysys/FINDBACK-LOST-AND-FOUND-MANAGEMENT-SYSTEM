@@ -3,8 +3,6 @@ const crypto = require('crypto')
 const db = require('../config/db.js')
 
 // middlewares
-const authMiddleware = require('../middleware/auth-middleware.js')
-const userMiddleware = require('../middleware/user-middleware.js')
 const upload = require('../middleware/upload-middleware.js');
 
 router.get("/register", (req,res) =>{
