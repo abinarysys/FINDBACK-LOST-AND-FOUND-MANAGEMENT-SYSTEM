@@ -46,7 +46,11 @@
         <label>Password</label>
         <input type="password" name="pw" placeholder="ex. jkb3H98#nd" required>
         <button type="submit">Log In</button>
+        <label for="register">
+    don't have a account?<a href="/auth/register">register here</a>
+    </label>
     </form>
+    
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();

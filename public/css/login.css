@@ -226,13 +226,12 @@ body > form {
     background-color: #FFFFFF;
     padding-left: 25px;
     padding-right: 25px;
-    box-shadow: -3px 0 6px -3px rgba(0, 0, 0, 0.2),
-                3px 0 6px -3px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
 }
 
 /* Card top: logo */
 body > img {
-    height: 105px;
+    height: 50px;
     padding-top: 25px;
     object-fit: contain;
     border-radius: 15px 15px 0 0;
@@ -256,9 +255,12 @@ body > form {
     padding-top: 5px;
     padding-bottom: 25px;
     border-radius: 0 0 15px 15px;
-    box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.2),
-                -3px 0 6px -3px rgba(0, 0, 0, 0.2),
-                3px 0 6px -3px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
+}
+form + p {
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border-radius: 0 0 15px 15px;
 }
 form label {
     display: block;
@@ -292,4 +294,13 @@ form button[type="submit"] {
 }
 form button[type="submit"]:hover {
     opacity: 0.85;
+}
+form label[for="register"] {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: 400;
+}
+form label[for="register"] a {
+    color: #7C18FF;
+    margin-left: 4px;
 }
