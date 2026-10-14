@@ -3,7 +3,7 @@ const mysql2 = require('mysql2')
 const db = mysql2.createConnection({
     host: "localhost",
     user: "root",
-    password: "@trompeta25",
+    password: "",
     database: "findback_db"
 
 })
