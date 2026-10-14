@@ -41,7 +41,6 @@ io.on('connection', (socket) => {
 });
 
 // middlewares
-const authMiddleware = require('./middleware/auth-middleware.js')
 const userMiddleware = require('./middleware/user-middleware.js')
 const upload = require('./middleware/upload-middleware.js');
 

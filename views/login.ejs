@@ -23,6 +23,20 @@
             <a href="/auth/register">Get Started</a>
         </div>
     </div>
+    <% if (success && success.length > 0) { %>
+        <div class="flash-message flash-success">
+            <span class="flash-icon">✓</span>
+            <span class="flash-text"><%= success[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+        <div class="flash-message flash-error">
+            <span class="flash-icon">!</span>
+            <span class="flash-text"><%= error[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %> 
     <img src="/img/logo.png" alt="FindBack Logo">
     <h2>Welcome to FindBack</h2>
     <p>Login to continue finding what matters</p>
@@ -33,5 +47,12 @@
         <input type="password" name="pw" placeholder="ex. jkb3H98#nd" required>
         <button type="submit">Log In</button>
     </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        socket.on('connect', () => {
+            console.log('Connected to FINDBACK Socket.IO!');
+        });
+    </script>
 </body>
 </html>

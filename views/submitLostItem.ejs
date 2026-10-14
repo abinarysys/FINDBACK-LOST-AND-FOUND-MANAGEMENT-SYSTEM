@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/submitLostItems.css">
     <title>SUBMIT LOST ITEM</title>
 </head>
@@ -32,6 +32,22 @@
         <% } %>
         </div>
     </div>
+
+    <% if (success && success.length > 0) { %>
+        <div class="flash-message flash-success">
+            <span class="flash-icon">✓</span>
+            <span class="flash-text"><%= success[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+        <div class="flash-message flash-error">
+            <span class="flash-icon">!</span>
+            <span class="flash-text"><%= error[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %> 
+
     <div class="top">
         <h4>REPORT AN ITEM</h4>
         <h2>Submit a Lost Item</h2>
@@ -89,15 +105,27 @@
                     rows="4"
                     placeholder="Enter description..."  
                     ></textarea>
-                    <label>Photo</label>
-                    <input type="file" required>
+                    <label>Photo*</label>
+                    <input type="file" accept="image/*" name="lostPhoto" required>
                 </div>
+                <label>Location Lost*</label>
+                <input type="text" name="locLost" placeholder=" Phinma UI Canteen near Waffles" required>
+                <label>Date Lost*</label>
+                <input type="date" name="dateLost" required>
                 <h4>Contact Information</h4>
-                <label>Name *</label>
-                <input type="text" name="foundername" placeholder="e.g Juan De La Cruz" reuired>
-                <input type="email" name="founderemail" placeholder="e.g juandelacruz@email.com" required>
+                <p><b>Name: </b><%= user.full_name %></p>
+                <p><b>Contact Number: </b><%= user.num %></p>
+                <button type="submit">Submit</button>
             </form>
+            <a href=#>Message</a>
         </div>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        socket.on('connect', () => {
+            console.log('Connected to FINDBACK Socket.IO!');
+        });
+    </script>
 </body>
 </html>
