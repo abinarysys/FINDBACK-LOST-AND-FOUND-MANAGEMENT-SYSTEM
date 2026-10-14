@@ -96,6 +96,147 @@ button {
     width: 30px;
     border-radius: 50px;
 }
+
+/* Recent Lost & Found Items */
+.recent-items {
+    padding: 50px 8%;
+    background-color: #fff9fb;
+}
+
+.recent-items > h3 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.recent-items > p {
+    color: #777;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+/* Items Grid */
+.items-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+/* Item Card */
+.item-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    min-width: 0;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+/* Photo Area */
+.item-picture {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    overflow: hidden;
+    background: #f2edf0;
+}
+
+.item-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.item-card:hover .item-picture img {
+    transform: scale(1.04);
+}
+
+/* LOST / FOUND Badge */
+.item-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.item-label.lost {
+    background-color: #ffe0e5;
+    color: #c62845;
+}
+
+.item-label.found {
+    background-color: #d9f5e7;
+    color: #16794b;
+}
+
+/* Item Details */
+.item-details {
+    padding: 18px;
+}
+
+.item-details h4 {
+    color: #333;
+    font-size: 18px;
+    margin: 0 0 14px;
+    overflow-wrap: anywhere;
+}
+
+.item-details p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 8px 0;
+    overflow-wrap: anywhere;
+}
+
+.item-details p b {
+    color: #444;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .items-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .recent-items {
+        padding: 40px 5%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .items-container {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-items {
+        padding: 30px 5%;
+    }
+
+    .recent-items > h3 {
+        font-size: 23px;
+    }
+
+    .item-picture {
+        height: 230px;
+    }
+}
+
 .flash-message {
     width: fit-content;
     max-width: 90%;

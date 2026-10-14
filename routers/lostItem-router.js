@@ -22,7 +22,7 @@ router.post("/submit", authMiddleware, upload.single('lostPhoto'), (req, res) =>
         return res.redirect("/lost")
     }
     const lostItemPic = req.file
-        ? '/uploads' + req.file.filename
+        ? '/uploads/' + req.file.filename
         : null
     console.log("FORM DATA:", req.body);
         console.log("UPLOADED FILE:", req.file);

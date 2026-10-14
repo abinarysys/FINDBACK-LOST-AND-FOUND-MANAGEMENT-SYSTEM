@@ -67,7 +67,7 @@
                 </div>
                 <div class="step">
                     <h3>3</h3>
-                    <p>Provide the location and data (when it was lost)</p>
+                    <p>Provide the location and date (when it was found)</p>
                 </div>
                 <div class="step">
                     <h3>4</h3>
@@ -80,11 +80,11 @@
                 <p>⚫ Be as detailed as possible in the description.</p>
                 <p>⚫ If you're unsure about the date, provide an estimated date.</p>
             </div>
-            <h3>Together , we can help lost items find their way home.</h3>
+            <h3>Together, we can help found items find their way home.</h3>
         </div>
-        <div class="lostItem-form">
+        <div class="foundItem-form">
             <h2>Item information</h2>
-            <form action="/lost/submit" method="POST" enctype="multipart/form-data">
+            <form action="/found/submit" method="POST" enctype="multipart/form-data">
                 <label>Item Name *</label>
                 <input type="text" name="name" placeholder="e.g Backpack, Phone, Wallet" required>
                 <label>Category*</label>
@@ -106,12 +106,12 @@
                     placeholder="Enter description..."  
                     ></textarea>
                     <label>Photo*</label>
-                    <input type="file" accept="image/*" name="lostPhoto" required>
+                    <input type="file" accept="image/*" name="foundPhoto" required>
                 </div>
-                <label>Location Lost*</label>
-                <input type="text" name="locLost" placeholder=" Phinma UI Canteen near Waffles" required>
-                <label>Date Lost*</label>
-                <input type="date" name="dateLost" required>
+                <label>Location Found*</label>
+                <input type="text" name="locFound" placeholder=" Phinma UI Canteen near Waffles" required>
+                <label>Date Found*</label>
+                <input type="date" name="dateFound" required>
                 <h4>Contact Information</h4>
                 <p><b>Name: </b><%= user.full_name %></p>
                 <p><b>Contact Number: </b><%= user.num %></p>
