@@ -83,4 +83,318 @@ router.get("/browse", (req,res) =>{
     res.render("browseitems")
 })
 
+router.get("/Electronics", (req,res) =>{
+    const getLostElectronics = `SELECT * FROM lost_items WHERE category_id = 1`
+    db.query(getLostElectronics, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("DB error");
+        }
+        const getFoundElectronics = `SELECT * FROM found_items WHERE category_id = 1`
+        db.query(getFoundElectronics, (err, foundResults) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("DB error");
+            }
+            const combinedResults = [
+                ...results.map(item => ({
+                    ...item,
+                    type: "lost",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_lost ? String(item.date_lost).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                })),
+                ...foundResults.map(item => ({
+                    ...item,
+                    type: "found",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_found ? String(item.date_found).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                }))
+            ].sort((a, b) => {
+                return new Date(b.sortDate) - new Date(a.sortDate);
+            });
+            res.render("electronics", { items: combinedResults });
+        });
+    });
+});
+
+router.get("/Bags", (req,res) =>{
+    const getLostBags = `SELECT * FROM lost_items WHERE category_id = 2`
+    db.query(getLostBags, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("DB error");
+        }
+        const getFoundBags = `SELECT * FROM found_items WHERE category_id = 2`
+        db.query(getFoundBags, (err, foundResults) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("DB error");
+            }
+            const combinedResults = [
+                ...results.map(item => ({
+                    ...item,
+                    type: "lost",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_lost ? String(item.date_lost).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                })),
+                ...foundResults.map(item => ({
+                    ...item,
+                    type: "found",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_found ? String(item.date_found).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                }))
+            ].sort((a, b) => {
+                return new Date(b.sortDate) - new Date(a.sortDate);
+            }
+            )
+            res.render("bags", { items: combinedResults })
+        })
+    })
+})
+
+router.get("/IDs&Cards", (req,res) =>{ 
+    const getLostIDs = `SELECT * FROM lost_items WHERE category_id = 3`
+    db.query(getLostIDs, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("DB error");
+        }
+        const getFoundIDs = `SELECT * FROM found_items WHERE category_id = 3`
+        db.query(getFoundIDs, (err, foundResults) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("DB error");
+            }
+            const combinedResults = [
+                ...results.map(item => ({
+                    ...item,
+                    type: "lost",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_lost ? String(item.date_lost).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                })),
+                ...foundResults.map(item => ({
+                    ...item,
+                    type: "found",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_found ? String(item.date_found).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                }))
+            ].sort((a, b) => {
+                return new Date(b.sortDate) - new Date(a.sortDate);
+            }
+            )
+            res.render("idsandcards", { items: combinedResults })
+        })
+    })
+})
+
+router.get("/Keys", (req,res) =>{
+    const getLostKeys = `SELECT * FROM lost_items WHERE category_id = 4`
+    db.query(getLostKeys, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("DB error");
+        }
+        const getFoundKeys = `SELECT * FROM found_items WHERE category_id = 4`
+        db.query(getFoundKeys, (err, foundResults) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("DB error");
+            }
+            const combinedResults = [
+                ...results.map(item => ({
+                    ...item,
+                    type: "lost",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_lost ? String(item.date_lost).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                })),
+                ...foundResults.map(item => ({
+                    ...item,
+                    type: "found",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_found ? String(item.date_found).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                }))
+            ].sort((a, b) => {
+                return new Date(b.sortDate) - new Date(a.sortDate);
+            }
+            )
+            res.render("keys", { items: combinedResults })
+        })
+    })
+})
+
+router.get("/Clothing", (req,res) =>{
+    const getLostClothing = `SELECT * FROM lost_items WHERE category_id = 5`
+    db.query(getLostClothing, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("DB error");
+        }
+        const getFoundClothing = `SELECT * FROM found_items WHERE category_id = 5`
+        db.query(getFoundClothing, (err, foundResults) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("DB error");
+            }
+            const combinedResults = [
+                ...results.map(item => ({
+                    ...item,
+                    type: "lost",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_lost ? String(item.date_lost).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                })),
+                ...foundResults.map(item => ({
+                    ...item,
+                    type: "found",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_found ? String(item.date_found).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                }))
+            ].sort((a, b) => {
+                return new Date(b.sortDate) - new Date(a.sortDate);
+            }
+            )
+            res.render("clothing", { items: combinedResults })
+        })
+    })
+})
+
+router.get("/Wallets", (req,res) =>{
+    const getLostWallets = `SELECT * FROM lost_items WHERE category_id = 6`
+    db.query(getLostWallets, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("DB error");
+        }
+        const getFoundWallets = `SELECT * FROM found_items WHERE category_id = 6`
+        db.query(getFoundWallets, (err, foundResults) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("DB error");
+            }
+            const combinedResults = [
+                ...results.map(item => ({
+                    ...item,
+                    type: "lost",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_lost ? String(item.date_lost).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                })),
+                ...foundResults.map(item => ({
+                    ...item,
+                    type: "found",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_found ? String(item.date_found).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                }))
+            ].sort((a, b) => {
+                return new Date(b.sortDate) - new Date(a.sortDate);
+            }
+            )
+            res.render("wallets", { items: combinedResults })
+        })
+    })
+})
+
+router.get("/Others", (req,res) =>{  
+    const getLostOthers = `SELECT * FROM lost_items WHERE category_id = 7`
+    db.query(getLostOthers, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("DB error");
+        }
+        const getFoundOthers = `SELECT * FROM found_items WHERE category_id = 7`
+        db.query(getFoundOthers, (err, foundResults) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("DB error");
+            }
+            const combinedResults = [
+                ...results.map(item => ({
+                    ...item,
+                    type: "lost",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_lost ? String(item.date_lost).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                })),
+                ...foundResults.map(item => ({
+                    ...item,
+                    type: "found",
+                    picture: item.photo_path ? '/uploads/' + item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '',
+                    location: item.location,
+                    itemDate: item.date_found ? String(item.date_found).slice(0, 10) : '',
+                    postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                    sortDate: item.created_at,
+                    reporterName: item.full_name,
+                    reporterContact: item.contact_number
+                }))
+            ].sort((a, b) => {
+                return new Date(b.sortDate) - new Date(a.sortDate);
+            }
+            )
+            res.render("others", { items: combinedResults })
+        })
+    })
+})
+
 module.exports = router;

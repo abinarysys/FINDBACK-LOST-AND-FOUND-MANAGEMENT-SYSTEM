@@ -91,8 +91,10 @@
 
     <div class="categories">
         <% categories.forEach(category => { %>
-            <img src="<%= category.category_icon %>" alt="<%= category.category_name %>">
-            <p><%= category.category_name %></p>
+            <a href="/<%= category.category_name %>">
+                <img src="<%= category.category_icon %>" alt="<%= category.category_name %>">
+                <p><%= category.category_name %></p>
+            </a>
         <% }) %>
     </div>
 
