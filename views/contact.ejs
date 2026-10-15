@@ -1,0 +1,146 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/contacts.css">
+    <title>CONTACT US</title>
+</head>
+<body>
+
+    <div class="nav">
+        <div class="logo">
+            <img src="/img/logo.png" alt="FindBack Logo">
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/browse">Browse Items</a>
+            <a href="/howitworks">How It Works</a>
+            <a href="/contacts">Contact Us</a>
+        </div>
+        <div class="right-buttons">
+            <a href="/auth/login">Login</a>
+            <a href="/auth/register">Get Started</a>
+        </div>
+    </div>
+
+    <main class="contact-page">
+
+        <!-- Heading -->
+        <section class="contact-hero">
+            <span class="contact-pill">CONTACT US</span>
+            <h1>Get in <span>Touch</span></h1>
+            <p>Have a question, concern, or need help with a lost or found item?<br>Send us a message and we'll get back to you.</p>
+        </section>
+
+        <section class="contact-layout">
+
+            <!-- Contact info -->
+            <div class="contact-info">
+                <h2>Contact Information</h2>
+                <p class="contact-info-intro">Reach us through any of these, or use the form.</p>
+
+                <div class="contact-info-item">
+                    <span class="contact-info-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+                    <div>
+                        <h4>Email</h4>
+                        <p>findback@example.com</p>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <span class="contact-info-icon"><img src="/img/icon/location.png" alt="Location icon"></span>
+                    <div>
+                        <h4>Location</h4>
+                        <p>Phinma University of Iloilo, Iloilo City</p>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <span class="contact-info-icon"><img src="/img/icon/contact.png" alt="Phone icon"></span>
+                    <div>
+                        <h4>Contact Number</h4>
+                        <p>+63 900 000 0000</p>
+                    </div>
+                </div>
+
+                <p class="contact-info-note">Together, we can help lost items find their way home.</p>
+            </div>
+
+            <!-- Form: opens the visitor's email app, no server needed -->
+            <div class="contact-form">
+                <h2>Send a Message</h2>
+                <form action="mailto:findback@example.com" method="POST" enctype="text/plain">
+                    <div class="contact-row">
+                        <div class="contact-field">
+                            <label for="name">Full Name*</label>
+                            <input type="text" id="name" name="name" placeholder="Your full name" required>
+                        </div>
+                        <div class="contact-field">
+                            <label for="email">Email*</label>
+                            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="contact-field">
+                        <label for="subject">Subject*</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">-- Select a subject --</option>
+                            <option>Lost item help</option>
+                            <option>Found item help</option>
+                            <option>Account issue</option>
+                            <option>Report a problem</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="contact-field">
+                        <label for="message">Message*</label>
+                        <textarea id="message" name="message" rows="6" placeholder="Write your message here..." required></textarea>
+                    </div>
+
+                    <button type="submit">Send Message</button>
+                </form>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="help-band">
+            <div class="help-item help-main">
+                <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+                <div>
+                    <h4>Need Help? We're Here for You.</h4>
+                    <p>Have a question, concern, or need help with a lost or found item? Contact us.</p>
+                </div>
+            </div>
+
+            <div class="help-item">
+                <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+                <span class="help-label">Email</span>
+            </div>
+
+            <div class="help-item">
+                <span class="help-icon"><img src="/img/icon/location.png" alt="Location icon"></span>
+                <span class="help-label">Location</span>
+            </div>
+
+            <div class="help-item">
+                <span class="help-icon"><img src="/img/icon/contact.png" alt="Phone icon"></span>
+                <span class="help-label">Contact</span>
+            </div>
+
+            <a href="/contacts" class="help-btn">Contact Us &rarr;</a>
+        </div>
+
+        <div class="footer-bar">
+            <h4>FindBack</h4>
+            <p>Helping people reunite with their lost belongings.</p>
+        </div>
+    </footer>
+</body>
+</html>
