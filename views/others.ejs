@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Others</title>
+    <link rel="stylesheet" href="/css/category.css">
+    <title>Electronics</title>
 </head>
 <body>
     <div class="nav">
@@ -20,6 +21,233 @@
             <a href="/auth/login">Login</a>
             <a href="/auth/register">Get Started</a>
         </div>
+    </div>
+
+    <% if (success && success.length > 0) { %>
+        <div class="flash-message flash-success">
+            <span class="flash-icon">✓</span>
+            <span class="flash-text"><%= success[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+        <div class="flash-message flash-error">
+            <span class="flash-icon">!</span>
+            <span class="flash-text"><%= error[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %> 
+
+<!-- ELECTRONICS CATEGORY BANNER -->
+<section class="category-banner">
+    <div class="banner-content">
+        <h1>Electronics</h1>
+        <p>Find lost and found items in Electronics</p>
+    </div>
+
+    <div class="banner-decoration">
+        <span class="magnifier magnifier-small"></span>
+        <span class="magnifier magnifier-large"></span>
+    </div>
+</section>
+
+<!-- ELECTRONICS BODY -->
+<main class="category-content">
+
+    <!-- SEARCH AND STATUS FILTER -->
+    <section class="search-filter-section">
+
+        <div class="search-box">
+            <span class="search-icon"></span>
+
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="Search for electronics..."
+                autocomplete="off"
+            >
+
+            <button
+                type="button"
+                id="clearSearch"
+                class="clear-search"
+            >&times;</button>
+        </div>
+
+        <select id="statusFilter" aria-label="Filter by status">
+            <option value="all">All Items</option>
+            <option value="lost">Lost</option>
+            <option value="found">Found</option>
+            <option value="claimed">Claimed</option>
+        </select>
+
+    </section>
+
+    <!-- ITEMS HEADING -->
+    <div class="items-heading">
+        <h2>Electronics Items</h2>
+        <p><span id="resultCount"><%= items.length %></span> items</p>
+    </div>
+
+    <!-- ITEM CARDS -->
+    <section class="items-container" id="itemsContainer">
+
+        <% items.forEach(item => {
+            const itemName = item.item_name || 'Unnamed Item';
+            const description = item.description || 'No description provided';
+            const location = item.location || 'Location not specified';
+
+            const rawStatus = String(
+                item.claim_status ||
+                item.claimStatus ||
+                item.status ||
+                item.type ||
+                ''
+            ).toLowerCase();
+
+            const isClaimed =
+                rawStatus.includes('claim') ||
+                rawStatus === 'returned' ||
+                rawStatus === 'resolved';
+
+            const displayStatus = isClaimed
+                ? 'claimed'
+                : (String(item.type).toLowerCase() === 'lost'
+                    ? 'lost'
+                    : 'found');
+
+            const searchableText = [
+                itemName,
+                description,
+                location,
+                item.category_name || '',
+                item.reporterName || ''
+            ].join(' ').toLowerCase();
+        %>
+
+        <article
+            class="item-card"
+            data-status="<%= displayStatus %>"
+            data-search="<%= searchableText %>"
+        >
+
+            <div class="item-picture">
+
+                <% if (item.picture) { %>
+                    <img
+                        src="<%= item.picture %>"
+                        alt="<%= itemName %>"
+                        loading="lazy"
+                    >
+                <% } else { %>
+                    <div class="image-placeholder">
+                        No image available
+                    </div>
+                <% } %>
+
+                <span class="item-label <%= displayStatus %>">
+                    <%= displayStatus.toUpperCase() %>
+                </span>
+
+            </div>
+
+            <div class="item-details">
+
+                <h3><%= itemName %></h3>
+
+                <p class="item-description">
+                    <%= description %>
+                </p>
+
+                <div class="item-meta">
+                    <span>
+                        <span class="calendar-icon"></span>
+                        <%= item.itemDate || 'Date not specified' %>
+                    </span>
+
+                    <span>
+                        <span class="location-icon"></span>
+                        <%= location %>
+                    </span>
+                </div>
+
+                <a
+                    class="view-details"
+                    href="/item-details/<%= item.item_id || item.lost_item_id || item.found_item_id || '' %>"
+                >
+                    View Details <span>&rarr;</span>
+                </a>
+
+            </div>
+        </article>
+
+        <% }); %>
+
+    </section>
+
+    <!-- NO RESULTS -->
+    <section class="empty-state" id="emptyState" hidden>
+        <h3>No items found</h3>
+        <p>Try another keyword or change the status filter.</p>
+        <button type="button" id="resetFilters">Clear Filters</button>
+    </section>
+
+</main>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const clearSearch = document.getElementById('clearSearch');
+    const resetFilters = document.getElementById('resetFilters');
+    const cards = document.querySelectorAll('.item-card');
+    const resultCount = document.getElementById('resultCount');
+    const itemsContainer = document.getElementById('itemsContainer');
+    const emptyState = document.getElementById('emptyState');
+
+    function filterItems() {
+        const keyword = searchInput.value.trim().toLowerCase();
+        const selectedStatus = statusFilter.value;
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const text = card.dataset.search || '';
+            const status = card.dataset.status;
+
+            const matchesSearch = text.includes(keyword);
+            const matchesStatus =
+                selectedStatus === 'all' || status === selectedStatus;
+
+            const visible = matchesSearch && matchesStatus;
+
+            card.hidden = !visible;
+
+            if (visible) visibleCount++;
+        });
+
+        resultCount.textContent = visibleCount;
+        itemsContainer.hidden = visibleCount === 0;
+        emptyState.hidden = visibleCount !== 0;
+        clearSearch.style.display = keyword ? 'block' : 'none';
+    }
+
+    searchInput.addEventListener('input', filterItems);
+    statusFilter.addEventListener('change', filterItems);
+
+    clearSearch.addEventListener('click', () => {
+        searchInput.value = '';
+        filterItems();
+        searchInput.focus();
+    });
+
+    resetFilters.addEventListener('click', () => {
+        searchInput.value = '';
+        statusFilter.value = 'all';
+        filterItems();
+    });
+
+    filterItems();
+</script>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
@@ -28,5 +256,38 @@
             console.log('Connected to FINDBACK Socket.IO!');
         });
     </script>
+    <footer class="footer">
+    <div class="help-band">
+        <div class="help-item help-main">
+            <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+            <div>
+                <h4>Need Help? We're Here for You.</h4>
+                <p>Have a question, concern, or need help with a lost or found item? Contact us.</p>
+            </div>
+        </div>
+
+        <div class="help-item">
+            <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+            <span class="help-label">Email</span>
+        </div>
+
+        <div class="help-item">
+            <span class="help-icon"><img src="/img/icon/location.png" alt="Location icon"></span>
+            <span class="help-label">Location</span>
+        </div>
+
+        <div class="help-item">
+            <span class="help-icon"><img src="/img/icon/contact.png" alt="Phone icon"></span>
+            <span class="help-label">Contact</span>
+        </div>
+
+        <a href="/contacts" class="help-btn">Contact Us &rarr;</a>
+    </div>
+
+    <div class="footer-bar">
+        <h4>FindBack</h4>
+        <p>Helping people reunite with their lost belongings.</p>
+    </div>
+</footer>
 </body>
 </html>
