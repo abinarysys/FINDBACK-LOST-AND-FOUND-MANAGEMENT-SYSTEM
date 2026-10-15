@@ -212,7 +212,7 @@ router.get("/IDs&Cards", (req,res) =>{
                 return new Date(b.sortDate) - new Date(a.sortDate);
             }
             )
-            res.render("idsandcards", { items: combinedResults })
+            res.render("idandcards", { items: combinedResults })
         })
     })
 })
