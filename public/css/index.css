@@ -939,7 +939,7 @@ body::after {
 .feedback-list > p:nth-of-type(3n+1):not(:first-of-type) { grid-row: 5; }      /* Message */
 
 
-/* ===== EXTRA RESPONSIVE (add at the very bottom) ===== */
+/* ===== EXTRA RESPONSIVE  ===== */
 
 @media (max-width: 1200px) {
     .top-layer {
