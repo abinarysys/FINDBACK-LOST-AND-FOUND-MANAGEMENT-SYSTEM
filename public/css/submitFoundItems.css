@@ -246,7 +246,7 @@ body {
             rgba(243, 238, 255, 0) 100%),
         url('/img/local-img/submitfound.png') right center / cover no-repeat;
     padding: 50px max(20px, calc((100% - 1200px) / 2 + 20px));
-    text-align: left;
+    text-align: center;
 }
 .top h4 {
     display: inline-block;
@@ -261,7 +261,7 @@ body {
 }
 .top h2 {
     width: fit-content;
-    margin: 0 0 12px;
+    margin: 0 auto 12px;
     font-size: clamp(26px, 5vw, 40px);
     font-weight: 700;
     line-height: 1.2;
@@ -273,7 +273,7 @@ body {
 }
 .top p {
     max-width: 460px;
-    margin: 0;
+    margin: 0 auto;
     font-size: 14px;
     line-height: 1.7;
     color: #5f5875;

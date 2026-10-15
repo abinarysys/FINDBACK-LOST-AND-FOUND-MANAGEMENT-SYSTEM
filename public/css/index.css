@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* =====================================================
+   ORIGINAL CODE (unchanged)
+   ===================================================== */
 body{
     margin: 0;
     padding: 0;
@@ -6,7 +11,7 @@ body{
 }
 
 .categories{
-    width: 200px;
+    width: 500px;
     height: 400px;
     padding: 10px;
     border-radius: 10px;
@@ -337,5 +342,733 @@ button {
         max-width: none;
         margin: 15px auto;
         padding: 12px;
+    }
+}
+
+
+/* =====================================================
+   FINDBACK REDESIGN (added below the original code)
+   ===================================================== */
+body {
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    color: #1b2559;
+}
+
+/* ---------- HERO ---------- */
+.top-layer {
+    display: flex;
+    align-items: stretch;
+    gap: 40px;
+    padding: 30px 5% 40px;
+}
+.top-layer .left {
+    flex: 1;
+    min-width: 0;
+}
+.top-layer .right {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+}
+.top-layer .right img {
+    width: 100%;
+    min-height: 320px;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+    background: linear-gradient(135deg, #efe6ff, #b79cf7);
+}
+
+/* Hero poster via CSS (delete this block if you set the <img src> in the HTML instead) */
+.top-layer .right {
+    background: url('/img/local-img/index.png') center / cover no-repeat;
+    border-radius: 20px;
+}
+.top-layer .right img {
+    visibility: hidden;
+}
+
+.header h3 {
+    font-size: 38px;
+    line-height: 1.2;
+    margin: 0;
+    color: #1b2559;
+}
+.header h3:nth-of-type(2) {
+    color: #7a14e6;
+}
+.header p {
+    color: #6b6f8d;
+    font-size: 14px;
+    max-width: 380px;
+    margin: 14px 0 0;
+}
+
+/* Search pill */
+.search {
+    display: flex;
+    align-items: center;
+    max-width: 480px;
+    margin: 24px 0;
+    padding: 6px 6px 6px 20px;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.search::before {
+    content: "what do you lose or find?";
+    flex: 1;
+    font-size: 12px;
+    color: #999;
+}
+.search a {
+    background: #7a14e6;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 9px 22px;
+    border-radius: 999px;
+}
+
+/* Lost / Found buttons */
+.lostFound-button {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.lostFound-button a {
+    text-decoration: none;
+}
+.lost-button,
+.found-button {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 230px;
+    padding: 18px;
+    border-radius: 10px;
+    color: #fff;
+    box-sizing: border-box;
+}
+.lost-button  { background: #7a14e6; }
+.found-button { background: #16a085; }
+.lost-button .search-icon img,
+.found-button .search-icon img {
+    width: 28px;
+    height: 28px;
+    display: block;
+    filter: brightness(0) invert(1);
+}
+.lost-button .text h4,
+.found-button .text h4 {
+    margin: 0 0 4px;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+}
+.lost-button .text p,
+.found-button .text p {
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+/* ---------- CATEGORIES ---------- */
+.categories {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    padding: 30px 5% 40px;
+    border: none;
+    border-radius: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+}
+.categories::before {
+    content: "Browse Items by Category";
+    width: 100%;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1b2559;
+}
+.categories a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100px;
+    text-decoration: none;
+}
+.categories a img {
+    box-sizing: border-box;
+    width: 100px;
+    height: 100px;
+    padding: 14px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #ddd;
+}
+.categories a p {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: #1b2559;
+    text-align: center;
+    text-transform: capitalize;
+}
+.categories a:nth-of-type(1) img { background: #7a7a7a; }
+.categories a:nth-of-type(2) img { background: #f04444; }
+.categories a:nth-of-type(3) img { background: #b8b8b8; }
+.categories a:nth-of-type(4) img { background: #f2b84b; }
+.categories a:nth-of-type(5) img { background: #4aa3e8; }
+.categories a:nth-of-type(6) img { background: #22b0c8; }
+.categories a:nth-of-type(7) img { background: #a86a1a; }
+
+/* ---------- RECENT ITEMS ---------- */
+.recent-items {
+    background: #fff;
+}
+.recent-items > h3 {
+    color: #1b2559;
+    font-weight: 700;
+    font-size: 22px;
+}
+.item-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+}
+.item-label {
+    top: 8px;
+    left: 8px;
+    padding: 4px 10px;
+    font-size: 10px;
+    color: #fff;
+}
+.item-label.lost  { background-color: #f04444; color: #fff; }
+.item-label.found { background-color: #16a085; color: #fff; }
+
+/* ---------- FEEDBACK ---------- */
+h2 {
+    text-align: center;
+    color: #1b2559;
+    font-size: 22px;
+    margin: 50px 5% 20px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+form textarea {
+    width: min(500px, 90%);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: inherit;
+}
+form button[type="submit"] {
+    background: #7a14e6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 600;
+}
+.feedback-list {
+    padding: 30px 8%;
+}
+.feedback-list h3 {
+    color: #1b2559;
+}
+
+/* ---------- FOOTER (generated, no HTML needed) ---------- */
+body::after {
+    content: "FindBack\A Helping people reunite with their lost belongings.";
+    white-space: pre-line;
+    display: block;
+    margin-top: 40px;
+    padding: 24px 8%;
+    background: #1b2559;
+    color: #fff;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+/* =====================================================
+   NAVBAR (copied from the submit page)
+   ===================================================== */
+body {
+    padding-top: 60px; /* room for the fixed bar */
+}
+
+.nav {
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+}
+.nav .logo img {
+    display: block;
+    height: 24px;
+    width: auto;
+    margin: 0;
+}
+.nav-links {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: auto;
+    margin: 0;
+    white-space: nowrap;
+    text-align: center;
+}
+.nav-links a {
+    margin: 0 14px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2d2a4a;
+}
+.nav .right-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    width: auto;
+    margin: 0;
+}
+.right-buttons a {
+    margin: 0;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2d2a4a;
+}
+.right-buttons > a:last-child {
+    background: #7C18FF;
+    color: #FFFFFF;
+    padding: 8px 18px;
+    border-radius: 6px;
+}
+.profilepic {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.profilepic img {
+    display: block;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.nav-links a:hover,
+.right-buttons a:hover {
+    color: #7C18FF;
+}
+.right-buttons > a:last-child:hover {
+    color: #FFFFFF;
+    opacity: 0.85;
+}
+/* ===== FOOTER: help band + dark bar ===== */
+body::after {
+    display: none;            /* turns off the old generated footer bar */
+}
+
+.footer {
+    margin-top: 40px;
+}
+
+.help-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 5%;
+    background: #c4b0ff;
+}
+
+.help-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.help-main {
+    flex: 1.6;
+    min-width: 0;
+}
+
+.help-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #d6c9ff;
+    font-size: 20px;
+}
+
+.help-main h4 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1b2559;
+}
+
+.help-main p {
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.5;
+    color: #1b2559;
+}
+
+.help-label {
+    font-size: 12px;
+    color: #1b2559;
+}
+
+.help-btn {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background: #7a14e6;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.help-btn:hover {
+    opacity: 0.85;
+}
+
+.footer-bar {
+    padding: 22px 5%;
+    background: #1b2559;
+    color: #fff;
+}
+
+.footer-bar h4 {
+    margin: 0 0 4px;
+    font-size: 13px;
+}
+
+.footer-bar p {
+    margin: 0;
+    font-size: 10px;
+    opacity: 0.85;
+}
+
+/* footer responsive */
+@media (max-width: 900px) {
+    .help-band {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    .help-main {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .help-item {
+        flex: 1 1 45%;
+    }
+    .help-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* nav responsive */
+@media (max-width: 900px) {
+    .nav-links a {
+        margin: 0 8px;
+    }
+}
+@media (max-width: 700px) {
+    body {
+        padding-top: 100px;
+    }
+    .nav {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 10px 15px;
+    }
+    .nav-links {
+        position: static;
+        transform: none;
+        order: 3;
+        width: 100%;
+        margin-top: 8px;
+        white-space: normal;
+        text-align: center;
+    }
+    .nav-links a {
+        display: inline-block;
+        margin: 2px 8px;
+    }
+}
+@media (max-width: 360px) {
+    .nav-links a {
+        font-size: 11px;
+        margin: 2px 5px;
+    }
+    .right-buttons {
+        gap: 8px;
+    }
+    .right-buttons > a:last-child {
+        padding: 6px 12px;
+    }
+}
+
+/* ===== CUSTOMER FEEDBACK: box row ===== */
+.feedback-list {
+    display: grid;
+    grid-auto-flow: column;            /* fill each column top-to-bottom = one feedback per column */
+    grid-template-columns: 260px;
+    grid-auto-columns: 260px;          /* every box is 260px wide */
+    grid-template-rows: auto auto repeat(3, auto);
+    column-gap: 20px;
+    align-items: stretch;
+    overflow-x: auto;                  /* scroll sideways when there are many */
+    padding: 30px 8% 40px;
+}
+
+/* heading + subtitle sit above the boxes */
+.feedback-list h3 {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 0 6px;
+    white-space: nowrap;
+}
+.feedback-list > p:first-of-type {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: #6b6f8d;
+    white-space: nowrap;
+}
+
+/* every Sender / Rating / Message line */
+.feedback-list > p:not(:first-of-type) {
+    margin: 0;
+    padding: 6px 18px;
+    background: #f6f3ff;
+    border-left: 1px solid #d9ccff;
+    border-right: 1px solid #d9ccff;
+    font-size: 13px;
+    color: #444;
+    overflow-wrap: anywhere;
+}
+/* Sender = top of the box */
+.feedback-list > p:nth-of-type(3n+2) {
+    padding-top: 18px;
+    border-top: 1px solid #d9ccff;
+    border-radius: 14px 14px 0 0;
+}
+/* Message = bottom of the box */
+.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) {
+    padding-bottom: 18px;
+    border-bottom: 1px solid #d9ccff;
+    border-radius: 0 0 14px 14px;
+}
+.feedback-list > p b {
+    color: #7a14e6;
+}
+/* ===== FEEDBACK: alignment ===== */
+.feedback-list {
+    justify-content: safe center;   /* centers the row of boxes; scrolls normally if there are many */
+    align-content: start;
+}
+
+/* title + subtitle line up with the left edge of the first box */
+.feedback-list h3,
+.feedback-list > p:first-of-type {
+    justify-self: start;
+    text-align: left;
+}
+
+/* same left alignment and spacing for text inside every box */
+.feedback-list > p:not(:first-of-type) {
+    text-align: left;
+    line-height: 1.6;
+    align-self: stretch;
+}
+
+/* Message row grows so all boxes end at the same height */
+.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) {
+    align-self: stretch;
+}/* ===== FEEDBACK: fix alignment ===== */
+.feedback-list {
+    grid-template-rows: auto auto auto auto auto;  /* 2 heading rows + 3 box rows */
+    align-items: stretch;
+    justify-content: start;
+}
+
+/* heading + subtitle span the top, above all the boxes */
+.feedback-list h3 {
+    grid-column: 1 / span 3;
+    grid-row: 1;
+}
+.feedback-list > p:first-of-type {
+    grid-column: 1 / span 3;
+    grid-row: 2;
+}
+
+/* every feedback uses the same three rows, one column each */
+.feedback-list > p:nth-of-type(3n+2) { grid-row: 3; }                          /* Sender  */
+.feedback-list > p:nth-of-type(3n)   { grid-row: 4; }                          /* Rating  */
+.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) { grid-row: 5; }      /* Message */
+
+
+/* ===== EXTRA RESPONSIVE (add at the very bottom) ===== */
+
+@media (max-width: 1200px) {
+    .top-layer {
+        gap: 30px;
+    }
+    .header h3 {
+        font-size: 34px;
+    }
+}
+
+@media (max-width: 900px) {
+    /* hero: poster goes under the text */
+    .top-layer {
+        flex-direction: column;
+        gap: 28px;
+        padding: 24px 5% 30px;
+    }
+    .top-layer .right img {
+        min-height: 260px;
+    }
+    .header p,
+    .search {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    /* hero */
+    .header h3 {
+        font-size: 28px;
+    }
+    .top-layer .right img {
+        min-height: 220px;
+    }
+
+    /* categories: 3 tiles per row */
+    .categories {
+        padding: 24px 5% 30px;
+        gap: 16px;
+    }
+    .categories::before {
+        font-size: 19px;
+    }
+    .categories a {
+        width: calc((100% - 32px) / 3);
+    }
+    .categories a img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    /* feedback: swipe sideways, one box roughly per screen */
+    h2 {
+        margin: 36px 5% 16px;
+        font-size: 19px;
+    }
+    .stars label {
+        font-size: 34px;
+    }
+    .feedback-list {
+        grid-auto-columns: 82%;
+        padding: 24px 5% 30px;
+        scroll-snap-type: x mandatory;
+    }
+    .feedback-list h3,
+    .feedback-list > p:first-of-type {
+        grid-column: 1;
+        white-space: normal;
+    }
+    .feedback-list > p:not(:first-of-type) {
+        scroll-snap-align: start;
+    }
+
+    /* footer */
+    body::after {
+        padding: 20px 5%;
+    }
+}
+
+@media (max-width: 480px) {
+    /* hero buttons stack */
+    .lostFound-button {
+        flex-direction: column;
+    }
+    .lost-button,
+    .found-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .header h3 {
+        font-size: 25px;
+    }
+    .categories a {
+        width: calc((100% - 16px) / 2);   /* 2 tiles per row */
+    }
+}
+
+
+/* footer icon images */
+.help-icon {
+    font-size: 0;            /* no emoji sizing needed anymore */
+}
+
+.help-icon img {
+    display: block;
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+}
+
+/* resize category boxes (change --tile to make them bigger or smaller) */
+@media (min-width: 601px) {
+    .categories {
+        --tile: 130px;
+    }
+
+    .categories a {
+        width: var(--tile);
+    }
+
+    .categories a img {
+        width: var(--tile);
+        height: var(--tile);
+    }
+
+    .categories a p {
+        font-size: 13px;   /* label size, optional */
     }
 }
