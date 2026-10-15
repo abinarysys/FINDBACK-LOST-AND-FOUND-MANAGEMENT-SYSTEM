@@ -71,7 +71,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/contact", (req,res) =>{
+router.get("/contacts", (req,res) =>{
     res.render("contact")
 })
 
