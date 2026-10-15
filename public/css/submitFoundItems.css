@@ -519,16 +519,39 @@ body {
     }
 
     /* Location (left) + Date (right) */
-    .foundtItem-form form > :nth-child(6)  { grid-column: 1; grid-row: 6; }
-    .foundItem-form form > :nth-child(7)  { grid-column: 1; grid-row: 7; }
-    .foundItem-form form > :nth-child(8)  { grid-column: 2; grid-row: 6; }
-    .foundItem-form form > :nth-child(9)  { grid-column: 2; grid-row: 7; }
+    .lostItem-form form > :nth-child(6),
+    .lostItem-form form > :nth-child(7) {
+        grid-column: 1;
+    }
+    .lostItem-form form > :nth-child(8),
+    .lostItem-form form > :nth-child(9) {
+        grid-column: 2;
+    }
+    .lostItem-form form > :nth-child(6),
+    .lostItem-form form > :nth-child(8) {
+        grid-row: 6;
+    }
+    .lostItem-form form > :nth-child(7),
+    .lostItem-form form > :nth-child(9) {
+        grid-row: 7;
+    }
 
-    /* Contact heading, then Name (left) + Number (right), then button */
-    .foundtItem-form form > :nth-child(10) { grid-row: 8; }
-    .foundItem-form form > :nth-child(11) { grid-column: 1; grid-row: 9; }
-    .foundItem-form form > :nth-child(12) { grid-column: 2; grid-row: 9; }
-    .foundItem-form form > :nth-child(13) { grid-row: 10; }
+    /* Description (left) and Photo (right) */
+    .description-and-photo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 20px;
+    }
+    .description-and-photo > label:nth-of-type(1) { grid-column: 1; grid-row: 1; }
+    .description-and-photo > textarea             { grid-column: 1; grid-row: 2; }
+    .description-and-photo > label:nth-of-type(2) { grid-column: 2; grid-row: 1; }
+    .description-and-photo > input                { grid-column: 2; grid-row: 2; }
+
+    .description-and-photo textarea,
+    .lostItem-form input[type="file"] {
+        height: 130px;
+    }
+
 
     /* Description (left) + Photo (right) */
     .description-and-photo {
@@ -616,6 +639,26 @@ body {
     }
     .right-buttons > a:last-child {
         padding: 6px 12px;
+    }
+}
+
+/* ===== FOUND ITEM: Location (left) + Date (right) ===== */
+@media (min-width: 601px) {
+    .foundItem-form form > :nth-child(6),
+    .foundItem-form form > :nth-child(7) {
+        grid-column: 1;
+    }
+    .foundItem-form form > :nth-child(8),
+    .foundItem-form form > :nth-child(9) {
+        grid-column: 2;
+    }
+    .foundItem-form form > :nth-child(6),
+    .foundItem-form form > :nth-child(8) {
+        grid-row: 6;
+    }
+    .foundItem-form form > :nth-child(7),
+    .foundItem-form form > :nth-child(9) {
+        grid-row: 7;
     }
 }
 /* ===== FOOTER: help band + dark bar ===== */
