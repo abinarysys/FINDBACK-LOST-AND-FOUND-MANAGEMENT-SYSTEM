@@ -4,7 +4,7 @@ const db = mysql2.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'findback_db'
+    database: 'findback'
 })
 
 module.exports = db;
