@@ -414,6 +414,23 @@ body {
     font-size: 13px;
     color: #2d2a4a;
 }
+.foundItem-form button[type="submit"] {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background-color: #7C18FF;
+    border: none;
+    border-radius: 8px;
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.foundItem-form button[type="submit"]:hover {
+    opacity: 0.85;
+}
 .foundtItem-form input::placeholder,
 .foundItem-form textarea::placeholder {
     color: #9a96ab;
@@ -600,4 +617,269 @@ body {
     .right-buttons > a:last-child {
         padding: 6px 12px;
     }
+}
+/* ===== FOOTER: help band + dark bar ===== */
+body::after {
+    display: none;            /* turns off the old generated footer bar */
+}
+
+.footer {
+    margin-top: 40px;
+}
+
+.help-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 5%;
+    background: #c4b0ff;
+}
+
+.help-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.help-main {
+    flex: 1.6;
+    min-width: 0;
+}
+
+.help-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #d6c9ff;
+    font-size: 20px;
+}
+
+.help-main h4 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1b2559;
+}
+
+.help-main p {
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.5;
+    color: #1b2559;
+}
+
+.help-label {
+    font-size: 12px;
+    color: #1b2559;
+}
+
+.help-btn {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background: #7a14e6;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.help-btn:hover {
+    opacity: 0.85;
+}
+
+.footer-bar {
+    padding: 22px 5%;
+    background: #1b2559;
+    color: #fff;
+}
+
+.footer-bar h4 {
+    margin: 0 0 4px;
+    font-size: 13px;
+}
+
+.footer-bar p {
+    margin: 0;
+    font-size: 10px;
+    opacity: 0.85;
+}
+
+/* footer responsive */
+@media (max-width: 900px) {
+    .help-band {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    .help-main {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .help-item {
+        flex: 1 1 45%;
+    }
+    .help-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* nav responsive */
+@media (max-width: 900px) {
+    .nav-links a {
+        margin: 0 8px;
+    }
+}
+@media (max-width: 700px) {
+    body {
+        padding-top: 100px;
+    }
+    .nav {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 10px 15px;
+    }
+    .nav-links {
+        position: static;
+        transform: none;
+        order: 3;
+        width: 100%;
+        margin-top: 8px;
+        white-space: normal;
+        text-align: center;
+    }
+    .nav-links a {
+        display: inline-block;
+        margin: 2px 8px;
+    }
+}
+@media (max-width: 360px) {
+    .nav-links a {
+        font-size: 11px;
+        margin: 2px 5px;
+    }
+    .right-buttons {
+        gap: 8px;
+    }
+    .right-buttons > a:last-child {
+        padding: 6px 12px;
+    }
+}
+
+/* ===== CUSTOMER FEEDBACK: box row ===== */
+.feedback-list {
+    display: grid;
+    grid-auto-flow: column;            /* fill each column top-to-bottom = one feedback per column */
+    grid-template-columns: 260px;
+    grid-auto-columns: 260px;          /* every box is 260px wide */
+    grid-template-rows: auto auto repeat(3, auto);
+    column-gap: 20px;
+    align-items: stretch;
+    overflow-x: auto;                  /* scroll sideways when there are many */
+    padding: 30px 8% 40px;
+}
+
+/* heading + subtitle sit above the boxes */
+.feedback-list h3 {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 0 6px;
+    white-space: nowrap;
+}
+.feedback-list > p:first-of-type {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: #6b6f8d;
+    white-space: nowrap;
+}
+
+/* every Sender / Rating / Message line */
+.feedback-list > p:not(:first-of-type) {
+    margin: 0;
+    padding: 6px 18px;
+    background: #f6f3ff;
+    border-left: 1px solid #d9ccff;
+    border-right: 1px solid #d9ccff;
+    font-size: 13px;
+    color: #444;
+    overflow-wrap: anywhere;
+}
+/* Sender = top of the box */
+.feedback-list > p:nth-of-type(3n+2) {
+    padding-top: 18px;
+    border-top: 1px solid #d9ccff;
+    border-radius: 14px 14px 0 0;
+}
+/* Message = bottom of the box */
+.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) {
+    padding-bottom: 18px;
+    border-bottom: 1px solid #d9ccff;
+    border-radius: 0 0 14px 14px;
+}
+.feedback-list > p b {
+    color: #7a14e6;
+}
+/* ===== FEEDBACK: alignment ===== */
+.feedback-list {
+    justify-content: safe center;   /* centers the row of boxes; scrolls normally if there are many */
+    align-content: start;
+}
+
+/* title + subtitle line up with the left edge of the first box */
+.feedback-list h3,
+.feedback-list > p:first-of-type {
+    justify-self: start;
+    text-align: left;
+}
+
+/* same left alignment and spacing for text inside every box */
+.feedback-list > p:not(:first-of-type) {
+    text-align: left;
+    line-height: 1.6;
+    align-self: stretch;
+}
+
+/* Message row grows so all boxes end at the same height */
+.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) {
+    align-self: stretch;
+}/* ===== FEEDBACK: fix alignment ===== */
+.feedback-list {
+    grid-template-rows: auto auto auto auto auto;  /* 2 heading rows + 3 box rows */
+    align-items: stretch;
+    justify-content: start;
+}
+
+/* heading + subtitle span the top, above all the boxes */
+.feedback-list h3 {
+    grid-column: 1 / span 3;
+    grid-row: 1;
+}
+.feedback-list > p:first-of-type {
+    grid-column: 1 / span 3;
+    grid-row: 2;
+}
+
+/* every feedback uses the same three rows, one column each */
+.feedback-list > p:nth-of-type(3n+2) { grid-row: 3; }                          /* Sender  */
+.feedback-list > p:nth-of-type(3n)   { grid-row: 4; }                          /* Rating  */
+.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) { grid-row: 5; }      /* Message */
+.help-icon {
+    font-size: 0;            /* no emoji sizing needed anymore */
+}
+
+.help-icon img {
+    display: block;
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
 }
