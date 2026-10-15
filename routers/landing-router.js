@@ -172,7 +172,7 @@ router.get("/Bags", (req,res) =>{
     })
 })
 
-router.get("/IDs&Cards", (req,res) =>{ 
+router.get("/IDsandCards", (req,res) =>{ 
     const getLostIDs = `SELECT * FROM lost_items WHERE category_id = 3`
     db.query(getLostIDs, (err, results) => {
         if (err) {
