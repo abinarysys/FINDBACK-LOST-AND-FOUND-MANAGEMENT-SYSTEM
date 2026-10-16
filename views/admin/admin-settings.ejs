@@ -105,6 +105,12 @@
                     <div class="field"><label for="aaPw">Temporary password</label><input class="input" id="aaPw" name="pw" type="password" minlength="8" placeholder="Min. 8 characters" required></div>
                 </div>
                 <p class="help">Share the temporary password privately. They can change it in My Profile.</p>
+
+                <div class="field" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border, #e5e7eb)">
+                    <label for="aaConfirmPw">Confirm it's you</label>
+                    <input class="input" id="aaConfirmPw" name="confirm_password" type="password" autocomplete="current-password" placeholder="Enter your own admin password" required>
+                    <p class="help">For security, enter the password of the account you're signed in with (<%= typeof currentAdminEmail !== 'undefined' ? currentAdminEmail : 'your account' %>) to add a new admin.</p>
+                </div>
             </div>
             <div class="modal-foot">
                 <button type="button" class="btn btn-ghost" data-close>Cancel</button>

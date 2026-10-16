@@ -94,8 +94,20 @@ router.post('/profile/update', authMiddleware, (req, res, next) => {
     }
 );
 
-router.get('/notifications', authMiddleware, (req, res) => {
-    res.render('user/notifications');
+const query = require('../config/query.js');
+
+router.get('/notifications', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.session.user.user_id;
+        const notifications = await query(
+            'SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50', [userId]);
+        await query('UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0', [userId]);
+        res.render('user/notifications', { notifications });
+    } catch (err) {
+        console.error(err);
+        req.flash('error', 'Could not load notifications.');
+        res.redirect('/');
+    }
 });
 
 router.get('/chat', authMiddleware, (req, res) => {

@@ -19,9 +19,17 @@
         </div>
 
         <!-- Right Buttons -->
+
         <div class="right-buttons">
 
+            <% if (user && user.role === 'admin') { %>
+                <a href="/admin" class="admin-dashboard-btn">
+                    Admin Dashboard
+                </a>
+            <% } %>
+
             <% if (user) { %>
+
 
                 <div class="profilepic">
                     <a href="/user/profile">

@@ -221,3 +221,19 @@ body {
     color: #FFFFFF;
     opacity: 0.85;
 }
+
+.admin-dashboard-btn {
+    display: inline-block;
+    padding: 10px 16px;
+    margin-right: 12px;
+    background: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.admin-dashboard-btn:hover {
+    background: #1d4ed8;
+}
