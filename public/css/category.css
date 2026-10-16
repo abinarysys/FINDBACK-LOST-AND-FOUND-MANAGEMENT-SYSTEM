@@ -139,6 +139,41 @@ a {
     animation: flashSlideIn 0.35s ease-out;
 }
 
+.claim-btn,
+.message-btn {
+    display: inline-block;
+    flex: 1;
+    min-width: 100px;
+    padding: 10px 14px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.claim-btn {
+    background-color: #e754b6;
+    color: white;
+}
+
+.claim-btn:hover {
+    background-color: #c43dc9;
+    transform: translateY(-2px);
+}
+
+.message-btn {
+    background-color: #fce4ec;
+    color: #c218ba;
+    border: 1px solid #f3b4e9;
+}
+
+.message-btn:hover {
+    background-color: #f8c9f2;
+    transform: translateY(-2px);
+}
+
 @keyframes flashSlideIn {
     from {
         opacity: 0;

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/claim.css">
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+
+    <title>Make a Claim | FINDBACK</title>
+</head>
+<body>
+    <div class="nav">
+        <div class="logo">
+            <img src="/img/logo.png" alt="FindBack Logo">
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/browse">Browse Items</a>
+            <a href="/howitworks">How It Works</a>
+            <a href="/contacts">Contact Us</a>
+        </div>
+        <div class="right-buttons">
+            <% if (user) { %>
+                <div class="profilepic">
+                    <a href="/user/profile">
+                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
+                    </a>
+                    <a href="/auth/logout">Log Out</a>
+                </div>
+            <% } else { %>
+                <a href="/auth/login">Login</a>
+                <a href="/auth/register">Get Started</a>
+            <% } %>
+        </div>
+    </div>
+
+    <% if (success && success.length > 0) { %>
+        <div class="flash-message flash-success">
+            <span class="flash-icon">✓</span>
+            <span class="flash-text"><%= success[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+        <div class="flash-message flash-error">
+            <span class="flash-icon">!</span>
+            <span class="flash-text"><%= error[0] %></span>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    <% } %>
+
+    <main class="claim-container">
+
+        <a href="/" class="back-link">&larr; Back to Home</a>
+
+        <section class="claim-card">
+
+            <div class="claim-header">
+                <h1>Make a Claim</h1>
+                <p>Think this item belongs to you? Submit a claim for verification.</p>
+            </div>
+
+            <div class="item-details">
+                <h2>Found Item Details</h2>
+
+                <% if (item.photo_path) { %>
+                    <img
+                        src="/uploads/<%= item.photo_path.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') %>"
+                        alt="Found item photo"
+                        class="item-image"
+                    >
+                <% } else { %>
+                    <div class="no-image">No image available</div>
+                <% } %>
+
+                <div class="detail-row">
+                    <span>Item Name</span>
+                    <strong><%= item.item_name %></strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Location</span>
+                    <strong><%= item.location || 'Not specified' %></strong>
+                </div>
+
+                <div class="description">
+                    <span>Description</span>
+                    <p><%= item.description || 'No description provided.' %></p>
+                </div>
+            </div>
+
+            <form
+                action="/claim/<%= item.type %>/<%= item.item_id %>/submit"
+                method="POST"
+                class="claim-form"
+            >
+
+                <h2>Your Claim</h2>
+
+                <p class="form-instruction">
+                    Provide details that can help the administrator verify that this item belongs to you.
+                </p>
+
+                <label for="claim_details">Claim Details</label>
+
+                <textarea
+                    id="claim_details"
+                    name="claim_details"
+                    rows="6"
+                    placeholder="Explain why this item belongs to you. Include identifying details that are not publicly visible..."
+                    required
+                    minlength="10"
+                    maxlength="2000"
+                ></textarea>
+
+                <small>
+                    For your safety, avoid sharing passwords or other sensitive account information.
+                </small>
+
+                <button type="submit" class="submit-btn">
+                    Submit Claim
+                </button>
+
+                <a href="/" class="cancel-link">Cancel</a>
+
+            </form>
+
+        </section>
+
+    </main>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to FINDBACK Socket.IO!');
+        });
+    </script>
+    <footer class="footer">
+    <div class="help-band">
+        <div class="help-item help-main">
+            <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+            <div>
+                <h4>Need Help? We're Here for You.</h4>
+                <p>Have a question, concern, or need help with a lost or found item? Contact us.</p>
+            </div>
+        </div>
+
+        <div class="help-item">
+            <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+            <span class="help-label">Email</span>
+        </div>
+
+        <div class="help-item">
+            <span class="help-icon"><img src="/img/icon/location.png" alt="Location icon"></span>
+            <span class="help-label">Location</span>
+        </div>
+
+        <div class="help-item">
+            <span class="help-icon"><img src="/img/icon/contact.png" alt="Phone icon"></span>
+            <span class="help-label">Contact</span>
+        </div>
+
+        <a href="/contacts" class="help-btn">Contact Us &rarr;</a>
+    </div>
+
+    <div class="footer-bar">
+        <h4>FindBack</h4>
+        <p>Helping people reunite with their lost belongings.</p>
+    </div>
+</footer>
+
+</body>
+</html>
+```

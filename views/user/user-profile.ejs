@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | FindBack</title>
+
+    <link rel="stylesheet" href="/css/user/sidebar.css">
+    <link rel="stylesheet" href="/css/user/profile.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- Sidebar -->
+        <%- include('partials/user-sidebar', {
+            user: user,
+            activePage: 'profile'
+        }) %>
+
+        <!-- Main Content -->
+        <div class="page-main">
+
+            <!-- Navbar -->
+            <%- include('partials/navbar', { user: user }) %>
+
+            <main class="profile-page">
+
+                <!-- Page Heading -->
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow">ACCOUNT SETTINGS</p>
+                        <h1>My Profile</h1>
+                        <p>View and manage your personal information.</p>
+                    </div>
+
+                    <span class="account-badge">
+                        <%= user.role || 'User' %>
+                    </span>
+                </div>
+
+                <!-- Profile Card -->
+                <section class="profile-card">
+
+                    <div class="profile-banner"></div>
+
+                    <!-- User Overview -->
+                    <div class="profile-overview">
+
+                        <div class="avatar">
+                            <% if (user.profile_image) { %>
+                                <img
+                                    src="<%= user.profile_image %>"
+                                    alt="Profile Picture"
+                                >
+                            <% } else { %>
+                                <span>
+                                    <%= user.full_name
+                                        ? user.full_name.charAt(0).toUpperCase()
+                                        : 'U' %>
+                                </span>
+                            <% } %>
+                        </div>
+
+                        <div class="profile-name">
+                            <h2><%= user.full_name || 'User Name' %></h2>
+                            <p><%= user.email || 'No email provided' %></p>
+                        </div>
+
+                        <!-- Purple Edit Profile Button -->
+                        <a href="/user/profile/edit" class="edit-button">
+                            Edit Profile
+                        </a>
+
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="profile-content">
+
+                        <div class="section-heading">
+                            <div>
+                                <h3>Personal Information</h3>
+                                <p>Your registered account details.</p>
+                            </div>
+                        </div>
+
+                        <div class="information-grid">
+
+                            <div class="information-item">
+                                <span>Full Name</span>
+                                <strong>
+                                    <%= user.full_name || 'Not provided' %>
+                                </strong>
+                            </div>
+
+                            <div class="information-item">
+                                <span>Email Address</span>
+                                <strong>
+                                    <%= user.email || 'Not provided' %>
+                                </strong>
+                            </div>
+
+                            <div class="information-item">
+                                <span>Contact Number</span>
+                                <strong>
+                                    <%= user.contact_number || 'Not provided' %>
+                                </strong>
+                            </div>
+
+                            <div class="information-item">
+                                <span>Account Role</span>
+                                <strong>
+                                    <%= user.role || 'User' %>
+                                </strong>
+                            </div>
+
+                            <div class="information-item">
+                                <span>Account Status</span>
+                                <strong class="status">
+                                    <%= user.account_status || 'Unknown' %>
+                                </strong>
+                            </div>
+
+                            <div class="information-item">
+                                <span>User ID</span>
+                                <strong>#<%= user.user_id %></strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -127,6 +127,14 @@
                         <p><b>Date Lost/Found:</b> <%= item.itemDate || 'Not specified' %></p>
                         <p><b>Date Posted:</b> <%= item.postedAt || 'Not specified' %></p>
                     </div>
+                    <div class="item-actions">
+                        <a href="/claim/<%= item.type %>/<%= item.type === 'lost' ? item.lost_item_id : item.found_item_id %>" class="claim-btn">
+                            Make a Claim
+                        </a>
+                        <a href="/user/chat" class="message-btn">
+                            Message
+                        </a>
+                    </div>
                 </div>
             <% }) %>
         </div>

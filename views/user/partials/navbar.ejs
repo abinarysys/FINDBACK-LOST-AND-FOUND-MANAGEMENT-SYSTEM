@@ -1,0 +1,53 @@
+<link rel="stylesheet" href="/css/user/navbar.css">
+
+<header class="navbar">
+    <div class="nav">
+
+        <!-- Logo -->
+        <div class="logo">
+            <a href="/">
+                <img src="/img/logo.png" alt="FindBack Logo">
+            </a>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/browse">Browse Items</a>
+            <a href="/howitworks">How It Works</a>
+            <a href="/contacts">Contact Us</a>
+        </div>
+
+        <!-- Right Buttons -->
+        <div class="right-buttons">
+
+            <% if (user) { %>
+
+                <div class="profilepic">
+                    <a href="/user/profile">
+                        <% if (user.profile_image) { %>
+                            <img
+                                src="<%= user.profile_image %>"
+                                alt="<%= user.full_name %> Profile Picture"
+                            >
+                        <% } else { %>
+                            <img
+                                src="/img/default-profile.png"
+                                alt="Default Profile Picture"
+                            >
+                        <% } %>
+                    </a>
+
+                    <a href="/auth/logout">Log Out</a>
+                </div>
+
+            <% } else { %>
+
+                <a href="/auth/login">Login</a>
+                <a href="/auth/register" class="get-started">Get Started</a>
+
+            <% } %>
+
+        </div>
+    </div>
+</header>

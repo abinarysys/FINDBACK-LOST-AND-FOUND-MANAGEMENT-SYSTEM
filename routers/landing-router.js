@@ -60,6 +60,8 @@ router.get("/", (req, res) => {
                     ].sort((a, b) => {
                         return new Date(b.sortDate) - new Date(a.sortDate);
                     });
+                    console.log('First recent item:', recentItems[0]);
+                    console.log('Item ID:', recentItems[0]?.item_id);
                     return res.render("index", {
                         categories: results,
                         feedbackList: result,

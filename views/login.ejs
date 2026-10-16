@@ -13,14 +13,23 @@
             <img src="/img/logo.png" alt="FindBack Logo">
         </div>
         <div class="nav-links">
-             <a href="/">Home</a>
+            <a href="/">Home</a>
             <a href="/browse">Browse Items</a>
             <a href="/howitworks">How It Works</a>
             <a href="/contacts">Contact Us</a>
         </div>
         <div class="right-buttons">
-            <a href="/auth/login">Login</a>
-            <a href="/auth/register">Get Started</a>
+            <% if (user) { %>
+                <div class="profilepic">
+                    <a href="/user/profile">
+                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
+                    </a>
+                    <a href="/auth/logout">Log Out</a>
+                </div>
+            <% } else { %>
+                <a href="/auth/login">Login</a>
+                <a href="/auth/register">Get Started</a>
+            <% } %>
         </div>
     </div>
     <% if (success && success.length > 0) { %>

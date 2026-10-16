@@ -1,0 +1,50 @@
+<link rel="stylesheet" href="/css/user/sidebar.css">
+<aside class="user-sidebar">
+    <div class="sidebar-welcome">
+        <h3>Welcome, <span><%= user.full_name %></span></h3>
+        <p>User Profile</p>
+    </div>
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+        <a href="/user/profile"
+           class="<%= activePage === 'profile' ? 'active' : '' %>">
+            <span class="nav-icon">◉</span>
+            <span>User Profile</span>
+        </a>
+
+        <a href="/user/notifications"
+           class="<%= activePage === 'notifications' ? 'active' : '' %>">
+            <span class="nav-icon">♟</span>
+            <span>Notification</span>
+        </a>
+        <a href="/user/chat"
+           class="<%= activePage === 'chat' ? 'active' : '' %>">
+            <span class="nav-icon">●</span>
+            <span>Chat FindBack</span>
+        </a>
+
+        <a href="/user/activity-logs"
+           class="<%= activePage === 'activity-logs' ? 'active' : '' %>">
+            <span class="nav-icon">◴</span>
+            <span>Activity Logs</span>
+        </a>
+
+    </nav>
+
+    <!-- Bottom navigation -->
+    <div class="sidebar-bottom">
+
+        <a href="/user/settings"
+           class="<%= activePage === 'settings' ? 'active' : '' %>">
+            <span class="nav-icon">☷</span>
+            <span>Settings</span>
+        </a>
+
+        <a href="/auth/logout" class="logout-link">
+            <span class="nav-icon">⇥</span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
