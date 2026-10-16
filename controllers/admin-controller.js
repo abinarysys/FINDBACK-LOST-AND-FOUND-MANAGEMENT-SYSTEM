@@ -1,7 +1,10 @@
+
 const crypto = require('crypto');
 const db = require('../config/db.js');
 
-// Helper for database queries
+// =====================================================
+// DATABASE QUERY HELPER
+// =====================================================
 const query = (sql, params = []) => {
     return new Promise((resolve, reject) => {
         db.query(sql, params, (err, results) => {
@@ -30,7 +33,6 @@ exports.register = async (req, res) => {
             return res.redirect('/admin/register');
         }
 
-        // Check if email already exists
         const existingUser = await query(
             'SELECT user_id FROM users WHERE email = ?',
             [normalizedEmail]
@@ -41,7 +43,6 @@ exports.register = async (req, res) => {
             return res.redirect('/admin/register');
         }
 
-        // Compatible with the existing user login password format
         const password = crypto
             .createHash('sha256')
             .update(pw)
@@ -89,12 +90,10 @@ exports.register = async (req, res) => {
 // =====================================================
 // ADMIN LOGIN
 // =====================================================
-
 exports.login = async (req, res) => {
     try {
         const { email, pw } = req.body;
 
-        // Validate inputs
         if (!email || !pw) {
             req.flash('error', 'Please enter your email and password.');
             return res.redirect('/admin/login');
@@ -102,7 +101,6 @@ exports.login = async (req, res) => {
 
         const normalizedEmail = email.trim().toLowerCase();
 
-        // Find account
         const users = await query(
             `SELECT
                 user_id,
@@ -125,13 +123,11 @@ exports.login = async (req, res) => {
 
         const user = users[0];
 
-        // Allow administrators only
         if (user.role !== 'admin') {
             req.flash('error', 'Invalid email or password.');
             return res.redirect('/admin/login');
         }
 
-        // Verify password using your existing SHA-256 format
         const hashedPassword = crypto
             .createHash('sha256')
             .update(pw)
@@ -142,13 +138,11 @@ exports.login = async (req, res) => {
             return res.redirect('/admin/login');
         }
 
-        // Check account status
         if (user.account_status !== 'active') {
             req.flash('error', 'Your admin account is inactive.');
             return res.redirect('/admin/login');
         }
 
-        // Create a fresh session
         req.session.regenerate((err) => {
             if (err) {
                 console.error('Admin session regeneration error:', err);
@@ -175,11 +169,7 @@ exports.login = async (req, res) => {
                     );
                 }
 
-                req.flash(
-                    'success',
-                    `Welcome, ${user.full_name}!`
-                );
-
+                req.flash('success', `Welcome, ${user.full_name}!`);
                 return res.redirect('/admin');
             });
         });
@@ -191,8 +181,7 @@ exports.login = async (req, res) => {
     }
 };
 
-
- // =====================================================
+// =====================================================
 // GET ADMIN REGISTER PAGE
 // =====================================================
 exports.getRegister = (req, res) => {
@@ -212,15 +201,13 @@ exports.getLogin = (req, res) => {
     });
 };
 
-
- // =====================================================
+// =====================================================
 // ADMIN LOGOUT
 // =====================================================
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Admin logout failed:', err);
-
             return res.status(500).send(
                 'Could not log out. Please try again.'
             );
@@ -230,7 +217,6 @@ exports.logout = (req, res) => {
         return res.redirect('/admin/login');
     });
 };
-
 
 // =====================================================
 // DASHBOARD STATISTICS
@@ -255,16 +241,15 @@ exports.getDashboard = async (req, res) => {
                 totalFoundItems: foundItems[0].total,
                 pendingClaims: claims[0].total,
                 totalFeedback: feedback[0].total
-            }
+            },
+            activePage: 'dashboard'
         });
 
     } catch (err) {
         console.error('Dashboard error:', err);
-
-        res.status(500).json({
-            success: false,
-            message: 'Could not load dashboard statistics.'
-        });
+        res.status(500).send(
+            'Could not load dashboard statistics.'
+        );
     }
 };
 
@@ -287,18 +272,14 @@ exports.getUsers = async (req, res) => {
             ORDER BY created_at DESC
         `);
 
-        res.json({
-            success: true,
-            users
+        res.render('admin/admin-users', {
+            users,
+            activePage: 'users'
         });
 
     } catch (err) {
         console.error('Get users error:', err);
-
-        res.status(500).json({
-            success: false,
-            message: 'Could not retrieve users.'
-        });
+        res.status(500).send('Could not retrieve users.');
     }
 };
 
@@ -323,20 +304,14 @@ exports.updateUserStatus = async (req, res) => {
         });
     }
 
-    // Prevent an admin from disabling their own account
     if (
-        !req.session.user ||
+        req.session.user &&
         userId === Number(req.session.user.user_id)
     ) {
-        if (
-            req.session.user &&
-            userId === Number(req.session.user.user_id)
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: 'You cannot change your own account status here.'
-            });
-        }
+        return res.status(400).json({
+            success: false,
+            message: 'You cannot change your own account status here.'
+        });
     }
 
     try {
@@ -352,7 +327,7 @@ exports.updateUserStatus = async (req, res) => {
             });
         }
 
-        res.json({
+        return res.json({
             success: true,
             message: 'User account status updated.'
         });
@@ -360,7 +335,7 @@ exports.updateUserStatus = async (req, res) => {
     } catch (err) {
         console.error('Update user status error:', err);
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Could not update user status.'
         });
@@ -385,18 +360,15 @@ exports.getLostItems = async (req, res) => {
             ORDER BY li.created_at DESC
         `);
 
-        res.json({
-            success: true,
-            items
+        res.render('admin/admin-lost-items', {
+            items,
+            activePage: 'items',
+            itemType: 'lost'
         });
 
     } catch (err) {
         console.error('Get lost items error:', err);
-
-        res.status(500).json({
-            success: false,
-            message: 'Could not retrieve lost items.'
-        });
+        res.status(500).send('Could not retrieve lost items.');
     }
 };
 
@@ -418,18 +390,15 @@ exports.getFoundItems = async (req, res) => {
             ORDER BY fi.created_at DESC
         `);
 
-        res.json({
-            success: true,
-            items
+        res.render('admin/admin-found-items', {
+            items,
+            activePage: 'items',
+            itemType: 'found'
         });
 
     } catch (err) {
         console.error('Get found items error:', err);
-
-        res.status(500).json({
-            success: false,
-            message: 'Could not retrieve found items.'
-        });
+        res.status(500).send('Could not retrieve found items.');
     }
 };
 
@@ -453,18 +422,14 @@ exports.getClaims = async (req, res) => {
             ORDER BY cl.created_at DESC
         `);
 
-        res.json({
-            success: true,
-            claims
+        res.render('admin/admin-claims', {
+            claims,
+            activePage: 'claims'
         });
 
     } catch (err) {
         console.error('Get claims error:', err);
-
-        res.status(500).json({
-            success: false,
-            message: 'Could not retrieve claims.'
-        });
+        res.status(500).send('Could not retrieve claims.');
     }
 };
 
@@ -502,7 +467,7 @@ exports.updateClaimStatus = async (req, res) => {
             });
         }
 
-        res.json({
+        return res.json({
             success: true,
             message: 'Claim status updated.'
         });
@@ -510,7 +475,7 @@ exports.updateClaimStatus = async (req, res) => {
     } catch (err) {
         console.error('Update claim status error:', err);
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Could not update claim status.'
         });
@@ -536,17 +501,409 @@ exports.getFeedback = async (req, res) => {
             ORDER BY f.created_at DESC
         `);
 
-        res.json({
-            success: true,
-            feedback
+        res.render('admin/admin-feedback', {
+            feedback,
+            activePage: 'feedback'
         });
 
     } catch (err) {
         console.error('Get feedback error:', err);
+        res.status(500).send('Could not retrieve feedback.');
+    }
+};
 
-        res.status(500).json({
+/* =====================================================
+   USER VERIFICATION
+===================================================== */
+
+// Display users awaiting verification
+exports.getUserVerification = async (req, res) => {
+    try {
+        const users = await query(`
+            SELECT
+                user_id,
+                full_name,
+                email,
+                contact_number,
+                profile_image,
+                created_at,
+                verification_status,
+                account_status
+            FROM users
+            WHERE role = 'user'
+            ORDER BY
+                CASE
+                    WHEN verification_status = 'pending' THEN 0
+                    ELSE 1
+                END,
+                created_at DESC
+        `);
+
+        res.render('admin/admin-user-verification', {
+            users,
+            activePage: 'verification'
+        });
+    } catch (err) {
+        console.error('User verification error:', err);
+        res.status(500).send('Could not load user verification.');
+    }
+};
+
+// Approve or reject a user
+exports.updateVerificationStatus = async (req, res) => {
+    const userId = Number(req.params.id);
+    const { status } = req.body;
+
+    if (!Number.isInteger(userId) || userId < 1) {
+        return res.status(400).json({
             success: false,
-            message: 'Could not retrieve feedback.'
+            message: 'Invalid user ID.'
         });
     }
+
+    if (!['verified', 'rejected', 'pending'].includes(status)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid verification status.'
+        });
+    }
+
+    try {
+        const result = await query(
+            `UPDATE users
+             SET verification_status = ?
+             WHERE user_id = ? AND role = 'user'`,
+            [status, userId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found.'
+            });
+        }
+
+        return res.json({
+            success: true,
+            message: `User ${status} successfully.`
+        });
+    } catch (err) {
+        console.error('Update verification error:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Could not update verification status.'
+        });
+    }
+};
+
+
+ // =====================================================
+ // ANALYTICS
+ // =====================================================
+exports.getAnalytics = async (req, res) => {
+    try {
+        const [
+            userStats,
+            lostStats,
+            foundStats,
+            claimStats,
+            monthlyRows,
+            categoryRows,
+            recentClaims
+        ] = await Promise.all([
+            query(`
+                SELECT
+                    COUNT(*) AS totalUsers,
+                    SUM(CASE WHEN account_status = 'active' THEN 1 ELSE 0 END) AS activeUsers,
+                    SUM(CASE WHEN verification_status = 'verified' THEN 1 ELSE 0 END) AS verifiedUsers,
+                    SUM(CASE WHEN verification_status = 'pending' THEN 1 ELSE 0 END) AS pendingUsers
+                FROM users
+                WHERE role = 'user'
+            `),
+
+            query(`
+                SELECT COUNT(*) AS totalLost
+                FROM lost_items
+            `),
+
+            query(`
+                SELECT COUNT(*) AS totalFound
+                FROM found_items
+            `),
+
+            query(`
+                SELECT
+                    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) AS approvedClaims,
+                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pendingClaims,
+                    COUNT(*) AS totalClaims
+                FROM claims
+            `),
+
+            query(`
+                SELECT
+                    months.month,
+                    DATE_FORMAT(STR_TO_DATE(CONCAT(months.month, '-01'), '%Y-%m-%d'), '%b') AS label,
+                    COALESCE(lost.total, 0) AS lostItems,
+                    COALESCE(found.total, 0) AS foundItems
+                FROM (
+                    SELECT DATE_FORMAT(
+                        DATE_SUB(CURDATE(), INTERVAL n MONTH), '%Y-%m'
+                    ) AS month
+                    FROM (
+                        SELECT 0 AS n UNION ALL SELECT 1 UNION ALL
+                        SELECT 2 UNION ALL SELECT 3 UNION ALL
+                        SELECT 4 UNION ALL SELECT 5 UNION ALL
+                        SELECT 6 UNION ALL SELECT 7 UNION ALL
+                        SELECT 8 UNION ALL SELECT 9 UNION ALL
+                        SELECT 10 UNION ALL SELECT 11
+                    ) numbers
+                ) months
+                LEFT JOIN (
+                    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month,
+                           COUNT(*) AS total
+                    FROM lost_items
+                    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                ) lost ON lost.month = months.month
+                LEFT JOIN (
+                    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month,
+                           COUNT(*) AS total
+                    FROM found_items
+                    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                ) found ON found.month = months.month
+                ORDER BY months.month ASC
+            `),
+
+            query(`
+                SELECT
+                    c.category_name,
+                    COUNT(items.category_id) AS total
+                FROM item_categories c
+                LEFT JOIN (
+                    SELECT category_id FROM lost_items
+                    UNION ALL
+                    SELECT category_id FROM found_items
+                ) items ON items.category_id = c.category_id
+                GROUP BY c.category_id, c.category_name
+                ORDER BY total DESC
+                LIMIT 5
+            `),
+
+            query(`
+                SELECT
+                    cl.claim_id,
+                    cl.status,
+                    cl.created_at,
+                    u.full_name,
+                    fi.item_name,
+                    c.category_name
+                FROM claims cl
+                LEFT JOIN users u ON cl.user_id = u.user_id
+                LEFT JOIN found_items fi ON cl.found_item_id = fi.found_item_id
+                LEFT JOIN item_categories c ON fi.category_id = c.category_id
+                ORDER BY cl.created_at DESC
+                LIMIT 5
+            `)
+        ]);
+
+        const monthlyItems = monthlyRows.map(row => ({
+            month: row.month,
+            label: row.label,
+            lostItems: Number(row.lostItems) || 0,
+            foundItems: Number(row.foundItems) || 0
+        }));
+
+        const categoryTotal = categoryRows.reduce(
+            (sum, row) => sum + Number(row.total || 0),
+            0
+        );
+
+        const categoryStats = categoryRows.map(row => ({
+            category_name: row.category_name,
+            total: Number(row.total) || 0,
+            percentage: categoryTotal
+                ? Math.round((Number(row.total) / categoryTotal) * 100)
+                : 0
+        }));
+
+        const analytics = {
+            users: {
+                totalUsers: Number(userStats[0]?.totalUsers) || 0,
+                activeUsers: Number(userStats[0]?.activeUsers) || 0,
+                verifiedUsers: Number(userStats[0]?.verifiedUsers) || 0,
+                pendingUsers: Number(userStats[0]?.pendingUsers) || 0
+            },
+            lostItems: Number(lostStats[0]?.totalLost) || 0,
+            foundItems: Number(foundStats[0]?.totalFound) || 0,
+            claims: {
+                totalClaims: Number(claimStats[0]?.totalClaims) || 0,
+                approvedClaims: Number(claimStats[0]?.approvedClaims) || 0,
+                pendingClaims: Number(claimStats[0]?.pendingClaims) || 0
+            },
+            monthlyItems,
+            categoryStats,
+            recentClaims
+        };
+
+        res.render('admin/admin-analytics', {
+            analytics,
+            activePage: 'analytics'
+        });
+
+    } catch (error) {
+        console.error('Analytics error:', error);
+        res.status(500).send('Failed to load analytics.');
+    }
+};
+
+// =====================================================
+// REPORTS
+// Data source: users, lost_items, found_items,
+//              item_categories
+// =====================================================
+exports.getReports = async (req, res) => {
+    try {
+        const [
+            userCount,
+            lostCount,
+            foundCount,
+            recentReports,
+            reportCategories
+        ] = await Promise.all([
+            query('SELECT COUNT(*) AS total FROM users'),
+            query('SELECT COUNT(*) AS total FROM lost_items'),
+            query('SELECT COUNT(*) AS total FROM found_items'),
+
+            query(`
+                SELECT *
+                FROM (
+                    SELECT
+                        li.lost_item_id AS id,
+                        li.item_name,
+                        'Lost' AS report_type,
+                        u.full_name AS reported_by,
+                        li.created_at,
+                        COALESCE(li.status, 'Pending') AS status
+                    FROM lost_items li
+                    LEFT JOIN users u ON li.user_id = u.user_id
+
+                    UNION ALL
+
+                    SELECT
+                        fi.found_item_id AS id,
+                        fi.item_name,
+                        'Found' AS report_type,
+                        u.full_name AS reported_by,
+                        fi.created_at,
+                        COALESCE(fi.status, 'Pending') AS status
+                    FROM found_items fi
+                    LEFT JOIN users u ON fi.user_id = u.user_id
+                ) AS all_reports
+                ORDER BY created_at DESC
+                LIMIT 20
+            `),
+
+            query(`
+                SELECT
+                    c.category_name,
+                    (
+                        SELECT COUNT(*)
+                        FROM lost_items li
+                        WHERE li.category_id = c.category_id
+                    ) +
+                    (
+                        SELECT COUNT(*)
+                        FROM found_items fi
+                        WHERE fi.category_id = c.category_id
+                    ) AS total
+                FROM item_categories c
+                ORDER BY total DESC
+                LIMIT 4
+            `)
+        ]);
+
+        const totalLost = Number(lostCount[0].total) || 0;
+        const totalFound = Number(foundCount[0].total) || 0;
+
+        res.render('admin/admin-reports', {
+            totalUsers: Number(userCount[0].total) || 0,
+            totalLost,
+            totalFound,
+            totalReports: totalLost + totalFound,
+            recentReports: recentReports.length,
+            reports: recentReports,
+            reportCategories,
+            activePage: 'reports'
+        });
+
+    } catch (err) {
+        console.error('Reports error:', err);
+        res.status(500).send(
+            'Could not load reports. Check your database column names.'
+        );
+    }
+};
+
+
+// =====================================================
+// ACTIVITY LOGS
+// Data source: existing users table
+// This shows account records, not a history of actions.
+// =====================================================
+exports.getActivityLogs = async (req, res) => {
+    try {
+        const logs = await query(`
+            SELECT
+                user_id,
+                full_name,
+                email,
+                role,
+                account_status,
+                created_at
+            FROM users
+            ORDER BY created_at DESC
+        `);
+
+        res.render('admin/admin-activity-logs', {
+            logs,
+            activePage: 'activity-logs'
+        });
+
+    } catch (err) {
+        console.error('Activity logs error:', err);
+        res.status(500).send(
+            'Could not load user records.'
+        );
+    }
+};
+
+exports.getActivityLogs = async (req, res) => {
+    try {
+        const logs = await query(`
+            SELECT
+                user_id,
+                full_name,
+                email,
+                role,
+                account_status,
+                created_at
+            FROM users
+            ORDER BY created_at DESC
+        `);
+
+        res.render('admin/admin-activity-logs', {
+            logs,
+            activePage: 'activity-logs'
+        });
+    } catch (err) {
+        console.error('Activity logs error:', err);
+        res.status(500).send('Could not load user records.');
+    }
+};
+
+
+/* ADMIN SETTINGS PAGE */
+exports.getSettings = (req, res) => {
+    res.render('admin/admin-settings', {
+        activePage: 'settings'
+    });
 };
