@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manage Items | FindBack</title>
+
+    <link rel="stylesheet" href="/css/admin-sidebar.css">
+    <link rel="stylesheet" href="/css/admin-lost-items.css">
+</head>
+<body>
+<%
+    /* ---- Normalise data coming from the controller ----
+       Accepts several possible variable names so the page still works
+       if the controller names them differently. */
+    const _pick = (...names) => {
+        for (const n of names) {
+            const v = locals[n];
+            if (Array.isArray(v)) return v;
+        }
+        return [];
+    };
+    const lostList  = _pick('lostItems', 'lost_items', 'lostReports', 'lostItemReports', 'lost', 'items');
+    const foundList = _pick('foundItems', 'found_items', 'foundReports', 'foundItemReports', 'found');
+
+    /* Build a valid browser URL for an uploaded image.
+       DB may store: "123-photo.jpg", "uploads/123-photo.jpg",
+       "/uploads/123-photo.jpg", "public/uploads/123-photo.jpg" or a full URL. */
+    const imgUrl = (raw) => {
+        if (!raw) return '';
+        let p = String(raw).trim().replace(/\\/g, '/');
+        if (/^(https?:)?\/\//i.test(p) || p.startsWith('data:')) return p;
+        p = p.replace(/^\/?public\//i, '');
+        if (!/^\/?uploads\//i.test(p)) p = 'uploads/' + p.replace(/^\//, '');
+        return '/' + p.replace(/^\//, '');
+    };
+
+    const fmtDate = (d) => {
+        if (!d) return '—';
+        const x = new Date(d);
+        return isNaN(x) ? '—' : x.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    };
+
+    const reporterName = (i) =>
+        i.full_name || i.reporter_name || i.user_name || i.username ||
+        ((i.first_name || i.last_name) ? [i.first_name, i.last_name].filter(Boolean).join(' ') : '') || '—';
+%>
+<div class="admin-layout">
+
+    <%- include('partials/admin-sidebar', { activePage: 'items' }) %>
+
+    <main class="admin-main">
+
+        <header class="page-heading">
+            <h1>ADMIN MANAGE ITEMS</h1>
+        </header>
+
+        <!-- LOST ITEMS -->
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>
+                    <span class="purple-icon">♟</span>
+                    Lost Items Management
+                </h2>
+
+                <input
+                    type="search"
+                    class="item-search"
+                    id="lostSearch"
+                    placeholder="Search lost items..."
+                    aria-label="Search lost items">
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table" id="lostTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Item Name</th>
+                            <th>Item Picture</th>
+                            <th>Category</th>
+                            <th>Date Created</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    <% if (lostList.length) { %>
+                        <% lostList.forEach(item => {
+                            const itemId = item.lost_item_id || item.lost_id || item.item_id || item.id || '—';
+                            const status = String(item.status || 'Unknown').toLowerCase();
+                            const name = item.item_name || item.name || item.title || 'Unnamed item';
+                            const cat = item.category_name || item.category || '—';
+                            const picture = imgUrl(item.image_url || item.item_image || item.image_path || item.image || item.photo || item.picture);
+                        %>
+                            <tr>
+                                <td><%= itemId %></td>
+
+                                <td class="item-name">
+                                    <%= name %>
+                                </td>
+
+                                <td>
+                                    <% if (picture) { %>
+                                        <img
+                                            class="admin-lost-items-image"
+                                            src="<%= picture %>" loading="lazy"
+                                            alt="<%= name %>"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <span class="no-image" style="display:none;">No image</span>
+                                    <% } else { %>
+                                        <span class="no-image">No image</span>
+                                    <% } %>
+                                </td>
+
+                                <td><%= cat %></td>
+
+                                <td>
+                                    <%= fmtDate(item.created_at || item.date_reported || item.date_lost || item.date_found) %>
+                                </td>
+
+                                <td>
+                                    <span class="status status-<%= status.replace(/[^a-z0-9-]/g, '') %>">
+                                        <%= item.status || 'Unknown' %>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="action-btn view-item-btn"
+                                        title="View item details"
+                                        data-id="<%= itemId %>"
+                                        data-name="<%= name %>"
+                                        data-category="<%= cat %>"
+                                        data-reporter="<%= reporterName(item) %>"
+                                        data-status="<%= item.status || 'Unknown' %>"
+                                        data-description="<%= item.description || 'No description available.' %>">
+                                        View
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                No lost item reports found.
+                            </td>
+                        </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <p class="table-count" id="lostCount">
+                    Total lost items: <%= lostList.length %>
+                </p>
+            </div>
+        </section>
+
+        <!-- FOUND ITEMS -->
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>
+                    <span class="purple-icon">♟</span>
+                    Found Items Management
+                </h2>
+
+                <input
+                    type="search"
+                    class="item-search"
+                    id="foundSearch"
+                    placeholder="Search found items..."
+                    aria-label="Search found items">
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table" id="foundTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Item Name</th>
+                            <th>Item Picture</th>
+                            <th>Category</th>
+                            <th>Date Created</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    <% if (foundList.length) { %>
+                        <% foundList.forEach(item => {
+                            const itemId = item.found_item_id || item.found_id || item.item_id || item.id || '—';
+                            const status = String(item.status || 'Unknown').toLowerCase();
+                            const name = item.item_name || item.name || item.title || 'Unnamed item';
+                            const cat = item.category_name || item.category || '—';
+                            const picture = imgUrl(item.image_url || item.item_image || item.image_path || item.image || item.photo || item.picture);
+                        %>
+                            <tr>
+                                <td><%= itemId %></td>
+
+                                <td class="item-name">
+                                    <%= name %>
+                                </td>
+
+                                <td>
+                                    <% if (picture) { %>
+                                        <img
+                                            class="admin-lost-items-image"
+                                            src="<%= picture %>" loading="lazy"
+                                            alt="<%= name %>"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <span class="no-image" style="display:none;">No image</span>
+                                    <% } else { %>
+                                        <span class="no-image">No image</span>
+                                    <% } %>
+                                </td>
+
+                                <td><%= cat %></td>
+
+                                <td>
+                                    <%= fmtDate(item.created_at || item.date_reported || item.date_lost || item.date_found) %>
+                                </td>
+
+                                <td>
+                                    <span class="status status-<%= status.replace(/[^a-z0-9-]/g, '') %>">
+                                        <%= item.status || 'Unknown' %>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="action-btn view-item-btn"
+                                        title="View item details"
+                                        data-id="<%= itemId %>"
+                                        data-name="<%= name %>"
+                                        data-category="<%= cat %>"
+                                        data-reporter="<%= reporterName(item) %>"
+                                        data-status="<%= item.status || 'Unknown' %>"
+                                        data-description="<%= item.description || 'No description available.' %>">
+                                        View
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                No found item reports found.
+                            </td>
+                        </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <p class="table-count" id="foundCount">
+                    Total found items: <%= foundList.length %>
+                </p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- ITEM DETAILS MODAL -->
+<div class="item-modal" id="itemModal" aria-hidden="true">
+    <div class="item-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+            <h2 id="modalTitle">Item Details</h2>
+            <button type="button" id="closeModal" class="modal-close" aria-label="Close">
+                &times;
+            </button>
+        </div>
+
+        <div class="modal-content">
+            <p><strong>Item ID:</strong> <span id="detailId"></span></p>
+            <p><strong>Item Name:</strong> <span id="detailName"></span></p>
+            <p><strong>Category:</strong> <span id="detailCategory"></span></p>
+            <p><strong>Reported By:</strong> <span id="detailReporter"></span></p>
+            <p><strong>Status:</strong> <span id="detailStatus"></span></p>
+            <p><strong>Description:</strong></p>
+            <p id="detailDescription" class="detail-description"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setupSearch(inputId, tableId, countId, label) {
+        const input = document.getElementById(inputId);
+        const table = document.getElementById(tableId);
+        const count = document.getElementById(countId);
+
+        input.addEventListener('input', function () {
+            const term = this.value.trim().toLowerCase();
+            const rows = Array.from(table.querySelectorAll('tbody tr'));
+            let matches = 0;
+
+            rows.forEach(row => {
+                if (row.querySelector('.empty-state')) {
+                    row.hidden = term.length > 0;
+                    return;
+                }
+
+                const visible = row.innerText.toLowerCase().includes(term);
+                row.hidden = !visible;
+
+                if (visible) matches++;
+            });
+
+            count.textContent = term
+                ? 'Matching ' + label + ': ' + matches
+                : 'Total ' + label + ': ' + rows.filter(
+                    row => !row.querySelector('.empty-state')
+                ).length;
+        });
+    }
+
+    setupSearch('lostSearch', 'lostTable', 'lostCount', 'lost items');
+    setupSearch('foundSearch', 'foundTable', 'foundCount', 'found items');
+
+    const modal = document.getElementById('itemModal');
+
+    document.querySelectorAll('.view-item-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            document.getElementById('detailId').textContent = this.dataset.id;
+            document.getElementById('detailName').textContent = this.dataset.name;
+            document.getElementById('detailCategory').textContent = this.dataset.category;
+            document.getElementById('detailReporter').textContent = this.dataset.reporter;
+            document.getElementById('detailStatus').textContent = this.dataset.status;
+            document.getElementById('detailDescription').textContent = this.dataset.description;
+
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        });
+    });
+
+    function closeItemModal() {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    document.getElementById('closeModal').addEventListener('click', closeItemModal);
+
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) closeItemModal();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeItemModal();
+    });
+</script>
+</body>
+</html>

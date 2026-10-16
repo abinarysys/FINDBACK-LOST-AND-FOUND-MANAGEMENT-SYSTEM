@@ -2,9 +2,7 @@
 const crypto = require('crypto');
 const db = require('../config/db.js');
 
-// =====================================================
-// DATABASE QUERY HELPER
-// =====================================================
+// Helper for database queries
 const query = (sql, params = []) => {
     return new Promise((resolve, reject) => {
         db.query(sql, params, (err, results) => {
@@ -594,6 +592,318 @@ exports.updateVerificationStatus = async (req, res) => {
             message: 'Could not update verification status.'
         });
     }
+};
+
+
+ // =====================================================
+ // ANALYTICS
+ // =====================================================
+exports.getAnalytics = async (req, res) => {
+    try {
+        const [
+            userStats,
+            lostStats,
+            foundStats,
+            claimStats,
+            monthlyRows,
+            categoryRows,
+            recentClaims
+        ] = await Promise.all([
+            query(`
+                SELECT
+                    COUNT(*) AS totalUsers,
+                    SUM(CASE WHEN account_status = 'active' THEN 1 ELSE 0 END) AS activeUsers,
+                    SUM(CASE WHEN verification_status = 'verified' THEN 1 ELSE 0 END) AS verifiedUsers,
+                    SUM(CASE WHEN verification_status = 'pending' THEN 1 ELSE 0 END) AS pendingUsers
+                FROM users
+                WHERE role = 'user'
+            `),
+
+            query(`
+                SELECT COUNT(*) AS totalLost
+                FROM lost_items
+            `),
+
+            query(`
+                SELECT COUNT(*) AS totalFound
+                FROM found_items
+            `),
+
+            query(`
+                SELECT
+                    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) AS approvedClaims,
+                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pendingClaims,
+                    COUNT(*) AS totalClaims
+                FROM claims
+            `),
+
+            query(`
+                SELECT
+                    months.month,
+                    DATE_FORMAT(STR_TO_DATE(CONCAT(months.month, '-01'), '%Y-%m-%d'), '%b') AS label,
+                    COALESCE(lost.total, 0) AS lostItems,
+                    COALESCE(found.total, 0) AS foundItems
+                FROM (
+                    SELECT DATE_FORMAT(
+                        DATE_SUB(CURDATE(), INTERVAL n MONTH), '%Y-%m'
+                    ) AS month
+                    FROM (
+                        SELECT 0 AS n UNION ALL SELECT 1 UNION ALL
+                        SELECT 2 UNION ALL SELECT 3 UNION ALL
+                        SELECT 4 UNION ALL SELECT 5 UNION ALL
+                        SELECT 6 UNION ALL SELECT 7 UNION ALL
+                        SELECT 8 UNION ALL SELECT 9 UNION ALL
+                        SELECT 10 UNION ALL SELECT 11
+                    ) numbers
+                ) months
+                LEFT JOIN (
+                    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month,
+                           COUNT(*) AS total
+                    FROM lost_items
+                    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                ) lost ON lost.month = months.month
+                LEFT JOIN (
+                    SELECT DATE_FORMAT(created_at, '%Y-%m') AS month,
+                           COUNT(*) AS total
+                    FROM found_items
+                    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                ) found ON found.month = months.month
+                ORDER BY months.month ASC
+            `),
+
+            query(`
+                SELECT
+                    c.category_name,
+                    COUNT(items.category_id) AS total
+                FROM item_categories c
+                LEFT JOIN (
+                    SELECT category_id FROM lost_items
+                    UNION ALL
+                    SELECT category_id FROM found_items
+                ) items ON items.category_id = c.category_id
+                GROUP BY c.category_id, c.category_name
+                ORDER BY total DESC
+                LIMIT 5
+            `),
+
+            query(`
+                SELECT
+                    cl.claim_id,
+                    cl.status,
+                    cl.created_at,
+                    u.full_name,
+                    fi.item_name,
+                    c.category_name
+                FROM claims cl
+                LEFT JOIN users u ON cl.user_id = u.user_id
+                LEFT JOIN found_items fi ON cl.found_item_id = fi.found_item_id
+                LEFT JOIN item_categories c ON fi.category_id = c.category_id
+                ORDER BY cl.created_at DESC
+                LIMIT 5
+            `)
+        ]);
+
+        const monthlyItems = monthlyRows.map(row => ({
+            month: row.month,
+            label: row.label,
+            lostItems: Number(row.lostItems) || 0,
+            foundItems: Number(row.foundItems) || 0
+        }));
+
+        const categoryTotal = categoryRows.reduce(
+            (sum, row) => sum + Number(row.total || 0),
+            0
+        );
+
+        const categoryStats = categoryRows.map(row => ({
+            category_name: row.category_name,
+            total: Number(row.total) || 0,
+            percentage: categoryTotal
+                ? Math.round((Number(row.total) / categoryTotal) * 100)
+                : 0
+        }));
+
+        const analytics = {
+            users: {
+                totalUsers: Number(userStats[0]?.totalUsers) || 0,
+                activeUsers: Number(userStats[0]?.activeUsers) || 0,
+                verifiedUsers: Number(userStats[0]?.verifiedUsers) || 0,
+                pendingUsers: Number(userStats[0]?.pendingUsers) || 0
+            },
+            lostItems: Number(lostStats[0]?.totalLost) || 0,
+            foundItems: Number(foundStats[0]?.totalFound) || 0,
+            claims: {
+                totalClaims: Number(claimStats[0]?.totalClaims) || 0,
+                approvedClaims: Number(claimStats[0]?.approvedClaims) || 0,
+                pendingClaims: Number(claimStats[0]?.pendingClaims) || 0
+            },
+            monthlyItems,
+            categoryStats,
+            recentClaims
+        };
+
+        res.render('admin/admin-analytics', {
+            analytics,
+            activePage: 'analytics'
+        });
+
+    } catch (error) {
+        console.error('Analytics error:', error);
+        res.status(500).send('Failed to load analytics.');
+    }
+};
+
+// =====================================================
+// REPORTS
+// Data source: users, lost_items, found_items,
+//              item_categories
+// =====================================================
+exports.getReports = async (req, res) => {
+    try {
+        const [
+            userCount,
+            lostCount,
+            foundCount,
+            recentReports,
+            reportCategories
+        ] = await Promise.all([
+            query('SELECT COUNT(*) AS total FROM users'),
+            query('SELECT COUNT(*) AS total FROM lost_items'),
+            query('SELECT COUNT(*) AS total FROM found_items'),
+
+            query(`
+                SELECT *
+                FROM (
+                    SELECT
+                        li.lost_item_id AS id,
+                        li.item_name,
+                        'Lost' AS report_type,
+                        u.full_name AS reported_by,
+                        li.created_at,
+                        COALESCE(li.status, 'Pending') AS status
+                    FROM lost_items li
+                    LEFT JOIN users u ON li.user_id = u.user_id
+
+                    UNION ALL
+
+                    SELECT
+                        fi.found_item_id AS id,
+                        fi.item_name,
+                        'Found' AS report_type,
+                        u.full_name AS reported_by,
+                        fi.created_at,
+                        COALESCE(fi.status, 'Pending') AS status
+                    FROM found_items fi
+                    LEFT JOIN users u ON fi.user_id = u.user_id
+                ) AS all_reports
+                ORDER BY created_at DESC
+                LIMIT 20
+            `),
+
+            query(`
+                SELECT
+                    c.category_name,
+                    (
+                        SELECT COUNT(*)
+                        FROM lost_items li
+                        WHERE li.category_id = c.category_id
+                    ) +
+                    (
+                        SELECT COUNT(*)
+                        FROM found_items fi
+                        WHERE fi.category_id = c.category_id
+                    ) AS total
+                FROM item_categories c
+                ORDER BY total DESC
+                LIMIT 4
+            `)
+        ]);
+
+        const totalLost = Number(lostCount[0].total) || 0;
+        const totalFound = Number(foundCount[0].total) || 0;
+
+        res.render('admin/admin-reports', {
+            totalUsers: Number(userCount[0].total) || 0,
+            totalLost,
+            totalFound,
+            totalReports: totalLost + totalFound,
+            recentReports: recentReports.length,
+            reports: recentReports,
+            reportCategories,
+            activePage: 'reports'
+        });
+
+    } catch (err) {
+        console.error('Reports error:', err);
+        res.status(500).send(
+            'Could not load reports. Check your database column names.'
+        );
+    }
+};
+
+
+// =====================================================
+// ACTIVITY LOGS
+// Data source: existing users table
+// This shows account records, not a history of actions.
+// =====================================================
+exports.getActivityLogs = async (req, res) => {
+    try {
+        const logs = await query(`
+            SELECT
+                user_id,
+                full_name,
+                email,
+                role,
+                account_status,
+                created_at
+            FROM users
+            ORDER BY created_at DESC
+        `);
+
+        res.render('admin/admin-activity-logs', {
+            logs,
+            activePage: 'activity-logs'
+        });
+
+    } catch (err) {
+        console.error('Activity logs error:', err);
+        res.status(500).send(
+            'Could not load user records.'
+        );
+    }
+};
+
+exports.getActivityLogs = async (req, res) => {
+    try {
+        const logs = await query(`
+            SELECT
+                user_id,
+                full_name,
+                email,
+                role,
+                account_status,
+                created_at
+            FROM users
+            ORDER BY created_at DESC
+        `);
+
+        res.render('admin/admin-activity-logs', {
+            logs,
+            activePage: 'activity-logs'
+        });
+    } catch (err) {
+        console.error('Activity logs error:', err);
+        res.status(500).send('Could not load user records.');
+    }
+};
+
+
+/* ADMIN SETTINGS PAGE */
+exports.getSettings = (req, res) => {
+    res.render('admin/admin-settings', {
+        activePage: 'settings'
+    });
 };
 
 

@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard | FindBack</title>
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <link rel="stylesheet" href="/css/admin-sidebar.css">
+    <link rel="stylesheet" href="/css/admin-Dashboard.css">
+</head>
+<body>
+<div class="admin-layout">
+    <%- include('partials/admin-sidebar', { activePage: 'dashboard' }) %>
+
+    <main class="admin-main">
+        <header class="page-heading">
+            <div>
+                <h1>Dashboard Overview</h1>
+                <p>Welcome back! Here's what's happening on FindBack.</p>
+            </div>
+        </header>
+
+        <section class="dashboard-section">
+            <h2><span class="section-icon">↗</span> Items Statistics</h2>
+            <div class="mini-stats">
+                <article class="mini-stat">
+                    <span class="mini-icon">▧</span>
+                    <strong><%= statistics?.totalLostItems ?? 0 %></strong>
+                    <small>Lost Items</small>
+                </article>
+                <article class="mini-stat">
+                    <span class="mini-icon">⌕</span>
+                    <strong><%= statistics?.totalFoundItems ?? 0 %></strong>
+                    <small>Found Items</small>
+                </article>
+                <article class="mini-stat">
+                    <span class="mini-icon">♧</span>
+                    <strong><%= statistics?.totalLostItems + statistics?.totalFoundItems || 0 %></strong>
+                    <small>Total Reports</small>
+                </article>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2><span class="section-icon">↗</span> Users Analytics</h2>
+            <div class="mini-stats">
+                <article class="mini-stat">
+                    <span class="mini-icon">♟</span>
+                    <strong><%= statistics?.totalUsers ?? 0 %></strong>
+                    <small>Total Users</small>
+                </article>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2><span class="section-icon">↗</span> Claims Analytics</h2>
+            <div class="mini-stats">
+                <article class="mini-stat">
+                    <span class="mini-icon">✓</span>
+                    <strong><%= statistics?.approvedClaims ?? 0 %></strong>
+                    <small>Approved</small>
+                </article>
+                <article class="mini-stat">
+                    <span class="mini-icon">×</span>
+                    <strong><%= statistics?.rejectedClaims ?? 0 %></strong>
+                    <small>Rejected</small>
+                </article>
+                <article class="mini-stat">
+                    <span class="mini-icon">◷</span>
+                    <strong><%= statistics?.pendingClaims ?? 0 %></strong>
+                    <small>Waiting</small>
+                </article>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+```ejs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reports | FindBack Admin</title>
+    <link rel="stylesheet" href="/css/admin-sidebar.css">
+    <link rel="stylesheet" href="/css/admin-reports.css">
+</head>
+<body>
+    <%- include('partials/admin-sidebar', { activePage: 'reports' }) %>
+
+    <main class="admin-main">
+        <h1 class="page-title">Reports</h1>
+
+        <section class="filter-bar">
+            <input type="date" id="startDate" aria-label="Start date">
+
+            <select id="reportType" aria-label="Report type">
+                <option value="all">Report Type　›</option>
+                <option value="lost">Lost Items</option>
+                <option value="found">Found Items</option>
+            </select>
+
+            <button class="primary-btn" onclick="window.print()">
+                Export Report　›
+            </button>
+        </section>
+
+        <section class="summary-grid">
+            <article class="summary-card">
+                <div class="summary-icon">▤</div>
+                <p>Total Reports Generated</p>
+                <h2><%= totalReports %></h2>
+            </article>
+
+            <article class="summary-card">
+                <div class="summary-icon">⌕</div>
+                <p>Lost Item Reports</p>
+                <h2><%= totalLost %></h2>
+            </article>
+
+            <article class="summary-card">
+                <div class="summary-icon">▧</div>
+                <p>Found Item Reports</p>
+                <h2><%= totalFound %></h2>
+            </article>
+
+            <article class="summary-card">
+                <div class="summary-icon">♙</div>
+                <p>User Reports</p>
+                <h2><%= totalUsers %></h2>
+            </article>
+        </section>
+
+        <section class="reports-layout">
+            <article class="panel recent-panel">
+                <h2>Recent Reports</h2>
+
+                <div class="table-scroll">
+                    <table id="reportsTable">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Report Summary</th>
+                                <th>Generated On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (reports && reports.length) { %>
+                                <% reports.forEach(report => { %>
+                                    <tr
+                                        data-type="<%= report.report_type.toLowerCase() %>"
+                                        data-date="<%= report.created_at ? new Date(report.created_at).toISOString().slice(0, 10) : '' %>"
+                                    >
+                                        <td>RPT-<%= report.id %></td>
+                                        <td>
+                                            <%= report.report_type %> Items:
+                                            <%= report.item_name || 'Unnamed item' %>
+                                        </td>
+                                        <td>
+                                            <%= report.created_at
+                                                ? new Date(report.created_at).toLocaleString()
+                                                : 'N/A' %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="3">No reports available yet.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="panel categories-panel">
+                <h2>Report Categories</h2>
+                <h3>ITEM REPORT</h3>
+
+                <% if (reportCategories && reportCategories.length) { %>
+                    <% reportCategories.forEach((category, index) => { %>
+                        <div class="category-row">
+                            <span class="category-icon">
+                                <%= ['▣', '▤', '♧', '◇'][index % 4] %>
+                            </span>
+                            <span><%= category.category_name %></span>
+                            <span class="category-count"><%= category.total %></span>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No categories found.</p>
+                <% } %>
+            </article>
+        </section>
+
+        <p class="page-footer">
+            FindBack Admin Dashboard &copy; <%= new Date().getFullYear() %>
+        </p>
+    </main>
+
+    <script>
+        const typeFilter = document.getElementById('reportType');
+        const dateFilter = document.getElementById('startDate');
+
+        function filterReports() {
+            const type = typeFilter.value;
+            const date = dateFilter.value;
+
+            document.querySelectorAll('#reportsTable tbody tr[data-type]')
+                .forEach(row => {
+                    const matchesType =
+                        type === 'all' || row.dataset.type === type;
+
+                    const matchesDate =
+                        !date || (row.dataset.date && row.dataset.date >= date);
+
+                    row.style.display =
+                        matchesType && matchesDate ? '' : 'none';
+                });
+        }
+
+        typeFilter.addEventListener('change', filterReports);
+        dateFilter.addEventListener('change', filterReports);
+    </script>
+</body>
+</html>
+```

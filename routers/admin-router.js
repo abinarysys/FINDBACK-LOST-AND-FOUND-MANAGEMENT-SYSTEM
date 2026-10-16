@@ -52,4 +52,28 @@ router.patch('/claims/:id/status', adminController.updateClaimStatus);
 // Feedback
 router.get('/feedback', adminController.getFeedback);
 
+
+ // User Verification
+router.get(
+    '/user-verification',
+    adminController.getUserVerification
+);
+
+router.patch(
+    '/users/:id/verification',
+    adminController.updateVerificationStatus
+);
+
+// Analytics
+router.get('/analytics',adminController.getAnalytics);
+
+//reports
+router.get('/reports', adminController.getReports);
+
+//activity logs
+router.get('/activity-logs', adminController.getActivityLogs);
+
+// Settings
+router.get('/settings', adminController.getSettings);
+
 module.exports = router;
