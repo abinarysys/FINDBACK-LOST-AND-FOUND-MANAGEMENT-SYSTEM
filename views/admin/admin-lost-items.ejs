@@ -1,4 +1,3 @@
-```ejs
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +9,42 @@
     <link rel="stylesheet" href="/css/admin-lost-items.css">
 </head>
 <body>
+<%
+    /* ---- Normalise data coming from the controller ----
+       Accepts several possible variable names so the page still works
+       if the controller names them differently. */
+    const _pick = (...names) => {
+        for (const n of names) {
+            const v = locals[n];
+            if (Array.isArray(v)) return v;
+        }
+        return [];
+    };
+    const lostList  = _pick('lostItems', 'lost_items', 'lostReports', 'lostItemReports', 'lost', 'items');
+    const foundList = _pick('foundItems', 'found_items', 'foundReports', 'foundItemReports', 'found');
+
+    /* Build a valid browser URL for an uploaded image.
+       DB may store: "123-photo.jpg", "uploads/123-photo.jpg",
+       "/uploads/123-photo.jpg", "public/uploads/123-photo.jpg" or a full URL. */
+    const imgUrl = (raw) => {
+        if (!raw) return '';
+        let p = String(raw).trim().replace(/\\/g, '/');
+        if (/^(https?:)?\/\//i.test(p) || p.startsWith('data:')) return p;
+        p = p.replace(/^\/?public\//i, '');
+        if (!/^\/?uploads\//i.test(p)) p = 'uploads/' + p.replace(/^\//, '');
+        return '/' + p.replace(/^\//, '');
+    };
+
+    const fmtDate = (d) => {
+        if (!d) return '—';
+        const x = new Date(d);
+        return isNaN(x) ? '—' : x.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    };
+
+    const reporterName = (i) =>
+        i.full_name || i.reporter_name || i.user_name || i.username ||
+        ((i.first_name || i.last_name) ? [i.first_name, i.last_name].filter(Boolean).join(' ') : '') || '—';
+%>
 <div class="admin-layout">
 
     <%- include('partials/admin-sidebar', { activePage: 'items' }) %>
@@ -51,25 +86,27 @@
                     </thead>
 
                     <tbody>
-                    <% if (typeof lostItems !== 'undefined' && lostItems.length) { %>
-                        <% lostItems.forEach(item => {
-                            const itemId = item.lost_item_id || item.item_id || item.id || '—';
+                    <% if (lostList.length) { %>
+                        <% lostList.forEach(item => {
+                            const itemId = item.lost_item_id || item.lost_id || item.item_id || item.id || '—';
                             const status = String(item.status || 'Unknown').toLowerCase();
-                            const picture = item.image_url || item.item_image || item.image_path || item.image || '';
+                            const name = item.item_name || item.name || item.title || 'Unnamed item';
+                            const cat = item.category_name || item.category || '—';
+                            const picture = imgUrl(item.image_url || item.item_image || item.image_path || item.image || item.photo || item.picture);
                         %>
                             <tr>
                                 <td><%= itemId %></td>
 
                                 <td class="item-name">
-                                    <%= item.item_name || 'Unnamed item' %>
+                                    <%= name %>
                                 </td>
 
                                 <td>
                                     <% if (picture) { %>
                                         <img
                                             class="admin-lost-items-image"
-                                            src="<%= picture %>"
-                                            alt="<%= item.item_name || 'Lost item' %>"
+                                            src="<%= picture %>" loading="lazy"
+                                            alt="<%= name %>"
                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                         <span class="no-image" style="display:none;">No image</span>
                                     <% } else { %>
@@ -77,16 +114,10 @@
                                     <% } %>
                                 </td>
 
-                                <td><%= item.category_name || '—' %></td>
+                                <td><%= cat %></td>
 
                                 <td>
-                                    <%= item.created_at
-                                        ? new Date(item.created_at).toLocaleDateString('en-US', {
-                                            month: 'short',
-                                            day: '2-digit',
-                                            year: 'numeric'
-                                        })
-                                        : '—' %>
+                                    <%= fmtDate(item.created_at || item.date_reported || item.date_lost || item.date_found) %>
                                 </td>
 
                                 <td>
@@ -101,9 +132,9 @@
                                         class="action-btn view-item-btn"
                                         title="View item details"
                                         data-id="<%= itemId %>"
-                                        data-name="<%= item.item_name || 'Unnamed item' %>"
-                                        data-category="<%= item.category_name || '—' %>"
-                                        data-reporter="<%= item.full_name || '—' %>"
+                                        data-name="<%= name %>"
+                                        data-category="<%= cat %>"
+                                        data-reporter="<%= reporterName(item) %>"
                                         data-status="<%= item.status || 'Unknown' %>"
                                         data-description="<%= item.description || 'No description available.' %>">
                                         View
@@ -124,7 +155,7 @@
 
             <div class="table-footer">
                 <p class="table-count" id="lostCount">
-                    Total lost items: <%= typeof lostItems !== 'undefined' ? lostItems.length : 0 %>
+                    Total lost items: <%= lostList.length %>
                 </p>
             </div>
         </section>
@@ -160,25 +191,27 @@
                     </thead>
 
                     <tbody>
-                    <% if (typeof foundItems !== 'undefined' && foundItems.length) { %>
-                        <% foundItems.forEach(item => {
-                            const itemId = item.found_item_id || item.item_id || item.id || '—';
+                    <% if (foundList.length) { %>
+                        <% foundList.forEach(item => {
+                            const itemId = item.found_item_id || item.found_id || item.item_id || item.id || '—';
                             const status = String(item.status || 'Unknown').toLowerCase();
-                            const picture = item.image_url || item.item_image || item.image_path || item.image || '';
+                            const name = item.item_name || item.name || item.title || 'Unnamed item';
+                            const cat = item.category_name || item.category || '—';
+                            const picture = imgUrl(item.image_url || item.item_image || item.image_path || item.image || item.photo || item.picture);
                         %>
                             <tr>
                                 <td><%= itemId %></td>
 
                                 <td class="item-name">
-                                    <%= item.item_name || 'Unnamed item' %>
+                                    <%= name %>
                                 </td>
 
                                 <td>
                                     <% if (picture) { %>
                                         <img
                                             class="admin-lost-items-image"
-                                            src="<%= picture %>"
-                                            alt="<%= item.item_name || 'Found item' %>"
+                                            src="<%= picture %>" loading="lazy"
+                                            alt="<%= name %>"
                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                         <span class="no-image" style="display:none;">No image</span>
                                     <% } else { %>
@@ -186,16 +219,10 @@
                                     <% } %>
                                 </td>
 
-                                <td><%= item.category_name || '—' %></td>
+                                <td><%= cat %></td>
 
                                 <td>
-                                    <%= item.created_at
-                                        ? new Date(item.created_at).toLocaleDateString('en-US', {
-                                            month: 'short',
-                                            day: '2-digit',
-                                            year: 'numeric'
-                                        })
-                                        : '—' %>
+                                    <%= fmtDate(item.created_at || item.date_reported || item.date_lost || item.date_found) %>
                                 </td>
 
                                 <td>
@@ -210,9 +237,9 @@
                                         class="action-btn view-item-btn"
                                         title="View item details"
                                         data-id="<%= itemId %>"
-                                        data-name="<%= item.item_name || 'Unnamed item' %>"
-                                        data-category="<%= item.category_name || '—' %>"
-                                        data-reporter="<%= item.full_name || '—' %>"
+                                        data-name="<%= name %>"
+                                        data-category="<%= cat %>"
+                                        data-reporter="<%= reporterName(item) %>"
                                         data-status="<%= item.status || 'Unknown' %>"
                                         data-description="<%= item.description || 'No description available.' %>">
                                         View
@@ -233,7 +260,7 @@
 
             <div class="table-footer">
                 <p class="table-count" id="foundCount">
-                    Total found items: <%= typeof foundItems !== 'undefined' ? foundItems.length : 0 %>
+                    Total found items: <%= foundList.length %>
                 </p>
             </div>
         </section>
@@ -330,4 +357,3 @@
 </script>
 </body>
 </html>
-```
