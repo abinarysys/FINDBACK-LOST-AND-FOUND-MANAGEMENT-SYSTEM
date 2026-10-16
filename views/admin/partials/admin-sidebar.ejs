@@ -1,0 +1,77 @@
+```ejs
+<aside class="admin-sidebar">
+
+    <div class="sidebar-brand">
+        <div class="brand-icon">F</div>
+        <div>
+            <h2>FindBack</h2>
+            <p>Admin Panel</p>
+        </div>
+    </div>
+
+    <div class="sidebar-label">MAIN MENU</div>
+
+    <nav class="sidebar-nav">
+
+        <a href="/admin"
+           class="<%= activePage === 'dashboard' ? 'active' : '' %>">
+            <span>▦</span> Dashboard
+        </a>
+
+        <a href="/admin/users"
+           class="<%= activePage === 'users' ? 'active' : '' %>">
+            <span>♙</span> Manage Users
+        </a>
+
+        <a href="/admin/lost-items"
+           class="<%= activePage === 'items' ? 'active' : '' %>">
+            <span>▣</span> Manage Items
+        </a>
+
+        <a href="/admin/user-verification"
+           class="<%= activePage === 'verification' ? 'active' : '' %>">
+            <span>✓</span> User Verification
+        </a>
+
+        <a href="/admin/analytics"
+           class="<%= activePage === 'analytics' ? 'active' : '' %>">
+            <span>▥</span> Analytics
+        </a>
+
+        <a href="/admin/reports"
+           class="<%= activePage === 'reports' ? 'active' : '' %>">
+            <span>▤</span> Reports
+        </a>
+
+        <a href="/admin/activity-logs"
+           class="<%= activePage === 'activity-logs' ? 'active' : '' %>">
+            <span>◷</span> Activity Logs
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <!-- Click Administrator to open Settings -->
+        <a href="/admin/settings"
+           class="admin-profile-link <%= activePage === 'settings' ? 'profile-active' : '' %>">
+
+            <div class="admin-mini-profile">
+                <div class="mini-avatar">A</div>
+
+                <div class="profile-text">
+                    <strong>Administrator</strong>
+                    <small>FindBack Admin</small>
+                </div>
+            </div>
+
+        </a>
+
+        <a href="/admin/logout" class="logout-link">
+            <span>↪</span> Logout
+        </a>
+
+    </div>
+
+</aside>
+```

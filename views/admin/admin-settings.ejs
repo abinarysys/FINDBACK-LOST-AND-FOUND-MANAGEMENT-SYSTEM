@@ -1,0 +1,119 @@
+```ejs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings | FindBack Admin</title>
+
+    <link rel="stylesheet" href="/css/admin-sidebar.css">
+    <link rel="stylesheet" href="/css/admin-settings.css">
+</head>
+<body>
+
+
+<%- include('partials/admin-sidebar', { activePage: 'settings' }) %>
+
+    <main class="admin-main settings-main">
+
+        <div class="page-heading">
+            <h1>Settings</h1>
+        </div>
+
+        <div class="settings-grid">
+
+            <section class="settings-card">
+                <h2>Account Management</h2>
+
+                <a href="/admin/profile" class="settings-option">
+                    <span>👤 Profile Picture</span>
+                    <span class="arrow">›</span>
+                </a>
+
+                <a href="/admin/profile" class="settings-option">
+                    <span>✉ Name, Email</span>
+                    <span class="arrow">›</span>
+                </a>
+
+                <a href="/admin/profile" class="settings-option">
+                    <span>🔒 Password</span>
+                    <span class="arrow">›</span>
+                </a>
+            </section>
+
+            <section class="settings-card">
+                <h2>Appearance</h2>
+
+                <label class="settings-option">
+                    <span>Light Mode / Dark Mode</span>
+                    <span class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </span>
+                </label>
+
+                <label class="settings-option">
+                    <span>Primary Color</span>
+                    <input
+                        type="color"
+                        id="primaryColor"
+                        value="#7C18FF"
+                        aria-label="Primary color"
+                    >
+                </label>
+            </section>
+
+            <section class="settings-card">
+                <h2>Systems</h2>
+
+                <a href="/admin/profile" class="settings-option">
+                    <span>👤 New User Register</span>
+                </a>
+
+                <a href="/admin/profile" class="settings-option">
+                    <span>👤 Admin Profile</span>
+                </a>
+            </section>
+
+            <section class="settings-card">
+                <h2>Notifications</h2>
+
+                <a href="/admin/profile" class="settings-option">
+                    <span>Device</span>
+                    <span class="arrow">›</span>
+                </a>
+
+                <a href="/admin/profile" class="settings-option">
+                    <span>Location</span>
+                    <span class="arrow">›</span>
+                </a>
+
+                <a href="/admin/profile" class="settings-option">
+                    <span>Last Active Time</span>
+                    <span class="arrow">›</span>
+                </a>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const darkToggle = document.getElementById('darkModeToggle');
+        const colorPicker = document.getElementById('primaryColor');
+
+        darkToggle.addEventListener('change', function () {
+            document.body.classList.toggle('dark-mode', this.checked);
+        });
+
+        colorPicker.addEventListener('input', function () {
+            document.documentElement.style.setProperty(
+                '--primary',
+                this.value
+            );
+        });
+    </script>
+
+</body>
+</html>
+```
