@@ -4,7 +4,6 @@ const query = require('../config/query');
 const { imgUrl } = require('../config/admin-ui');
 const { logAdminAction } = require('../middleware/admin-activity');
 
-<<<<<<< HEAD
 // Helper for database queries
 const query = (sql, params = []) => {
     return new Promise((resolve, reject) => {
@@ -12,31 +11,6 @@ const query = (sql, params = []) => {
             if (err) return reject(err);
             resolve(results);
         });
-=======
-const sha256 = (text) => crypto.createHash('sha256').update(String(text)).digest('hex');
-const toId = (v) => { const n = Number(v); return Number.isInteger(n) && n > 0 ? n : null; };
-const validPhone = (v) => /^\d{10,11}$/.test(v);
-const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-
-// Runs a query on admin_activity_logs; if you haven't run sql/admin-update.sql yet
-// the page still opens (empty) instead of crashing.
-let logsMissing = false;
-const safeLogsQuery = async (sql, params = []) => {
-    try {
-        return await query(sql, params);
-    } catch (err) {
-        if (err.code === 'ER_NO_SUCH_TABLE') { logsMissing = true; return []; }
-        throw err;
-    }
-};
-
-const showError = (res, err, message) => {
-    console.error(message, err);
-    res.status(500).render('admin/admin-error', {
-        title: 'Something went wrong',
-        code: 500,
-        message
->>>>>>> 7aa01c2a3333de78f48628ee01ab45d0335dade3
     });
 };
 
