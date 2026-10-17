@@ -1,6 +1,7 @@
 // routers/admin-router.js
 const router = require('express').Router();
 
+const claimsController = require('../controllers/admin-claims-controller.js');
 const adminMiddleware = require('../middleware/admin-middleware.js');
 const adminController = require('../controllers/admin-controller.js');
 const upload = require('../middleware/upload-middleware.js');
@@ -32,6 +33,10 @@ router.post('/register/user', uploadPfp('/admin/register'), adminController.regi
 // EVERYTHING BELOW REQUIRES AN ACTIVE ADMIN
 // =====================================================
 router.use(adminMiddleware);
+
+// Claims
+router.get('/claims', claimsController.getClaims);
+router.patch('/claims/:id/status', claimsController.updateClaimStatus);
 
 router.get('/logout', adminController.logout);
 

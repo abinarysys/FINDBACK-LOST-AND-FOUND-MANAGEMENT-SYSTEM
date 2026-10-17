@@ -534,7 +534,8 @@ exports.getSettings = async (req, res) => {
             title: 'Settings',
             activePage: 'settings',
             admins: admins.map((a) => ({ ...a, last_login: lastLogin[a.user_id] || null })),
-            currentAdminId: req.admin.user_id
+            currentAdminId: req.admin.user_id,
+            currentAdminEmail: req.admin.email
         });
     } catch (err) {
         showError(res, err, 'Could not load settings.');
@@ -547,8 +548,22 @@ exports.addAdmin = async (req, res) => {
         const email = String(req.body.email || '').trim().toLowerCase();
         const num = String(req.body.num || '').trim();
         const pw = String(req.body.pw || '');
+        const confirmPw = String(req.body.confirm_password || '');
 
         const back = (msg) => { req.flash('error', msg); return res.redirect('/admin/settings'); };
+
+        // Verify that the person adding an admin really owns the signed-in admin account
+        if (!confirmPw) return back('Enter your own password to confirm adding a new admin.');
+        const me = await query(
+            "SELECT password_hash FROM users WHERE user_id = ? AND role = 'admin' LIMIT 1",
+            [req.admin.user_id]
+        );
+        if (!me.length || me[0].password_hash !== sha256(confirmPw)) {
+            await logAdminAction(req, 'ADD_ADMIN_DENIED', {
+                targetType: 'admin', details: 'Add admin blocked: wrong confirmation password'
+            });
+            return back('Your password is incorrect. The new admin was not created.');
+        }
 
         if (!name || !email || !pw) return back('Name, email and password are required.');
         if (!validEmail(email)) return back('Please enter a valid email address.');

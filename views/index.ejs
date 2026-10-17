@@ -19,6 +19,11 @@
             <a href="/contacts">Contact Us</a>
         </div>
         <div class="right-buttons">
+            <% if (user && user.role === 'admin') { %>
+                <a href="/admin" class="admin-dashboard-btn">
+                    Admin Dashboard
+                </a>
+            <% } %>
             <% if (user) { %>
                 <div class="profilepic">
                     <a href="/user/profile">
@@ -174,15 +179,6 @@
             <p><b>Message:</b> <%= fList.message %></p>
         <% }) %>
     </div>
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-
-        socket.on('connect', () => {
-            console.log('Connected to FINDBACK Socket.IO!');
-        });
-    </script>
     <footer class="footer">
     <div class="help-band">
         <div class="help-item help-main">
@@ -216,5 +212,14 @@
         <p>Helping people reunite with their lost belongings.</p>
     </div>
 </footer>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/notify.js"></script>
+<script>
+    const socket = io();
+
+    socket.on('connect', () => {
+        console.log('Connected to FINDBACK Socket.IO!');
+    });
+</script>
 </body>
 </html>

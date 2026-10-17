@@ -221,96 +221,19 @@ body {
     color: #FFFFFF;
     opacity: 0.85;
 }
-/* ===== NAVBAR RESPONSIVE (bottom of navbar.css) ===== */
 
-/* same font on every page, even ones whose body uses Arial (delete if you don't want this) */
-.navbar .nav {
-    font-family: 'Poppins', Arial, sans-serif;
-}
-.navbar .nav .logo a {
-    display: block;
-}
-
-/* links no longer fit centered between logo and buttons, so give them their own row */
-@media (max-width: 900px) {
-    .navbar .nav {
-        height: auto;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px 12px;
-        padding: 10px 16px 8px;
-    }
-
-    /* row 1: logo left, profile + Log Out (or Login + Get Started) right */
-    .navbar .nav .logo {
-        flex: 0 0 auto;
-        margin: 0;
-    }
-    .navbar .nav .logo img {
-        height: 22px;
-    }
-    .navbar .nav .right-buttons {
-        flex: 0 0 auto;
-        margin-left: auto;
-    }
-    .navbar .nav .right-buttons a {
-        white-space: nowrap;           /* "Log Out" never breaks or gets cut off */
-    }
-
-    /* row 2: links centered, no more overlapping the logo */
-    .navbar .nav .nav-links {
-        position: static;
-        transform: none;
-        order: 3;
-        flex: 1 1 100%;
-        width: 100%;
-        margin: 0;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 4px 16px;
-        white-space: normal;
-    }
-    .navbar .nav .nav-links a {
-        margin: 0;
-        padding: 2px 0;
-    }
-
-    /* the navbar is now taller, so push the page content down.
-       "html body" beats the body padding rules in your page stylesheets */
-    html body {
-        padding-top: 92px;
-    }
+.admin-dashboard-btn {
+    display: inline-block;
+    padding: 10px 16px;
+    margin-right: 12px;
+    background: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s ease;
 }
 
-@media (max-width: 600px) {
-    .navbar .nav {
-        padding: 10px 14px 8px;
-    }
-    .navbar .nav .nav-links {
-        gap: 4px 14px;
-    }
-}
-
-@media (max-width: 400px) {
-    .navbar .nav .right-buttons {
-        gap: 8px;
-    }
-    .navbar .nav .right-buttons > a:last-child {
-        padding: 6px 12px;             /* smaller "Get Started" button */
-    }
-    .navbar .nav .nav-links {
-        gap: 4px 12px;
-    }
-    .navbar .nav .nav-links a {
-        font-size: 11px;
-    }
-}
-
-/* very narrow phones, where the links may wrap onto two lines */
-@media (max-width: 340px) {
-    html body {
-        padding-top: 112px;
-    }
+.admin-dashboard-btn:hover {
+    background: #1d4ed8;
 }

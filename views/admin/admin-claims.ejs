@@ -1,0 +1,113 @@
+<%- include('partials/head', { title: 'Claims' }) %>
+<body>
+<%- include('partials/sidebar') %>
+<main class="main">
+    <%- include('partials/flash') %>
+
+    <header class="page-head">
+        <div><h1>Claims</h1><p>Check each claim against the found item, then verify or reject it. The user is notified right away.</p></div>
+    </header>
+
+    <%
+        const count = function (s) { return claims.filter(function (c) { return c.status === s; }).length; };
+    %>
+    <section class="panel">
+        <div class="toolbar">
+            <label class="search">
+                <%- icon('search') %>
+                <input class="input" type="search" placeholder="Search item or claimant" data-search="claimsTable" aria-label="Search claims">
+            </label>
+            <div class="chips">
+                <button type="button" class="chip active" data-filter="claimsTable" data-key="v" data-value="">All <em><%= claims.length %></em></button>
+                <button type="button" class="chip" data-filter="claimsTable" data-key="v" data-value="pending">Pending <em><%= count('pending') %></em></button>
+                <button type="button" class="chip" data-filter="claimsTable" data-key="v" data-value="verified">Verified <em><%= count('verified') %></em></button>
+                <button type="button" class="chip" data-filter="claimsTable" data-key="v" data-value="rejected">Rejected <em><%= count('rejected') %></em></button>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table class="table" id="claimsTable">
+                <thead><tr><th>Found item</th><th>Claimant</th><th>Claim details</th><th>Submitted</th><th>Status</th><th class="num">Action</th></tr></thead>
+                <tbody>
+                <% claims.forEach(function (c) { %>
+                    <tr data-row data-v="<%= c.status %>">
+                        <td>
+                            <div class="cell-user">
+                                <% if (c.photo) { %><img src="<%= c.photo %>" alt="" width="44" height="44" style="object-fit:cover;border-radius:8px"><% } %>
+                                <div>
+                                    <strong><%= c.item_name %></strong>
+                                    <small><%= c.category_name || 'Uncategorized' %> · <%= c.location || 'No location' %></small>
+                                    <small>Found by <%= c.finder || 'Unknown' %></small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-user"><%- avatar(c.claimant, c.claimant_image) %>
+                                <div><strong><%= c.claimant %></strong><small><%= c.claimant_email %></small><small><%= c.claimant_contact || '—' %></small></div>
+                            </div>
+                        </td>
+                        <td style="max-width:320px">
+                            <details>
+                                <summary><%= c.claim_details.length > 60 ? c.claim_details.slice(0, 60) + '…' : c.claim_details %></summary>
+                                <p style="white-space:pre-wrap;margin-top:6px"><%= c.claim_details %></p>
+                                <% if (c.description) { %><p style="margin-top:6px"><small><b>Item description on file:</b> <%= c.description %></small></p><% } %>
+                            </details>
+                            <% if (c.admin_note) { %><small>Admin note: <%= c.admin_note %></small><% } %>
+                        </td>
+                        <td><%= fmtDate(c.created_at) %></td>
+                        <td><span class="badge <%= badge(c.status) %>"><%= c.status %></span></td>
+                        <td>
+                            <div class="row-actions">
+                                <% if (c.status === 'pending') { %>
+                                    <button class="btn btn-success btn-sm" data-claim-action="verified" data-id="<%= c.claim_id %>" data-item="<%= c.item_name %>"><%- icon('check') %>Verify</button>
+                                    <button class="btn btn-danger btn-sm" data-claim-action="rejected" data-id="<%= c.claim_id %>" data-item="<%= c.item_name %>"><%- icon('x') %>Reject</button>
+                                <% } else { %>
+                                    <small><%= c.reviewed_at ? fmtDate(c.reviewed_at) : '' %></small>
+                                <% } %>
+                            </div>
+                        </td>
+                    </tr>
+                <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty" data-empty="claimsTable" <%= claims.length ? 'hidden' : '' %>><%- icon('shield') %><p>No claims yet.</p></div>
+        <div class="panel-foot"><span>Showing <b data-count="claimsTable"><%= claims.length %></b> of <%= claims.length %> claims</span></div>
+    </section>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+document.querySelectorAll('[data-claim-action]').forEach(function (btn) {
+    btn.addEventListener('click', async function () {
+        var status = btn.dataset.claimAction;
+        var item = btn.dataset.item;
+        var note = prompt(status === 'verified'
+            ? 'Verify the claim for "' + item + '"?\nOptional note for the user (e.g. what to bring):'
+            : 'Reject the claim for "' + item + '"?\nOptional reason (shown to the user):');
+        if (note === null) return;               // cancelled
+        btn.disabled = true;
+        try {
+            var res = await fetch('/admin/claims/' + btn.dataset.id + '/status', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ status: status, note: note })
+            });
+            var data = await res.json();
+            alert(data.message);
+            location.reload();
+        } catch (e) {
+            alert('Something went wrong. Please try again.');
+            btn.disabled = false;
+        }
+    });
+});
+
+// live alert when a new claim comes in
+if (window.io) {
+    io().on('claim:new', function (d) {
+        if (confirm('New claim from ' + d.claimant + ' for "' + d.item_name + '". Reload the list?')) location.reload();
+    });
+}
+</script>
+<%- include('partials/foot') %>

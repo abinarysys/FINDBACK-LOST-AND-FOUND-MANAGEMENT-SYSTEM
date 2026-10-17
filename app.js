@@ -12,11 +12,13 @@ const io = new Server(server);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(session({
+const sessionMiddleware = session({
     secret: 's3cr3t',
     resave: false,
     saveUninitialized: false
-}));
+});
+app.use(sessionMiddleware);
+io.engine.use(sessionMiddleware);   // needs socket.io 4.6+ (run: npm ls socket.io)
 
 // flash 
 app.use(flash());
@@ -33,11 +35,13 @@ app.set('io', io);
 
 // web socket
 io.on('connection', (socket) => {
+    const sessUser = socket.request.session?.user;
+    if (sessUser) {
+        socket.join(`user:${sessUser.user_id}`);          // private room per user
+        if (sessUser.role === 'admin') socket.join('admins');
+    }
     console.log('A user connected:', socket.id);
-
-    socket.on('disconnect', () => {
-        console.log('A user disconnected:', socket.id);
-    });
+    socket.on('disconnect', () => console.log('A user disconnected:', socket.id));
 });
 
 // middlewares

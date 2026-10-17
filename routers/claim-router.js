@@ -1,106 +1,106 @@
-// MODULES
+// routers/claim-router.js
 const router = require('express').Router();
-const db = require('../config/db.js');
-
-// MIDDLEWARE
+const query = require('../config/query.js');
 const authMiddleware = require('../middleware/auth-middleware.js');
 
-// SHOW CLAIM PAGE FOR A SPECIFIC "FOUND" ITEM THE USER TAPPED IN THE HOME AREA OR CATEGORY AREA
-// claim.ejs
-router.get('/:type/:item_id', authMiddleware, (req, res) => {
-
-    // SO HERE, PARAMS MEAN PARAMETER. WE USED THE TYPE AND ID OF LOST ITEM AS PARAMETER INSIDE THE ENDPOINT OR URL
+// SHOW CLAIM PAGE (found items only - lost items can't be claimed)
+router.get('/:type/:item_id', authMiddleware, async (req, res) => {
     const { type, item_id } = req.params;
 
-    /* THESE ARE DICTIONARIES (IN PYTHON), WELL IN JS THIS ARE JUST OBJECTS.
-        IF ITEM TYPE IS LOST, TABLES WILL BE 'lost_items', IF TYPE IS FOUND, THE TABLES WILL BE 'found_items'
-    IF ITEM IS LOST, 'lost_item_id', IF FOUND, 'found_item_id'
-    */
-    const tables = {lost: 'lost_items', found: 'found_items'}
-    const idColumns = {lost: 'lost_item_id', found: 'found_item_id'}
-
-    // THIS CODE SAYS, "IT NEEDS TO BE FOUND ONLU"
-    const table = tables[type];
-    const idColumn = idColumns[type];
-
-    // IF NOT FOUND, THEN IT IS AN INVALID ITEM TYPE
-    if (!table) {
-        return res.status(400).send('Invalid item type.');
-    }
-
-// RETRIEVE THE FOUND ID (MAKE IT ALIAS 'item_id') AND OTHER COLUMNS
-    const sql = ` SELECT ${idColumn} AS item_id, item_name, description, location, photo_path
-        FROM ${table} WHERE ${idColumn} = ?`
-    db.query(sql, [item_id], (err, results) => {
-        if (err) {
-            console.error('Claim item query error:', err);
-            req.flash("error", "Failed to retrieve item")
-            return res.status(500).send('Failed to retrieve item.')
-        }
-
-        // IF THERE ARE NO ITEM, RETURN 'ITEM NOT FOUND'
-        if (results.length === 0) {
-            return res.status(404).send('Item not found.');
-        }
-
-        // PREPARE THE ITEM OBJECT
-        // '...results[0] RETRIEVES THE ITEM'S DETAILS AS OBJECT
-        // 'type' IS FOUND
-        // PICTURE IS THE PICTURE OF FOUND ITEM
-        const item = {
-            ...results[0],
-            type: type,
-            picture: results[0].photo_path
-        }
-
-        res.render('claim', { item });
-    });
-});
-
-// FOR A FORM CLAIM
-//claim.ejs
-router.post('/:type/:item_id/submit', authMiddleware, (req, res) => {
-    const { type, item_id } = req.params;
-    const { claim_details } = req.body;
-
-    // MEANS ONLY FOUND ITEMS CAN BE CLAIMED
-    // LOST ITEMS CAN'T BE CLAIMED BECAUSE IF A USER FOUND AN ITEM THEY SHOULD POST IT INSTEAD OF CLAIMING BECAUSE CLAIMING IS FOR FOUND ITEM ONLY
-    // CLAIM MEANS TELLING THAT ITEM IS YOURS
     if (type !== 'found') {
-        return res.status(400).send('Only found items can be claimed.');
+        req.flash('error', 'Only found items can be claimed.');
+        return res.redirect('/');
     }
 
-    // IF THERE IS NO CLAIM DETAILS OR EMPTY, THIS WILL WHAT BE RETURNED
-    if (!claim_details || !claim_details.trim()) {
-        req.flash("error", "Please provide your claim updates")
-        return res.status(400).send('Please provide your claim details.');
-    }
+    try {
+        const rows = await query(
+            `SELECT found_item_id AS item_id, item_name, description, location, photo_path, status
+               FROM found_items WHERE found_item_id = ?`, [item_id]);
 
-    // USER ID OF THE LOGGED IN USER
-    const userId = req.session.user?.user_id;
-
-    // IF NOT USER, WILL LOG IN
-    if (!userId) {
-        return res.status(401).send('Please log in first.');
-    }
-
-    // INSERT THE CLAIM INSIDE THE claims TABLE
-    const sql = `
-        INSERT INTO claims (found_item_id, user_id, claim_details)
-        VALUES (?, ?, ?)
-    `;
-
-    db.query(sql, [item_id, userId, claim_details.trim()], (err, result) => {
-        if (err) {
-            console.error('Submit claim error:', err);
-            return res.status(500).send('Failed to submit claim.');
+        if (!rows.length) {
+            req.flash('error', 'Item not found.');
+            return res.redirect('/');
+        }
+        if (rows[0].status !== 'available') {
+            req.flash('error', 'This item is no longer available for claiming.');
+            return res.redirect('/');
         }
 
-        // GOES BACK TO THE HOME
-        req.flash("success", "Claim submitted successfully! Please wait for the verification notif!")
+        const item = { ...rows[0], type, picture: rows[0].photo_path };
+        res.render('claim', { item });
+    } catch (err) {
+        console.error('Claim item query error:', err);
+        req.flash('error', 'Failed to retrieve item.');
         res.redirect('/');
-    });
+    }
 });
 
-// EXPORT ROUTER GLOBALLY
+// SUBMIT A CLAIM -> saved as 'pending' for the admin
+router.post('/:type/:item_id/submit', authMiddleware, async (req, res) => {
+    const { type, item_id } = req.params;
+    const back = `/claim/${type}/${item_id}`;
+    const claimDetails = String(req.body.claim_details || '').trim();
+    const user = req.session.user;
+
+    if (type !== 'found') {
+        req.flash('error', 'Only found items can be claimed.');
+        return res.redirect('/');
+    }
+    if (!user?.user_id) {
+        req.flash('error', 'Please log in first.');
+        return res.redirect('/auth/login');
+    }
+    if (claimDetails.length < 10 || claimDetails.length > 2000) {
+        req.flash('error', 'Claim details must be between 10 and 2000 characters.');
+        return res.redirect(back);
+    }
+
+    try {
+        const items = await query(
+            'SELECT found_item_id, user_id, item_name, status FROM found_items WHERE found_item_id = ?',
+            [item_id]);
+        const item = items[0];
+
+        if (!item) {
+            req.flash('error', 'Item not found.');
+            return res.redirect('/');
+        }
+        if (item.user_id === user.user_id) {
+            req.flash('error', "You can't claim an item that you posted yourself.");
+            return res.redirect('/');
+        }
+        if (item.status !== 'available') {
+            req.flash('error', 'This item is no longer available for claiming.');
+            return res.redirect('/');
+        }
+
+        const dup = await query(
+            "SELECT claim_id FROM claims WHERE found_item_id = ? AND user_id = ? AND status = 'pending'",
+            [item.found_item_id, user.user_id]);
+        if (dup.length) {
+            req.flash('error', 'You already have a pending claim for this item.');
+            return res.redirect('/');
+        }
+
+        const result = await query(
+            'INSERT INTO claims (found_item_id, user_id, claim_details) VALUES (?, ?, ?)',
+            [item.found_item_id, user.user_id, claimDetails]);
+
+        // live alert for any admin who is online
+        const io = req.app.get('io');
+        if (io) io.to('admins').emit('claim:new', {
+            claim_id: result.insertId,
+            item_name: item.item_name,
+            claimant: user.full_name || user.username || 'A user'
+        });
+
+        req.flash('success', 'Claim submitted! Please wait for the verification notification.');
+        res.redirect('/');
+    } catch (err) {
+        console.error('Submit claim error:', err);
+        req.flash('error', 'Failed to submit your claim. Please try again.');
+        res.redirect(back);
+    }
+});
+
 module.exports = router;
