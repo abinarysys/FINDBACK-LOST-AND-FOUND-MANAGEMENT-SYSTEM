@@ -110,10 +110,6 @@ router.get('/notifications', authMiddleware, async (req, res) => {
     }
 });
 
-router.get('/chat', authMiddleware, (req, res) => {
-    res.render('user/chat');
-});
-
 router.get('/activity-logs', authMiddleware, (req, res) => {
     res.render('user/activity');
 });
