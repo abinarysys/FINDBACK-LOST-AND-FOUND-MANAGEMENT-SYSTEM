@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notifications | FINDBACK</title>
+
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+
+    <link rel="stylesheet" href="/css/user/sidebar.css">
+    <link rel="stylesheet" href="/css/user/notif.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- User Sidebar -->
+    <%- include('partials/user-sidebar', {
+        user: user,
+        activePage: 'notifications'
+    }) %>
+
+    <!-- Main Page -->
+    <main class="notifications-page">
+
+        <!-- Navbar -->
+        <%- include('partials/navbar', { user: user }) %>
+
+        <section class="notifications-content">
+
+            <!-- Page Heading -->
+            <div class="page-heading">
+                <div>
+                    <h1>Notifications</h1>
+                    <p>Stay updated on your lost and found items.</p>
+                </div>
+
+                <span class="notification-count">
+                    <%= notifications.length %>
+                    <%= notifications.length === 1
+                        ? 'notification'
+                        : 'notifications' %>
+                </span>
+            </div>
+
+            <!-- Notifications Card -->
+            <div class="notifications-card">
+
+                <div class="notifications-card-header">
+                    <div>
+                        <h2>Your Updates</h2>
+                        <p>Important updates about your claims and items.</p>
+                    </div>
+                </div>
+
+                <% if (notifications && notifications.length > 0) { %>
+
+                    <div class="notification-list">
+
+                        <% notifications.forEach(notification => { %>
+
+                            <article
+                                class="notification-item <%= Number(notification.is_read) === 1 ? 'read' : 'unread' %>"
+                                data-notification-id="<%= notification.notification_id %>"
+                            >
+
+                                <!-- Notification Icon -->
+                                <div class="notification-icon <%= notification.type %>">
+
+                                    <% if (notification.type === 'claim_verified') { %>
+                                        <span aria-hidden="true">✓</span>
+
+                                    <% } else if (notification.type === 'claim_rejected') { %>
+                                        <span aria-hidden="true">×</span>
+
+                                    <% } else { %>
+                                        <span aria-hidden="true">●</span>
+                                    <% } %>
+
+                                </div>
+
+                                <!-- Notification Information -->
+                                <div class="notification-details">
+
+                                    <div class="notification-title-row">
+                                        <h3><%= notification.title %></h3>
+
+                                        <% if (Number(notification.is_read) !== 1) { %>
+                                            <span class="new-badge">New</span>
+                                        <% } %>
+                                    </div>
+
+                                    <p class="notification-message">
+                                        <%= notification.message %>
+                                    </p>
+
+                                    <span class="notification-date">
+                                        <% if (notification.created_at) { %>
+                                            <%= new Date(notification.created_at).toLocaleString('en-PH', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                                hour: 'numeric',
+                                                minute: '2-digit'
+                                            }) %>
+                                        <% } %>
+                                    </span>
+
+                                    <% if (notification.link) { %>
+                                        <a
+                                            class="notification-link"
+                                            href="<%= notification.link %>"
+                                        >
+                                            View details
+                                            <span aria-hidden="true">→</span>
+                                        </a>
+                                    <% } %>
+
+                                </div>
+
+                                <!-- Unread Indicator -->
+                                <% if (Number(notification.is_read) !== 1) { %>
+                                    <span
+                                        class="unread-dot"
+                                        title="Unread notification"
+                                    ></span>
+                                <% } %>
+
+                            </article>
+
+                        <% }) %>
+
+                    </div>
+
+                <% } else { %>
+
+                    <!-- Empty State -->
+                    <div class="empty-notifications">
+                        <div class="empty-icon" aria-hidden="true">♧</div>
+
+                        <h3>You're all caught up!</h3>
+
+                        <p>
+                            You don't have any notifications yet.
+                            We'll let you know when there's an update.
+                        </p>
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </section>
+    </main>
+
+    <!-- IMPORTANT: Load Socket.IO before notify.js -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/notify.js"></script>
+
+</body>
+</html>

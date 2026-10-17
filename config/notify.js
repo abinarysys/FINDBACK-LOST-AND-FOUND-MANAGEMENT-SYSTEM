@@ -1,6 +1,6 @@
 ﻿const query = require('./query');
 
-// Save the notification to MySQL and send it live to the user's private room.
+// Save a notification and send it to the intended user in real time.
 async function notifyUser(io, userId, notification) {
     if (!userId) {
         throw new Error('A valid user ID is required to send a notification.');
@@ -8,14 +8,15 @@ async function notifyUser(io, userId, notification) {
 
     const { type, title, message, link = null } = notification;
 
-    // Save notification so the user can see it later.
+    // Save notification in the database.
     await query(
-        `INSERT INTO notifications (user_id, type, title, message, link)
+        `INSERT INTO notifications
+            (user_id, type, title, message, link)
          VALUES (?, ?, ?, ?, ?)`,
         [userId, type, title, message, link]
     );
 
-    // Send the notification immediately if Socket.IO is available.
+    // Send notification to the user's private Socket.IO room.
     if (io) {
         io.to(`user:${userId}`).emit('notification', {
             type,
