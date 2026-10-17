@@ -66,6 +66,9 @@
     line-height: 1.7;
     overflow-wrap: anywhere;
 }
+.sidebar-welcome p{
+    font-size: 13px;
+}
 
 .sidebar-welcome h3 span {
     display: block;

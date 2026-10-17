@@ -818,18 +818,18 @@ body::after {
 }
 
 .claim-btn {
-    background-color: #e754b6;
+    background-color: #8a66f5;
     color: white;
 }
 
 .claim-btn:hover {
-    background-color: #c43dc9;
+    background-color: #aa91f5;
     transform: translateY(-2px);
 }
 
 .message-btn {
-    background-color: #fce4ec;
-    color: #c218ba;
+    background-color: #ddd4fa;
+    color: #8a66f5;
     border: 1px solid #f3b4e9;
 }
 
@@ -1302,7 +1302,7 @@ img {
     .message-btn:hover {
         transform: none;
     }
-    .claim-btn:hover   { background-color: #e754b6; }
+    .claim-btn:hover   { background-color: #c4b0ff; }
     .message-btn:hover { background-color: #fce4ec; }
 }
 
@@ -1312,4 +1312,41 @@ img {
         transition: none !important;
         animation: none !important;
     }
+}
+
+
+/* ===== RECENT ITEMS: CARD BUTTON FIX ===== */
+
+/* card becomes a column so the buttons always sit at the bottom */
+.item-card {
+    display: flex;
+    flex-direction: column;
+}
+.item-details {
+    flex: 1;                         /* takes the leftover space, pushing buttons down */
+}
+
+/* buttons: inset to match the text, same height, aligned across cards */
+.item-actions {
+    margin-top: 0;
+    padding: 0 18px 18px;
+    align-items: stretch;
+}
+.claim-btn,
+.message-btn {
+    display: flex;                   /* centers the text vertically */
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 1px solid transparent;   /* claim gets a border too, so both match */
+    line-height: 1.2;
+}
+.message-btn {
+    border-color: #c4b0ff;
+}
+
+/* hide broken-image alt text so it doesn't overlap the LOST/FOUND badge */
+.item-picture img {
+    font-size: 0;
+    color: transparent;
 }
