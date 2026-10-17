@@ -210,3 +210,179 @@ body {
         width: 100%;
     }
 }
+
+/* ===== RESPONSIVE: NAVBAR TO FOOTER ===== */
+
+/* ---------- NAVBAR ---------- */
+
+/* links no longer fit centered between logo and buttons, so give them their own row */
+@media (max-width: 800px) {
+    .nav {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 10px 20px;
+        gap: 6px 12px;
+    }
+    .nav-links {
+        position: static;
+        transform: none;
+        order: 3;
+        width: 100%;
+        white-space: normal;
+        text-align: center;
+    }
+    .nav-links a {
+        display: inline-block;
+        margin: 3px 10px;
+    }
+
+    /* the taller navbar now covers more of the page, so push content down */
+    .page-main {
+        padding-top: 125px;
+    }
+}
+
+@media (max-width: 600px) {
+    .nav {
+        padding: 10px 14px;
+    }
+    .nav-links a {
+        margin: 3px 7px;
+    }
+    .page-main {
+        padding-top: 120px;
+    }
+}
+
+@media (max-width: 400px) {
+    .nav-links a {
+        font-size: 11px;
+        margin: 3px 5px;
+    }
+    .right-buttons {
+        gap: 8px;
+    }
+    .right-buttons > a:last-child {
+        padding: 6px 12px;
+    }
+    .page-main {
+        padding-top: 115px;
+    }
+}
+
+/* ---------- PAGE CONTENT ---------- */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+body {
+    overflow-x: hidden;
+}
+img {
+    max-width: 100%;
+}
+.page-heading h1,
+.page-heading p,
+.form-group small {
+    overflow-wrap: anywhere;
+}
+
+@media (min-width: 1600px) {
+    .page-main {
+        padding: 110px 60px 50px;
+    }
+    .edit-profile-container {
+        max-width: 960px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .page-main {
+        padding-left: 28px;
+        padding-right: 28px;
+    }
+}
+
+@media (max-width: 600px) {
+    .page-heading p {
+        font-size: 13px;
+    }
+    .profile-picture-wrapper {
+        width: 105px;
+        height: 105px;
+    }
+    .form-group input {
+        font-size: 16px;      /* stops iPhone zoom on tap */
+        padding: 12px;
+    }
+    .upload-button {
+        padding: 12px 20px;
+    }
+    .cancel-button,
+    .save-button {
+        padding: 14px 22px;
+        min-height: 46px;
+    }
+}
+
+@media (max-width: 400px) {
+    .page-main {
+        margin-left: 60px;
+        width: calc(100% - 60px);
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .page-heading h1 {
+        font-size: 21px;
+    }
+    .edit-profile-form {
+        padding: 16px 12px;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .profile-picture-wrapper {
+        width: 85px;
+        height: 85px;
+    }
+    .picture-section {
+        padding-bottom: 18px;
+        margin-bottom: 18px;
+    }
+}
+
+@media (hover: none) {
+    .upload-button:hover { background: #eee5ff; }
+    .cancel-button:hover { background: #f0edf5; }
+    .save-button:hover   { background: #7045ad; }
+}
+
+/* ---------- FOOTER (same classes as your other pages) ---------- */
+@media (max-width: 900px) {
+    .help-band {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    .help-main {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .help-item {
+        flex: 1 1 45%;
+    }
+    .help-btn {
+        width: 100%;
+        text-align: center;
+    }
+    .help-icon img {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 400px) {
+    .help-item {
+        flex: 1 1 100%;
+    }
+}

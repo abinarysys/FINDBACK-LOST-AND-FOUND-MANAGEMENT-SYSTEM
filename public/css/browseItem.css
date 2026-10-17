@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* ===== BASE ===== */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #F6F3FF;
+    font-family: 'Poppins', sans-serif;
+    color: #2d2a4a;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* ===== NAVBAR ===== */
+.nav {
+    position: sticky;          /* stays on top, but takes up its own space, so no body padding guesswork */
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 60px;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+}
+.nav .logo img {
+    display: block;
+    height: 24px;
+    width: auto;
+    margin: 0;
+}
+.nav-links {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    text-align: center;
+}
+.nav-links a {
+    margin: 0 14px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2d2a4a;
+}
+.nav .right-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin: 0;
+}
+.right-buttons a {
+    margin: 0;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2d2a4a;
+}
+.right-buttons > a:last-child {
+    background: #7C18FF;
+    color: #FFFFFF;
+    padding: 8px 18px;
+    border-radius: 6px;
+}
+.profilepic {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.profilepic img {
+    display: block;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.nav-links a:hover,
+.right-buttons a:hover {
+    color: #7C18FF;
+}
+.right-buttons > a:last-child:hover {
+    color: #FFFFFF;
+    opacity: 0.85;
+}
+
+/* ===== NAV RESPONSIVE ===== */
+
+/* Tablet: links no longer fit centered between logo and buttons,
+   so move them to their own row */
+@media (max-width: 900px) {
+    .nav {
+        flex-wrap: wrap;
+        padding: 10px 20px;
+    }
+    .nav-links {
+        position: static;
+        transform: none;
+        order: 3;
+        width: 100%;
+        white-space: normal;
+        text-align: center;
+    }
+    .nav-links a {
+        display: inline-block;
+        margin: 4px 10px;
+    }
+}
+
+/* Phone */
+@media (max-width: 600px) {
+    .nav {
+        padding: 10px 15px;
+    }
+    .nav-links a {
+        margin: 4px 8px;
+    }
+}
+
+/* Small phone */
+@media (max-width: 360px) {
+    .nav-links a {
+        font-size: 11px;
+        margin: 4px 5px;
+    }
+    .right-buttons {
+        gap: 8px;
+    }
+    .right-buttons > a:last-child {
+        padding: 6px 12px;
+    }
+}
+
+/* ===== NAVBAR: PHONE LAYOUT ===== */
+html {
+    overflow-x: hidden;
+}
+
+@media (max-width: 800px) {
+    .nav {
+        left: 0;
+        right: 0;
+        width: auto;               /* pinned to both screen edges, can't run past the right side */
+        max-width: 100%;
+        height: auto;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 12px;
+        padding: 10px 16px 8px;
+    }
+
+    /* row 1: logo left, profile + Log Out right */
+    .nav .logo {
+        flex: 0 0 auto;
+    }
+    .nav .logo img {
+        height: 22px;
+    }
+    .nav .right-buttons {
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
+    .profilepic {
+        gap: 10px;
+    }
+    .profilepic a {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;       /* "Log Out" never breaks or gets clipped */
+    }
+
+    /* row 2: links centered and evenly spaced */
+    .nav .nav-links {
+        position: static;
+        transform: none;
+        order: 3;
+        flex: 1 1 100%;
+        width: 100%;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px 16px;
+        white-space: normal;
+    }
+    .nav .nav-links a {
+        display: inline-block;
+        margin: 0;
+        padding: 2px 0;
+        font-size: 12px;
+    }
+
+    /* room for the taller fixed navbar (also covers 701-800px, which your 700px rule misses) */
+    body {
+        padding-top: 95px;
+    }
+}
+
+@media (max-width: 360px) {
+    .nav .nav-links {
+        gap: 4px 12px;
+    }
+    .nav .nav-links a {
+        font-size: 11px;
+    }
+}

@@ -14,8 +14,14 @@ body {
     min-height: 100vh;
 }
 
-/* ===== NAVBAR ===== */
+/* images never overflow their containers */
+img {
+    max-width: 100%;
+}
+
+/* ===== NAVBAR (copied from the home page) ===== */
 .nav {
+    box-sizing: border-box;
     position: fixed;
     top: 0;
     left: 0;
@@ -33,12 +39,16 @@ body {
     display: block;
     height: 24px;
     width: auto;
+    margin: 0;
 }
-.nav .nav-links {
+.nav-links {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    display: block;
+    width: auto;
+    margin: 0;
     white-space: nowrap;
     text-align: center;
 }
@@ -52,17 +62,17 @@ body {
 .nav .right-buttons {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 12px;
+    width: auto;
+    margin: 0;
 }
 .right-buttons a {
+    margin: 0;
     text-decoration: none;
     font-size: 12px;
     font-weight: 500;
     color: #2d2a4a;
-}
-.nav-links a:hover,
-.right-buttons a:hover {
-    color: #7C18FF;
 }
 .right-buttons > a:last-child {
     background: #7C18FF;
@@ -70,9 +80,67 @@ body {
     padding: 8px 18px;
     border-radius: 6px;
 }
+.profilepic {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.profilepic img {
+    display: block;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.nav-links a:hover,
+.right-buttons a:hover {
+    color: #7C18FF;
+}
 .right-buttons > a:last-child:hover {
     color: #FFFFFF;
     opacity: 0.85;
+}
+
+/* nav responsive */
+@media (max-width: 900px) {
+    .nav-links a {
+        margin: 0 8px;
+    }
+}
+@media (max-width: 700px) {
+    body {
+        padding-top: 100px;
+    }
+    .nav {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 10px 15px;
+    }
+    .nav-links {
+        position: static;
+        transform: none;
+        order: 3;
+        width: 100%;
+        margin-top: 8px;
+        white-space: normal;
+        text-align: center;
+    }
+    .nav-links a {
+        display: inline-block;
+        margin: 2px 8px;
+    }
+}
+@media (max-width: 360px) {
+    .nav-links a {
+        font-size: 11px;
+        margin: 2px 5px;
+    }
+    .right-buttons {
+        gap: 8px;
+    }
+    .right-buttons > a:last-child {
+        padding: 6px 12px;
+    }
 }
 
 /* ===== PAGE WRAPPER ===== */
@@ -163,11 +231,12 @@ body {
     height: 44px;
     border-radius: 50%;
     background: #7B4BC9;
+    overflow: hidden;
 }
 .contact-info-icon img {
     display: block;
-    width: 22px;
-    height: 22px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
 }
 .contact-info-item h4 {
@@ -301,6 +370,7 @@ body {
     border-radius: 50%;
     background: #d6c9ff;
     font-size: 0;
+    overflow: hidden;
 }
 .help-icon img {
     display: block;
@@ -355,9 +425,6 @@ body {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
-    .nav-links a {
-        margin: 0 8px;
-    }
     .contact-layout {
         flex-direction: column;
     }
@@ -375,26 +442,6 @@ body {
 }
 
 @media (max-width: 700px) {
-    body {
-        padding-top: 100px;
-    }
-    .nav {
-        height: auto;
-        flex-wrap: wrap;
-        padding: 10px 15px;
-    }
-    .nav .nav-links {
-        position: static;
-        transform: none;
-        order: 3;
-        width: 100%;
-        margin-top: 8px;
-        white-space: normal;
-    }
-    .nav-links a {
-        display: inline-block;
-        margin: 2px 8px;
-    }
     .contact-form {
         padding: 22px;
     }
@@ -422,18 +469,5 @@ body {
     }
     .contact-form {
         padding: 18px;
-    }
-}
-
-@media (max-width: 360px) {
-    .nav-links a {
-        font-size: 11px;
-        margin: 2px 5px;
-    }
-    .right-buttons {
-        gap: 8px;
-    }
-    .right-buttons > a:last-child {
-        padding: 6px 12px;
     }
 }

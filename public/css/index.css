@@ -1125,3 +1125,173 @@ body::after {
         font-size: 13px;   /* label size, optional */
     }
 }
+
+/* ===== RESPONSIVE: NAVBAR TO FOOTER (added at the bottom) ===== */
+
+/* ---------- Safety net ---------- */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+body {
+    overflow-x: hidden;
+}
+img {
+    max-width: 100%;
+}
+
+/* ---------- NAVBAR ---------- */
+
+/* links no longer fit centered between logo and buttons, so give them their own row
+   (moved up from 700px so they never collide on tablets) */
+@media (max-width: 800px) {
+    .nav {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 10px 20px;
+        gap: 6px 12px;
+    }
+    .nav-links {
+        position: static;
+        transform: none;
+        order: 3;
+        width: 100%;
+        margin-top: 0;
+        white-space: normal;
+        text-align: center;
+    }
+    .nav-links a {
+        display: inline-block;
+        margin: 3px 10px;
+    }
+
+    /* the taller fixed navbar would cover the top of the page, so push content down */
+    body {
+        padding-top: 110px;
+    }
+}
+
+@media (max-width: 600px) {
+    .nav {
+        padding: 10px 14px;
+    }
+    .nav-links a {
+        margin: 3px 7px;
+    }
+}
+
+@media (max-width: 400px) {
+    .nav-links a {
+        font-size: 11px;
+        margin: 3px 5px;
+    }
+    .right-buttons {
+        gap: 8px;
+    }
+    .right-buttons > a:last-child {
+        padding: 6px 12px;
+    }
+    body {
+        padding-top: 115px;
+    }
+}
+
+/* ---------- LARGE SCREENS ---------- */
+@media (min-width: 1600px) {
+    /* keeps the content from stretching edge to edge on big monitors / TVs */
+    .top-layer,
+    .categories,
+    .recent-items,
+    .feedback-list {
+        padding-left: calc((100% - 1400px) / 2);
+        padding-right: calc((100% - 1400px) / 2);
+    }
+    .help-band,
+    .footer-bar {
+        padding-left: calc((100% - 1400px) / 2);
+        padding-right: calc((100% - 1400px) / 2);
+    }
+}
+
+/* ---------- LAPTOPS: 3 cards per row before dropping to 2 ---------- */
+@media (min-width: 1025px) and (max-width: 1280px) {
+    .items-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* ---------- PHONES ---------- */
+@media (max-width: 600px) {
+    /* 16px stops iPhones from zooming in when the feedback box is tapped */
+    form textarea {
+        font-size: 16px;
+    }
+    form button[type="submit"],
+    .claim-btn,
+    .message-btn {
+        min-height: 44px;
+    }
+    .item-details h4 {
+        font-size: 17px;
+    }
+}
+
+@media (max-width: 400px) {
+    .search {
+        padding-left: 14px;
+    }
+    .search a {
+        padding: 9px 16px;
+    }
+    .lost-button,
+    .found-button {
+        padding: 14px;
+    }
+    .stars label {
+        font-size: 30px;
+    }
+}
+
+/* ---------- FOOTER ---------- */
+@media (max-width: 400px) {
+    .help-item {
+        flex: 1 1 100%;
+    }
+    .help-btn {
+        padding: 12px 16px;
+    }
+}
+
+/* ---------- PHONES IN LANDSCAPE (short screens) ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+    .top-layer {
+        padding-top: 16px;
+    }
+    .top-layer .right img {
+        min-height: 200px;
+    }
+}
+
+/* ---------- TOUCH DEVICES: no hover effects stuck after a tap ---------- */
+@media (hover: none) {
+    .item-card:hover {
+        transform: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    .item-card:hover .item-picture img {
+        transform: none;
+    }
+    .claim-btn:hover,
+    .message-btn:hover {
+        transform: none;
+    }
+    .claim-btn:hover   { background-color: #e754b6; }
+    .message-btn:hover { background-color: #fce4ec; }
+}
+
+/* ---------- RESPECT "REDUCE MOTION" ---------- */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}

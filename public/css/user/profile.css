@@ -7,10 +7,21 @@
     --border: #E7E2ED;
     --text: #17131D;
     --muted: #81768C;
+    --sidebar-width: 250px; /* ADDED */
 }
 
 * {
     box-sizing: border-box;
+}
+
+/* ADDED */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ADDED */
+img {
+    max-width: 100%;
 }
 
 body {
@@ -22,16 +33,16 @@ body {
 
 /* MAIN CONTENT */
 .page-main {
-    margin-left: 250px;
+    margin-left: var(--sidebar-width); /* CHANGED */
     padding-top: 65px;
-    width: calc(100% - 250px);
+    width: calc(100% - var(--sidebar-width)); /* CHANGED */
     min-height: 100vh;
     min-width: 0;
 }
 
 /* PROFILE PAGE */
 .profile-page {
-    padding: 35px;
+    padding: clamp(16px, 3vw, 35px); /* CHANGED */
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
@@ -42,7 +53,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    flex-wrap: wrap; /* ADDED */
+    gap: 12px 20px; /* CHANGED */
     margin-bottom: 28px;
 }
 
@@ -56,7 +68,7 @@ body {
 
 .page-heading h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: clamp(22px, 3vw, 28px); /* CHANGED */
     font-weight: 700;
 }
 
@@ -87,7 +99,7 @@ body {
 
 /* TOP BANNER */
 .profile-banner {
-    height: 145px;
+    height: clamp(110px, 16vw, 145px); /* CHANGED */
     background: linear-gradient(120deg, #7C18FF, #B88AFF);
 }
 
@@ -95,7 +107,8 @@ body {
 .profile-overview {
     display: flex;
     align-items: center;
-    gap: 20px;
+    flex-wrap: wrap; /* ADDED */
+    gap: 12px 20px; /* CHANGED */
     padding: 0 30px 25px;
     margin-top: -43px;
 }
@@ -122,11 +135,10 @@ body {
     object-fit: cover;
 }
 
-
-
 .profile-name {
+    flex: 1 1 200px; /* ADDED */
     min-width: 0;
-    padding-top: 50px; 
+    padding-top: 50px;
 }
 
 .profile-name h2 {
@@ -225,9 +237,13 @@ body {
 
 /* RESPONSIVE */
 @media (max-width: 850px) {
+    :root {
+        --sidebar-width: 220px; /* CHANGED */
+    }
+
     .page-main {
-        margin-left: 220px;
-        width: calc(100% - 220px);
+        margin-left: var(--sidebar-width); /* CHANGED */
+        width: calc(100% - var(--sidebar-width)); /* CHANGED */
     }
 
     .profile-page {
@@ -242,9 +258,13 @@ body {
 }
 
 @media (max-width: 600px) {
+    :root {
+        --sidebar-width: 68px; /* CHANGED */
+    }
+
     .page-main {
-        margin-left: 68px;
-        width: calc(100% - 68px);
+        margin-left: var(--sidebar-width); /* CHANGED */
+        width: calc(100% - var(--sidebar-width)); /* CHANGED */
         padding-top: 60px;
     }
 
@@ -303,5 +323,24 @@ body {
 
     .information-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ADDED: small phones, stack and center the profile header */
+@media (max-width: 480px) {
+    .profile-overview {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-name {
+        flex: none;
+        width: 100%;
+        padding-top: 0;
+    }
+
+    .edit-button {
+        width: 100%;
     }
 }
