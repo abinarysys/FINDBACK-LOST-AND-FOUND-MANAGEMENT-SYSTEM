@@ -705,3 +705,209 @@ body {
         transition: none;
     }
 }
+
+/* =========================================
+   EXTRA RESPONSIVE FIXES (add at bottom)
+========================================= */
+
+/* --- Prevent sideways scrolling on any screen --- */
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+}
+
+.notifications-page,
+.notifications-content,
+.notifications-card,
+.notification-list,
+.notification-item,
+.notification-details,
+.notification-item-card,
+.notification-item-info {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* --- Large screens: keep content from stretching too wide --- */
+@media (min-width: 1600px) {
+    .notifications-content {
+        max-width: 1400px;
+    }
+}
+
+/* --- Tablets: heading and item card breathe a little better --- */
+@media (max-width: 900px) {
+    .page-heading {
+        flex-wrap: wrap;
+    }
+
+    .notification-item-card {
+        flex-wrap: wrap;
+    }
+
+    .notification-item-info {
+        flex: 1 1 200px;
+    }
+}
+
+/* --- Phones: stop the unread dot overlapping the title --- */
+@media (max-width: 768px) {
+    .notification-item.unread .notification-details {
+        padding-right: 16px;
+    }
+
+    .notification-title-row h3 {
+        font-size: 14px;
+    }
+
+    .notification-message {
+        line-height: 1.8;
+    }
+}
+
+/* --- Small phones --- */
+@media (max-width: 480px) {
+    .notifications-content {
+        padding: 16px 10px 28px;
+    }
+
+    .page-heading h1 {
+        font-size: 20px;
+    }
+
+    .notification-item {
+        padding: 16px 11px;
+    }
+
+    .notification-item-photo {
+        height: 170px;
+    }
+
+    .notification-item-info h4 {
+        font-size: 14px;
+    }
+
+    .item-photo-placeholder span {
+        font-size: 28px;
+    }
+
+    .claim-status {
+        font-size: 9px;
+        padding: 5px 10px;
+    }
+
+    .message-claimant-button {
+        min-height: 44px; /* easy to tap */
+    }
+
+    .empty-notifications {
+        min-height: 240px;
+        padding: 32px 16px;
+    }
+
+    .empty-icon {
+        width: 58px;
+        height: 58px;
+        font-size: 28px;
+    }
+}
+
+/* --- Very small phones (320px - 360px) --- */
+@media (max-width: 360px) {
+    .notifications-content {
+        padding: 14px 8px 24px;
+    }
+
+    .notification-item {
+        gap: 8px;
+        padding: 14px 9px;
+    }
+
+    .notification-icon {
+        flex-basis: 30px;
+        width: 30px;
+        height: 30px;
+        font-size: 15px;
+    }
+
+    .notification-title-row h3 {
+        font-size: 12.5px;
+    }
+
+    .notification-message,
+    .notification-item-info p {
+        font-size: 10.5px;
+    }
+
+    .notification-item-photo {
+        height: 150px;
+    }
+
+    .notifications-card-header {
+        padding: 14px;
+    }
+}
+
+/* --- Landscape phones: avoid huge photos eating the screen --- */
+@media (max-height: 500px) and (orientation: landscape) {
+    .notification-item-photo {
+        height: 120px;
+    }
+}
+
+/* --- Touch devices: no hover jumping --- */
+@media (hover: none) {
+    .message-claimant-button:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
+
+/* =========================================
+   SIDEBAR-AWARE LAYOUT (same method as profile page)
+========================================= */
+
+:root {
+    --sidebar-width: 250px;
+}
+
+.notifications-page {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    padding-top: 65px; /* space for the fixed navbar */
+    min-width: 0;
+}
+
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 220px;
+    }
+}
+
+@media (max-width: 850px) {
+    :root {
+        --sidebar-width: 220px;
+    }
+}
+
+/* sidebar shrinks to the icon strip, content moves beside it */
+@media (max-width: 600px) {
+    :root {
+        --sidebar-width: 68px;
+    }
+
+    .notifications-page {
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        padding-top: 60px;
+    }
+
+    .notifications-content {
+        padding: 16px 12px 28px;
+    }
+}

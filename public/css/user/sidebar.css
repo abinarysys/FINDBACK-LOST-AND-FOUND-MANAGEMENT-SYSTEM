@@ -165,21 +165,41 @@
     }
 }
 
+/* navbar wraps into two rows, so the sidebar starts lower */
+@media (max-width: 700px) {
+    .user-sidebar {
+        top: 90px;
+        height: calc(100vh - 90px);
+    }
+}
+
 @media (max-width: 600px) {
     .user-sidebar {
-        top: 60px;
+        top: 90px;
         width: 68px;
-        height: calc(100vh - 60px);
-        padding: 22px 8px;
+        height: calc(100vh - 90px);
+        padding: 6px 8px 22px;
     }
 
+    /* keep "User Profile" visible, but small and tight */
     .sidebar-welcome {
-        padding: 0 0 20px;
+        padding: 0 0 8px;
+        margin-bottom: 8px;
+        text-align: center;
     }
 
     .sidebar-welcome h3,
     .sidebar-welcome .welcome-label,
-    .sidebar-welcome .sidebar-subtitle,
+    .sidebar-welcome .sidebar-subtitle {
+        display: none;
+    }
+
+    .sidebar-welcome p {
+        margin: 0;
+        font-size: 11px;
+        line-height: 1.3;
+    }
+
     .sidebar-nav a > span:not(.nav-icon),
     .sidebar-bottom a > span:not(.nav-icon) {
         display: none;
@@ -190,5 +210,9 @@
         justify-content: center;
         gap: 0;
         padding: 12px 5px;
+    }
+
+    .sidebar-bottom {
+        padding-top: 14px;
     }
 }

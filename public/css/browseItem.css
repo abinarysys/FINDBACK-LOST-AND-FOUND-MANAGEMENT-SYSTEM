@@ -411,3 +411,69 @@ img {
     background-color: #9ca3af;
     cursor: not-allowed;
 }
+
+
+
+
+/* ==========================================
+   CLAIM + MESSAGE BUTTONS IN A BOX
+   ========================================== */
+.card-actions {
+    display: flex !important;
+    gap: 8px;
+    margin-top: auto;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+}
+
+.card.is-claimed .card-actions {
+    background: none;
+    border: 0;
+}
+
+.card-actions .claim-btn,
+.card-actions .message-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    min-width: 0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+}
+
+.card-actions .claim-btn {
+    background: #8a66f5;
+    color: #fff;
+}
+
+.card-actions .claim-btn.disabled {
+    background: #c9c9d6;
+    color: #fff;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.card-actions .message-btn {
+    background: #ddd4fa;
+    color: #8a66f5;
+    border-color: #c4b0ff;
+}
+
+.card.is-claimed .card-actions {
+    background: #f3f3f7;
+    border-color: #c9c9d6;
+}
+
+@media (max-width: 480px) {
+    .card-actions { flex-direction: column; }
+}
