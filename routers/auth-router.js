@@ -143,8 +143,7 @@ router.get('/logout', (req, res) => {
             return res.status(500).send(
                 'Could not log out. Please try again.'
             );
-        }
-
+        }  
         return res.redirect('/auth/login');
     })
 })

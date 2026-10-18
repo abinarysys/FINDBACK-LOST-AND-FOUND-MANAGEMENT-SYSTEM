@@ -96,26 +96,48 @@ router.post('/profile/update', authMiddleware, (req, res, next) => {
 
 const query = require('../config/query.js');
 
-router.get('/notifications', authMiddleware, async (req, res) => {
-    try {
-        const userId = req.session.user.user_id;
-        const notifications = await query(
-            'SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50', [userId]);
-        await query('UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0', [userId]);
-        res.render('user/notifications', { notifications });
-    } catch (err) {
-        console.error(err);
-        req.flash('error', 'Could not load notifications.');
-        res.redirect('/');
-    }
+router.get("/activity-logs", (req, res) => {
+    const sessionUser = req.session && req.session.user;
+    if (!sessionUser) return res.redirect('/auth/login');
+    const userId = sessionUser.user_id;
+
+    const lostSql = `SELECT lost_items.*, item_categories.category_name
+        FROM lost_items
+        LEFT JOIN item_categories ON lost_items.category_id = item_categories.category_id
+        WHERE lost_items.user_id = ?`;
+    const foundSql = `SELECT found_items.*, item_categories.category_name
+        FROM found_items
+        LEFT JOIN item_categories ON found_items.category_id = item_categories.category_id
+        WHERE found_items.user_id = ?`;
+
+    db.query(lostSql, [userId], (err, lostRows) => {
+        if (err) { console.error(err); return res.status(500).send("Could not load your activity"); }
+
+        db.query(foundSql, [userId], (err, foundRows) => {
+            if (err) { console.error(err); return res.status(500).send("Could not load your activity"); }
+
+            const shape = (item, type) => ({
+                type,
+                itemId: item.item_id ?? item.lost_id ?? item.found_id ?? item.id,
+                title: item.item_name || item.category_name || 'Unnamed item',
+                category_name: item.category_name,
+                location: item.location,
+                status: item.status,          // shows only if your table has a "status" column
+                created_at: item.created_at
+            });
+
+            const activities = [
+                ...lostRows.map(i => shape(i, 'lost')),
+                ...foundRows.map(i => shape(i, 'found'))
+            ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            res.render("user/activity", {
+                activities,
+                stats: { total: activities.length, lost: lostRows.length, found: foundRows.length }
+            });
+        });
+    });
 });
 
-router.get('/activity-logs', authMiddleware, (req, res) => {
-    res.render('user/activity');
-});
-
-router.get('/user/settings', authMiddleware, (req, res) => {
-    res.render('settings');
-});
 
 module.exports = router;

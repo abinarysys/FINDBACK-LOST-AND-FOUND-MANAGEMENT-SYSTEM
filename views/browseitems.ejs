@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/browseItem.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/browseItems.css">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <title>BROWSE ITEMS</title>
 </head>
@@ -16,7 +19,7 @@
             <a href="/">Home</a>
             <a href="/browse">Browse Items</a>
             <a href="/howitworks">How It Works</a>
-            <a href="/contact">Contact Us</a>
+            <a href="/contacts">Contact Us</a>
         </div>
         <div class="right-buttons">
             <% if (user) { %>
@@ -32,7 +35,6 @@
             <% } %>
         </div>
     </div>
-
     <% if (success && success.length > 0) { %>
         <div class="flash-message flash-success">
             <span class="flash-icon">✓</span>
@@ -48,6 +50,177 @@
             <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
         </div>
     <% } %>
+
+    <!-- ================= BROWSE ITEMS (start) ================= -->
+    <%
+        const catStyle = {
+            'electronics':   { icon: '📱', color: '#6b6b6b' },
+            'bags':          { icon: '🎒', color: '#f04a4a' },
+            'ids & cards':   { icon: '🪪', color: '#b9b9b9' },
+            'ids and cards': { icon: '🪪', color: '#b9b9b9' },
+            'keys':          { icon: '🔑', color: '#f2b84b' },
+            'clothing':      { icon: '👕', color: '#4aa3ee' },
+            'accessories':   { icon: '⌚', color: '#22b0cc' },
+            'wallets':       { icon: '👛', color: '#ff7ac6' },
+            'others':        { icon: '📦', color: '#a05a00' }
+        };
+        const styleFor = (name) => catStyle[String(name).toLowerCase()] || { icon: '🏷️', color: '#8b7bd8' };
+    %>
+    <div class="browse" data-type="<%= activeType %>" data-category="<%= activeCategory %>">
+        <header class="hero">
+            <div class="hero-text">
+                <h1>Browse Items</h1>
+                <p>Find lost and found items by category</p>
+            </div>
+            <svg class="hero-deco" viewBox="0 0 160 110" aria-hidden="true">
+                <g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round">
+                    <circle cx="108" cy="38" r="26"/><line x1="90" y1="58" x2="68" y2="80"/>
+                    <circle cx="42" cy="78" r="18"/><line x1="29" y1="91" x2="14" y2="106"/>
+                </g>
+            </svg>
+        </header>
+
+        <div class="search-wrap">
+            <label class="search-bar">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+                <input type="search" id="searchInput" placeholder="Search for an item (e.g. phone, wallet, backpack...)" autocomplete="off">
+            </label>
+        </div>
+
+        <section class="categories" aria-label="Categories">
+            <% categories.forEach(cat => { const s = styleFor(cat.category_name); %>
+                <button type="button" class="cat" data-category="<%= cat.category_name %>" aria-pressed="false">
+                    <span class="cat-tile" data-color="<%= s.color %>"><span class="cat-icon"><%= s.icon %></span></span>
+                    <span class="cat-name"><%= cat.category_name %></span>
+                </button>
+            <% }) %>
+        </section>
+
+        <main class="posts">
+            <div class="posts-head">
+                <h2 id="postsTitle">Recent Lost &amp; Found Posts</h2>
+                <div class="filters" role="group" aria-label="Filter by type">
+                    <button type="button" class="pill" data-type="all">All</button>
+                    <button type="button" class="pill" data-type="lost">Lost</button>
+                    <button type="button" class="pill" data-type="found">Found</button>
+                </div>
+            </div>
+            <p class="result-count" id="resultCount" aria-live="polite"></p>
+
+            <div class="grid" id="itemGrid">
+                <% items.forEach(item => { %>
+                    <article class="card"
+                        data-type="<%= item.type %>"
+                        data-category="<%= item.category_name || '' %>"
+                        data-search="<%= [item.item_name, item.description, item.category_name, item.location, item.brand, item.color].filter(Boolean).join(' ').toLowerCase() %>">
+                        <div class="card-img">
+                            <span class="badge badge-<%= item.type %>"><%= item.type === 'lost' ? 'Lost' : 'Found' %></span>
+                            <% if (item.picture) { %>
+                                <img src="<%= item.picture %>" alt="<%= item.item_name || 'Item photo' %>" loading="lazy">
+                            <% } else { %>
+                                <div class="no-photo">No photo</div>
+                            <% } %>
+                        </div>
+                        <div class="card-body">
+                            <h3><%= item.item_name || item.category_name || 'Unnamed item' %></h3>
+                            <p class="desc"><%= item.description || 'No description provided.' %></p>
+                            <div class="meta">
+                                <span class="meta-item" title="Date <%= item.type %>">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>
+                                    <%= item.itemDate || '—' %>
+                                </span>
+                                <span class="meta-item" title="Location">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                                    <%= item.location || 'Unknown' %>
+                                </span>
+                            </div>
+                            <a class="btn-details" href="/item/<%= item.type %>/<%= item.itemId %>">View Details →</a>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+
+            <div class="empty" id="emptyState" hidden>
+                <p><strong>No items match your search.</strong></p>
+                <p>Try a different keyword, or clear the category and type filters.</p>
+                <button type="button" class="bi-btn" id="clearFilters">Clear filters</button>
+            </div>
+        </main>
+
+        <section class="help-bar">
+            <div class="help-main">
+                <strong>Need Help? We're Here for You.</strong>
+                <span>Have a question, concern, or need help with a lost or found item? Contact us.</span>
+            </div>
+            <a class="help-item" href="mailto:support@findback.com"><span class="help-dot">✉</span> Email</a>
+            <a class="help-item" href="/contacts"><span class="help-dot">📍</span> Location</a>
+            <a class="help-item" href="/contacts"><span class="help-dot">📞</span> Contact</a>
+            <a class="bi-btn" href="/contacts">Contact Us →</a>
+        </section>
+        <footer class="bi-footer">
+            <strong>FindBack</strong>
+            <span>Helping people reconnect with their lost belongings.</span>
+        </footer>
+    </div>
+
+    <script>
+        (function () {
+            const root = document.querySelector('.browse');
+            const state = {
+                type: root.dataset.type,
+                category: root.dataset.category,
+                q: ''
+            };
+            document.querySelectorAll('.cat-tile').forEach(t => { t.style.background = t.dataset.color; });
+            const cards = Array.from(document.querySelectorAll('.browse .card'));
+            const cats = Array.from(document.querySelectorAll('.browse .cat'));
+            const pills = Array.from(document.querySelectorAll('.browse .pill'));
+            const countEl = document.getElementById('resultCount');
+            const emptyEl = document.getElementById('emptyState');
+            const titleEl = document.getElementById('postsTitle');
+            const norm = s => String(s).toLowerCase();
+
+            function apply() {
+                let shown = 0;
+                cards.forEach(c => {
+                    const ok =
+                        (state.type === 'all' || c.dataset.type === state.type) &&
+                        (state.category === 'all' || norm(c.dataset.category) === norm(state.category)) &&
+                        (!state.q || c.dataset.search.includes(state.q));
+                    c.hidden = !ok;
+                    if (ok) shown++;
+                });
+                cats.forEach(b => {
+                    const on = norm(b.dataset.category) === norm(state.category);
+                    b.classList.toggle('active', on);
+                    b.setAttribute('aria-pressed', on);
+                });
+                pills.forEach(p => p.classList.toggle('active', p.dataset.type === state.type));
+                emptyEl.hidden = shown !== 0;
+                countEl.textContent = shown + (shown === 1 ? ' item' : ' items');
+                titleEl.textContent = state.category === 'all'
+                    ? 'Recent Lost & Found Posts'
+                    : state.category + ' — Lost & Found Posts';
+            }
+
+            cats.forEach(b => b.addEventListener('click', () => {
+                state.category = norm(state.category) === norm(b.dataset.category) ? 'all' : b.dataset.category;
+                apply();
+            }));
+            pills.forEach(p => p.addEventListener('click', () => { state.type = p.dataset.type; apply(); }));
+            document.getElementById('searchInput').addEventListener('input', e => {
+                state.q = e.target.value.trim().toLowerCase();
+                apply();
+            });
+            document.getElementById('clearFilters').addEventListener('click', () => {
+                state.type = 'all'; state.category = 'all'; state.q = '';
+                document.getElementById('searchInput').value = '';
+                apply();
+            });
+            apply();
+        })();
+    </script>
+    <!-- ================= BROWSE ITEMS (end) ================= -->
 
     <script src="/socket.io/socket.io.js"></script>
     <script>

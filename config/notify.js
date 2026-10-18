@@ -1,30 +1,59 @@
 ﻿const query = require('./query');
 
-// Save a notification and send it to the intended user in real time.
 async function notifyUser(io, userId, notification) {
     if (!userId) {
-        throw new Error('A valid user ID is required to send a notification.');
+        throw new Error('A valid user ID is required.');
     }
 
-    const { type, title, message, link = null } = notification;
+    const {
+        type,
+        title,
+        message,
+        link = '/user/notifications',
+        found_item_id = null,
+        claim_id = null,
+        related_user_id = null
+    } = notification;
 
-    // Save notification in the database.
-    await query(
+    const result = await query(
         `INSERT INTO notifications
-            (user_id, type, title, message, link)
-         VALUES (?, ?, ?, ?, ?)`,
-        [userId, type, title, message, link]
-    );
-
-    // Send notification to the user's private Socket.IO room.
-    if (io) {
-        io.to(`user:${userId}`).emit('notification', {
+            (user_id, type, title, message, link,
+             found_item_id, claim_id, related_user_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            userId,
             type,
             title,
             message,
-            link
-        });
+            link,
+            found_item_id,
+            claim_id,
+            related_user_id
+        ]
+    );
+
+    const newNotification = {
+        notification_id: result.insertId,
+        user_id: userId,
+        type,
+        title,
+        message,
+        link,
+        found_item_id,
+        claim_id,
+        related_user_id,
+        is_read: 0,
+        created_at: new Date()
+    };
+
+    if (io) {
+        io.to(`user:${userId}`).emit(
+            'notification',
+            newNotification
+        );
     }
+
+    return newNotification;
 }
 
 module.exports = { notifyUser };

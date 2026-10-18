@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const db = require('../config/db.js');
 
+
 router.get("/", (req, res) => {
     const getCategory = "SELECT * FROM item_categories"
     db.query(getCategory, (err, results) => {
@@ -81,9 +82,61 @@ router.get("/howitworks", (req,res) =>{
     res.render("howitworks")
 })
 
-router.get("/browse", (req,res) =>{
-    res.render("browseitems")
-})
+router.get("/browse", (req, res) => {
+    const toPicture = (p) =>
+        p ? '/uploads/' + p.replace(/^uploads[\\/]/, '').replace(/^\/uploads[\\/]/, '') : '';
+
+    db.query("SELECT * FROM item_categories ORDER BY category_id", (err, categories) => {
+        if (err) { console.error(err); return res.status(500).send("DB error"); }
+
+        const lostSql = `SELECT lost_items.*, users.full_name, users.contact_number, item_categories.category_name
+            FROM lost_items
+            LEFT JOIN users ON lost_items.user_id = users.user_id
+            LEFT JOIN item_categories ON lost_items.category_id = item_categories.category_id`;
+
+        db.query(lostSql, (err, lostRows) => {
+            if (err) { console.error(err); return res.status(500).send("Could not load lost items"); }
+
+            const foundSql = `SELECT found_items.*, users.full_name, users.contact_number, item_categories.category_name
+                FROM found_items
+                LEFT JOIN users ON found_items.user_id = users.user_id
+                LEFT JOIN item_categories ON found_items.category_id = item_categories.category_id`;
+
+            db.query(foundSql, (err, foundRows) => {
+                if (err) { console.error(err); return res.status(500).send("Could not load found items"); }
+
+                const items = [
+                    ...lostRows.map(item => ({
+                        ...item,
+                        type: "lost",
+                        itemId: item.item_id ?? item.lost_id ?? item.id,
+                        picture: toPicture(item.photo_path),
+                        itemDate: item.date_lost ? String(item.date_lost).slice(0, 10) : '',
+                        postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                        sortDate: item.created_at
+                    })),
+                    ...foundRows.map(item => ({
+                        ...item,
+                        type: "found",
+                        itemId: item.item_id ?? item.found_id ?? item.id,
+                        picture: toPicture(item.photo_path),
+                        itemDate: item.date_found ? String(item.date_found).slice(0, 10) : '',
+                        postedAt: item.created_at ? String(item.created_at).slice(0, 10) : '',
+                        sortDate: item.created_at
+                    }))
+                ].sort((a, b) => new Date(b.sortDate) - new Date(a.sortDate));
+
+                res.render("browseitems", {
+                    categories,
+                    items,
+                    activeCategory: req.query.category || 'all',
+                    activeType: ['lost', 'found'].includes(req.query.type) ? req.query.type : 'all'
+                });
+            });
+        });
+    });
+});
+
 
 router.get("/Electronics", (req,res) =>{
     const getLostElectronics = `SELECT * FROM lost_items WHERE category_id = 1`

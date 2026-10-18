@@ -60,6 +60,9 @@ app.use("/found", require("./routers/foundItem-router.js"))
 app.use('/admin', require('./routers/admin-router.js'));
 app.use("/user", require('./routers/userprofile-router.js'))
 app.use("/claim", require('./routers/claim-router.js'))
+app.use("/user/settings", require('./routers/usersettings-router.js'))
+app.use("/user/chat", require('./routers/userchat-router.js'))
+app.use("/user/notifications", require("./routers/notification-router.js"))
 
 server.listen(4000, () => {
     console.log('FINDBACK running at http://localhost:4000');

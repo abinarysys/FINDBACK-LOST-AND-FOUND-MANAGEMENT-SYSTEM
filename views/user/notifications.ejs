@@ -8,7 +8,6 @@
     <title>Notifications | FINDBACK</title>
 
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
-
     <link rel="stylesheet" href="/css/user/sidebar.css">
     <link rel="stylesheet" href="/css/user/notif.css">
 
@@ -18,77 +17,53 @@
 </head>
 
 <body>
-
-    <!-- User Sidebar -->
     <%- include('partials/user-sidebar', {
         user: user,
         activePage: 'notifications'
     }) %>
 
-    <!-- Main Page -->
     <main class="notifications-page">
-
-        <!-- Navbar -->
         <%- include('partials/navbar', { user: user }) %>
 
         <section class="notifications-content">
-
-            <!-- Page Heading -->
             <div class="page-heading">
                 <div>
                     <h1>Notifications</h1>
-                    <p>Stay updated on your lost and found items.</p>
+                    <p>Stay updated on your lost and found claims.</p>
                 </div>
 
                 <span class="notification-count">
                     <%= notifications.length %>
-                    <%= notifications.length === 1
-                        ? 'notification'
-                        : 'notifications' %>
+                    <%= notifications.length === 1 ? 'notification' : 'notifications' %>
                 </span>
             </div>
 
-            <!-- Notifications Card -->
             <div class="notifications-card">
-
                 <div class="notifications-card-header">
-                    <div>
-                        <h2>Your Updates</h2>
-                        <p>Important updates about your claims and items.</p>
-                    </div>
+                    <h2>Your Notifications</h2>
+                    <p>Updates about your claims and found items.</p>
                 </div>
 
                 <% if (notifications && notifications.length > 0) { %>
-
                     <div class="notification-list">
-
                         <% notifications.forEach(notification => { %>
-
                             <article
                                 class="notification-item <%= Number(notification.is_read) === 1 ? 'read' : 'unread' %>"
                                 data-notification-id="<%= notification.notification_id %>"
                             >
-
-                                <!-- Notification Icon -->
                                 <div class="notification-icon <%= notification.type %>">
-
                                     <% if (notification.type === 'claim_verified') { %>
-                                        <span aria-hidden="true">✓</span>
-
+                                        ✓
                                     <% } else if (notification.type === 'claim_rejected') { %>
-                                        <span aria-hidden="true">×</span>
-
+                                        ×
                                     <% } else { %>
-                                        <span aria-hidden="true">●</span>
+                                        ●
                                     <% } %>
-
                                 </div>
 
-                                <!-- Notification Information -->
                                 <div class="notification-details">
-
                                     <div class="notification-title-row">
-                                        <h3><%= notification.title %></h3>
+                                        <h3><%= notification.title || 'Notification' %></h3>
 
                                         <% if (Number(notification.is_read) !== 1) { %>
                                             <span class="new-badge">New</span>
@@ -99,68 +74,117 @@
                                         <%= notification.message %>
                                     </p>
 
+                                    <% if (notification.found_item_id && notification.item_name) { %>
+                                        <div class="notification-item-card">
+                                            <div class="notification-item-photo">
+                                                <% if (notification.photo_path) { %>
+                                                    <img
+                                                        src="<%= notification.photo_path.startsWith('/') ? notification.photo_path : '/' + notification.photo_path %>"
+                                                        alt="<%= notification.item_name %>"
+                                                        loading="lazy"
+                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                                    >
+                                                    <div class="item-photo-placeholder" style="display:none;">
+                                                        <span>▧</span>
+                                                        <small>No image available</small>
+                                                    </div>
+                                                <% } else { %>
+                                                    <div class="item-photo-placeholder">
+                                                        <span>▧</span>
+                                                        <small>No image available</small>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+
+                                            <div class="notification-item-info">
+                                                <span class="item-card-label">FOUND ITEM</span>
+                                                <h4><%= notification.item_name %></h4>
+
+                                                <% if (notification.category_name) { %>
+                                                    <p>
+                                                        <span class="detail-label">Category:</span>
+                                                        <%= notification.category_name %>
+                                                    </p>
+                                                <% } %>
+
+                                                <% if (notification.item_location) { %>
+                                                    <p>
+                                                        <span class="detail-label">Location:</span>
+                                                        <%= notification.item_location %>
+                                                    </p>
+                                                <% } %>
+
+                                                <% if (notification.date_found) { %>
+                                                    <p>
+                                                        <span class="detail-label">Date found:</span>
+                                                        <%= new Date(notification.date_found).toLocaleDateString('en-PH', {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            timeZone: 'UTC'
+                                                        }) %>
+                                                    </p>
+                                                <% } %>
+
+                                                <% if (notification.item_description) { %>
+                                                    <p class="item-description">
+                                                        <%= notification.item_description %>
+                                                    </p>
+                                                <% } %>
+
+                                                <% if (notification.type === 'claim_verified') { %>
+                                                    <span class="claim-status verified">Claim verified</span>
+                                                <% } else if (notification.type === 'claim_rejected') { %>
+                                                    <span class="claim-status rejected">Claim not approved</span>
+                                                <% } %>
+                                            </div>
+                                        </div>
+
+                                        <% if (notification.related_user_id &&
+                                              Number(notification.related_user_id) !== Number(user.user_id)) { %>
+                                            <a
+                                                class="message-claimant-button"
+                                                href="/user/chat?user_id=<%= encodeURIComponent(notification.related_user_id) %>&item_id=<%= encodeURIComponent(notification.found_item_id) %>&claim_id=<%= encodeURIComponent(notification.claim_id || '') %>"
+                                            >
+                                                Message the Claimant
+                                            </a>
+                                        <% } %>
+                                    <% } %>
+
                                     <span class="notification-date">
                                         <% if (notification.created_at) { %>
                                             <%= new Date(notification.created_at).toLocaleString('en-PH', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric',
-                                                hour: 'numeric',
-                                                minute: '2-digit'
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short'
                                             }) %>
                                         <% } %>
                                     </span>
 
-                                    <% if (notification.link) { %>
-                                        <a
-                                            class="notification-link"
-                                            href="<%= notification.link %>"
-                                        >
-                                            View details
-                                            <span aria-hidden="true">→</span>
+                                    <% if (notification.link && !notification.found_item_id) { %>
+                                        <a class="notification-link" href="<%= notification.link %>">
+                                            View details →
                                         </a>
                                     <% } %>
-
                                 </div>
 
-                                <!-- Unread Indicator -->
                                 <% if (Number(notification.is_read) !== 1) { %>
-                                    <span
-                                        class="unread-dot"
-                                        title="Unread notification"
-                                    ></span>
+                                    <span class="unread-dot" title="Unread"></span>
                                 <% } %>
-
                             </article>
-
                         <% }) %>
-
                     </div>
-
                 <% } else { %>
-
-                    <!-- Empty State -->
                     <div class="empty-notifications">
-                        <div class="empty-icon" aria-hidden="true">♧</div>
-
-                        <h3>You're all caught up!</h3>
-
-                        <p>
-                            You don't have any notifications yet.
-                            We'll let you know when there's an update.
-                        </p>
+                        <div class="empty-icon">♧</div>
+                        <h3>No notifications yet</h3>
+                        <p>Updates about your claims and lost and found items will appear here.</p>
                     </div>
-
                 <% } %>
-
             </div>
-
         </section>
     </main>
 
-    <!-- IMPORTANT: Load Socket.IO before notify.js -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/notify.js"></script>
-
 </body>
 </html>
