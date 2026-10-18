@@ -104,18 +104,25 @@
     </div>
 
     <div class="recent-items">
-        <h3>Recent Lost &amp; Found Items</h3>
-        <p>Check out the latest items reported by our users!</p>
+        <div class="recent-head">
+            <div>
+                <h3>Recent Lost &amp; Found Items</h3>
+                <p>Check out the latest items reported by our users!</p>
+            </div>
+            <a href="/browse" class="view-all-btn">View All &rarr;</a>
+        </div>
 
         <div class="items-container">
-            <% recentItems.forEach(item => { %>
-                <div class="item-card">
+            <% recentItems.slice(0, 4).forEach(item => { %>
+                <div class="item-card <%= item.isClaimed ? 'is-claimed' : '' %>">
                     <div class="item-picture">
                         <% if (item.picture) { %>
                             <img src="<%= item.picture %>" alt="<%= item.item_name %>">
                         <% } %>
 
-                        <% if (item.type === 'lost') { %>
+                        <% if (item.isClaimed) { %>
+                            <span class="item-label claimed">CLAIMED</span>
+                        <% } else if (item.type === 'lost') { %>
                             <span class="item-label lost">LOST</span>
                         <% } else { %>
                             <span class="item-label found">FOUND</span>
@@ -133,9 +140,13 @@
                         <p><b>Date Posted:</b> <%= item.postedAt || 'Not specified' %></p>
                     </div>
                     <div class="item-actions">
-                        <a href="/claim/<%= item.type %>/<%= item.type === 'lost' ? item.lost_item_id : item.found_item_id %>" class="claim-btn">
-                            Make a Claim
-                        </a>
+                        <% if (item.isClaimed) { %>
+                            <span class="claim-btn disabled" aria-disabled="true">Already Claimed</span>
+                        <% } else { %>
+                            <a href="/claim/<%= item.type %>/<%= item.type === 'lost' ? item.lost_item_id : item.found_item_id %>" class="claim-btn">
+                                Make a Claim
+                            </a>
+                        <% } %>
                         <a href="/user/chat" class="message-btn">
                             Message
                         </a>
@@ -214,12 +225,5 @@
 </footer>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/notify.js"></script>
-<script>
-    const socket = io();
-
-    socket.on('connect', () => {
-        console.log('Connected to FINDBACK Socket.IO!');
-    });
-</script>
 </body>
 </html>

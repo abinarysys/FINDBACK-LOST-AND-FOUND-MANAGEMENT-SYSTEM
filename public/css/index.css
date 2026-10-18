@@ -108,16 +108,16 @@ button {
     background-color: #fff9fb;
 }
 
-.recent-items > h3 {
+.recent-items .recent-head h3 {
     font-size: 28px;
     color: #333;
-    margin-bottom: 10px;
+    margin: 0 0 10px;
 }
 
-.recent-items > p {
+.recent-items .recent-head p {
     color: #777;
     font-size: 15px;
-    margin-bottom: 30px;
+    margin: 0;
 }
 
 /* Items Grid */
@@ -233,7 +233,7 @@ button {
         padding: 30px 5%;
     }
 
-    .recent-items > h3 {
+    .recent-items .recent-head h3 {
         font-size: 23px;
     }
 
@@ -530,7 +530,7 @@ body {
 .recent-items {
     background: #fff;
 }
-.recent-items > h3 {
+.recent-items .recent-head h3 {
     color: #1b2559;
     font-weight: 700;
     font-size: 22px;
@@ -548,6 +548,39 @@ body {
 }
 .item-label.lost  { background-color: #f04444; color: #fff; }
 .item-label.found { background-color: #16a085; color: #fff; }
+
+/* ---------- RECENT ITEMS: heading row + View All button ---------- */
+.recent-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.view-all-btn {
+    flex-shrink: 0;
+    padding: 10px 22px;
+    border-radius: 8px;
+    background: #7a14e6;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+}
+
+.view-all-btn:hover {
+    opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+    .recent-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
 
 /* ---------- FEEDBACK ---------- */
 h2 {
@@ -1349,4 +1382,25 @@ img {
 .item-picture img {
     font-size: 0;
     color: transparent;
+}
+
+
+/* ===== CLAIMED ITEMS (label + disabled claim button) ===== */
+.item-label.claimed {
+    background-color: #6d7088;
+    color: #fff;
+}
+.item-card.is-claimed .item-picture img {
+    filter: grayscale(.7);
+    opacity: .75;
+}
+.claim-btn.disabled {
+    background: #c9c9d6;
+    color: #fff;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.claim-btn.disabled:hover {
+    background: #c9c9d6;
+    transform: none;
 }

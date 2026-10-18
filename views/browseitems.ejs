@@ -103,18 +103,24 @@
                     <button type="button" class="pill" data-type="all">All</button>
                     <button type="button" class="pill" data-type="lost">Lost</button>
                     <button type="button" class="pill" data-type="found">Found</button>
+                    <button type="button" class="pill" data-type="claimed">Claimed</button>
                 </div>
             </div>
             <p class="result-count" id="resultCount" aria-live="polite"></p>
 
             <div class="grid" id="itemGrid">
                 <% items.forEach(item => { %>
-                    <article class="card"
+                    <article class="card <%= item.isClaimed ? 'is-claimed' : '' %>"
                         data-type="<%= item.type %>"
+                        data-claimed="<%= item.isClaimed ? '1' : '0' %>"
                         data-category="<%= item.category_name || '' %>"
                         data-search="<%= [item.item_name, item.description, item.category_name, item.location, item.brand, item.color].filter(Boolean).join(' ').toLowerCase() %>">
                         <div class="card-img">
-                            <span class="badge badge-<%= item.type %>"><%= item.type === 'lost' ? 'Lost' : 'Found' %></span>
+                            <% if (item.isClaimed) { %>
+                                <span class="badge badge-claimed">Claimed</span>
+                            <% } else { %>
+                                <span class="badge badge-<%= item.type %>"><%= item.type === 'lost' ? 'Lost' : 'Found' %></span>
+                            <% } %>
                             <% if (item.picture) { %>
                                 <img src="<%= item.picture %>" alt="<%= item.item_name || 'Item photo' %>" loading="lazy">
                             <% } else { %>
@@ -134,7 +140,14 @@
                                     <%= item.location || 'Unknown' %>
                                 </span>
                             </div>
-                            <a class="btn-details" href="/item/<%= item.type %>/<%= item.itemId %>">View Details →</a>
+                            <div class="card-actions">
+                                <% if (item.isClaimed) { %>
+                                    <span class="claim-btn disabled" aria-disabled="true">Already Claimed</span>
+                                <% } else { %>
+                                    <a href="/claim/<%= item.type %>/<%= item.type === 'lost' ? item.lost_item_id : item.found_item_id %>" class="claim-btn">Make a Claim</a>
+                                <% } %>
+                                <a href="/user/chat" class="message-btn">Message</a>
+                            </div>
                         </div>
                     </article>
                 <% }) %>
@@ -183,8 +196,15 @@
             function apply() {
                 let shown = 0;
                 cards.forEach(c => {
+                    const claimed = c.dataset.claimed === '1';
+                    // All = everything | Lost = lost posts | Found = found items still available | Claimed = settled items
+                    const typeOk =
+                        state.type === 'all' ||
+                        (state.type === 'claimed' && claimed) ||
+                        (state.type === 'lost' && c.dataset.type === 'lost') ||
+                        (state.type === 'found' && c.dataset.type === 'found' && !claimed);
                     const ok =
-                        (state.type === 'all' || c.dataset.type === state.type) &&
+                        typeOk &&
                         (state.category === 'all' || norm(c.dataset.category) === norm(state.category)) &&
                         (!state.q || c.dataset.search.includes(state.q));
                     c.hidden = !ok;
@@ -223,12 +243,6 @@
     <!-- ================= BROWSE ITEMS (end) ================= -->
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-
-        socket.on('connect', () => {
-            console.log('Connected to FINDBACK Socket.IO!');
-        });
-    </script>
+    <script src="/js/notify.js"></script>
 </body>
 </html>
