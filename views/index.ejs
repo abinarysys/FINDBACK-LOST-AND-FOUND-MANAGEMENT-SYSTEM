@@ -128,7 +128,7 @@
                                 Make a Claim
                             </a>
                         <% } %>
-                        <a href="/user/chat" class="message-btn">Message</a>
+                        <a href="/user/chat/start/<%= item.type %>/<%= item.type === 'lost' ? item.lost_item_id : item.found_item_id %>" class="message-btn">Message</a>
                     </div>
                 </div>
             <% }) %>

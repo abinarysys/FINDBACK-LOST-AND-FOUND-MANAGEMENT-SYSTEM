@@ -1,0 +1,88 @@
+<%
+    /* Chat page. Expects: user, activePage ('chat'), openId (conversation to open, or null),
+       draft (text to prefill in the message box, or ''). The conversations and messages are loaded by
+       /js/chat.js from the JSON API, so this file only holds the page skeleton. */
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat | FindBack</title>
+
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/user-ui.css">
+    <link rel="stylesheet" href="/css/user/user-shell.css">
+    <link rel="stylesheet" href="/css/user/chat.css">
+</head>
+<body>
+    <%- include('partials/user-header', { user: user, activePage: 'chat' }) %>
+
+    <main class="u-main">
+        <header class="page-head">
+            <div>
+                <h1>Chat</h1>
+                <p>Message the people who posted or found an item. Messages arrive instantly.</p>
+            </div>
+        </header>
+
+        <section class="panel chat" id="chat"
+                 data-me="<%= user.user_id %>"
+                 data-open="<%= openId || '' %>"
+                 data-draft="<%= draft || '' %>">
+
+            <!-- left: conversation list -->
+            <aside class="chat-list-pane" aria-label="Conversations">
+                <div class="chat-list-head">
+                    <div class="search">
+                        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input class="input" type="search" id="chatSearch" placeholder="Search people" autocomplete="off" aria-label="Search conversations">
+                    </div>
+                </div>
+                <div class="chat-list" id="chatList" role="list">
+                    <div class="chat-placeholder">Loading conversations…</div>
+                </div>
+            </aside>
+
+            <!-- right: the open conversation -->
+            <section class="chat-thread-pane" aria-label="Messages">
+                <div class="chat-empty" id="chatEmpty">
+                    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <h2>Select a conversation</h2>
+                    <p>Or press <strong>Message</strong> on an item to start a new one.</p>
+                    <a class="btn btn-primary" href="/browse">Browse items</a>
+                </div>
+
+                <div class="chat-thread" id="chatThread" hidden>
+                    <header class="chat-thread-head">
+                        <button type="button" class="btn btn-ghost btn-sm chat-back" id="chatBack" aria-label="Back to conversations">&larr; Back</button>
+                        <span class="avatar" id="threadAvatar"></span>
+                        <div class="chat-thread-who">
+                            <strong id="threadName"></strong>
+                            <small id="threadStatus">FindBack user</small>
+                        </div>
+                    </header>
+
+                    <div class="chat-messages" id="chatMessages" aria-live="polite">
+                        <button type="button" class="btn btn-ghost btn-sm chat-older" id="chatOlder" hidden>Load older messages</button>
+                    </div>
+
+                    <p class="chat-error" id="chatError" role="alert" hidden></p>
+
+                    <form class="chat-compose" id="chatForm" autocomplete="off">
+                        <label class="sr-only" for="chatInput">Message</label>
+                        <textarea class="textarea" id="chatInput" rows="1" maxlength="1000" placeholder="Write a message…"></textarea>
+                        <button type="submit" class="btn btn-primary" id="chatSend">Send</button>
+                    </form>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.js" defer></script>
+</body>
+</html>
