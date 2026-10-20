@@ -5,26 +5,28 @@
 ========================================= */
 
 :root {
-    --notif-primary: #b94f80;
-    --notif-primary-dark: #963b65;
-    --notif-primary-light: #fff0f6;
-    --notif-pink-soft: #fff8fb;
+    /* These now read the shared design tokens from user-ui.css (same as the admin dashboard).
+       The second value is only a fallback if user-ui.css is not loaded. */
+    --notif-primary: var(--primary, #7C18FF);
+    --notif-primary-dark: var(--primary-600, #6a14dd);
+    --notif-primary-light: var(--primary-soft, #f3eaff);
+    --notif-pink-soft: var(--surface-2, #FAF8FD);
 
-    --notif-text: #352632;
-    --notif-text-secondary: #746471;
-    --notif-text-muted: #9a8a96;
+    --notif-text: var(--text, #17131D);
+    --notif-text-secondary: var(--text-2, #5E5669);
+    --notif-text-muted: var(--muted, #81768C);
 
-    --notif-border: #f0dce6;
-    --notif-background: #fffafd;
-    --notif-white: #ffffff;
+    --notif-border: var(--border, #E7E2ED);
+    --notif-background: var(--bg, #F5F5F5);
+    --notif-white: var(--surface, #ffffff);
 
-    --notif-success: #21864a;
-    --notif-success-bg: #e7f7ed;
+    --notif-success: var(--success, #10B981);
+    --notif-success-bg: var(--success-soft, #E4F7F0);
 
-    --notif-danger: #b83249;
-    --notif-danger-bg: #ffedf0;
+    --notif-danger: var(--danger, #EF4444);
+    --notif-danger-bg: var(--danger-soft, #FDECEC);
 
-    --notif-shadow: 0 5px 20px rgba(89, 44, 68, 0.06);
+    --notif-shadow: var(--shadow, 0 5px 20px rgba(23, 19, 29, 0.06));
 }
 
 /* =========================================
@@ -90,7 +92,7 @@ body {
     gap: 5px;
     flex-shrink: 0;
     padding: 9px 15px;
-    border: 1px solid #f1d4e2;
+    border: 1px solid var(--notif-border);
     border-radius: 30px;
     background: var(--notif-primary-light);
     color: var(--notif-primary-dark);
@@ -114,7 +116,7 @@ body {
 .notifications-card-header {
     padding: 24px 26px;
     border-bottom: 1px solid var(--notif-border);
-    background: #fffdfd;
+    background: var(--notif-pink-soft);
 }
 
 .notifications-card-header h2 {
@@ -149,7 +151,7 @@ body {
     width: 100%;
     min-width: 0;
     padding: 24px 26px;
-    border-bottom: 1px solid #f3e8ee;
+    border-bottom: 1px solid var(--notif-border);
     background: var(--notif-white);
     transition: background 0.2s ease;
 }
@@ -159,15 +161,15 @@ body {
 }
 
 .notification-item:hover {
-    background: #fffbfd;
+    background: var(--notif-pink-soft);
 }
 
 .notification-item.unread {
-    background: #fff9fc;
+    background: var(--notif-pink-soft);
 }
 
 .notification-item.unread:hover {
-    background: #fff3f8;
+    background: var(--notif-primary-light);
 }
 
 .notification-item.read {
@@ -186,7 +188,7 @@ body {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #f6e7ef;
+    background: var(--notif-primary-light);
     color: var(--notif-primary);
     font-size: 22px;
     font-weight: 700;
@@ -270,7 +272,7 @@ body {
     min-width: 0;
     margin: 17px 0 14px;
     padding: 16px;
-    border: 1px solid #f0dce6;
+    border: 1px solid var(--notif-border);
     border-radius: 13px;
     background: var(--notif-pink-soft);
 }
@@ -282,7 +284,7 @@ body {
     height: 145px;
     overflow: hidden;
     border-radius: 10px;
-    background: #f4e8ef;
+    background: var(--notif-primary-light);
 }
 
 .notification-item-photo img {
@@ -302,7 +304,7 @@ body {
     width: 100%;
     height: 100%;
     padding: 10px;
-    color: #a18496;
+    color: var(--notif-text-muted);
     text-align: center;
 }
 
@@ -348,14 +350,14 @@ body {
 }
 
 .notification-item-info .detail-label {
-    color: #51404d;
+    color: var(--notif-text-secondary);
     font-weight: 600;
 }
 
 .notification-item-info .item-description {
     margin-top: 12px;
     padding-top: 10px;
-    border-top: 1px solid #ecdce5;
+    border-top: 1px solid var(--notif-border);
     line-height: 1.8;
 }
 
@@ -399,7 +401,7 @@ body {
     border: 1px solid var(--notif-primary);
     border-radius: 9px;
     background: var(--notif-primary);
-    color: #ffffff !important;
+    color: var(--on-primary, #fff) !important;
     font-family: 'Poppins', sans-serif;
     font-size: 12px;
     font-weight: 600;
@@ -417,13 +419,13 @@ body {
 .message-claimant-button:hover {
     border-color: var(--notif-primary-dark);
     background: var(--notif-primary-dark);
-    color: #ffffff !important;
-    box-shadow: 0 4px 10px rgba(185, 79, 128, 0.2);
+    color: var(--on-primary, #fff) !important;
+    box-shadow: 0 4px 10px color-mix(in srgb, var(--notif-primary) 20%, transparent);
     transform: translateY(-1px);
 }
 
 .message-claimant-button:focus-visible {
-    outline: 3px solid rgba(185, 79, 128, 0.3);
+    outline: 3px solid color-mix(in srgb, var(--notif-primary) 30%, transparent);
     outline-offset: 3px;
 }
 
@@ -910,4 +912,87 @@ img {
     .notifications-content {
         padding: 16px 12px 28px;
     }
+}
+
+/* =========================================
+   STEP 2 ADDITIONS: mark-as-read + View Claim
+========================================= */
+
+.page-heading-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.mark-all-btn,
+.mark-read-btn {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--notif-primary);
+    background: var(--notif-white);
+    border: 1px solid var(--notif-border);
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.mark-all-btn:hover,
+.mark-read-btn:hover {
+    background: var(--notif-primary-light);
+    border-color: var(--notif-primary);
+}
+
+.mark-all-btn:disabled,
+.mark-read-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.mark-read-btn {
+    margin-top: 10px;
+    margin-left: 10px;
+    padding: 5px 12px;
+}
+
+.view-claim-button {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: var(--notif-primary);
+    color: var(--on-primary, #fff);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.view-claim-button:hover {
+    background: var(--notif-primary-dark);
+}
+
+.view-claim-button:focus-visible,
+.mark-all-btn:focus-visible,
+.mark-read-btn:focus-visible {
+    outline: 2px solid var(--notif-primary);
+    outline-offset: 2px;
+}
+
+.notification-item.just-arrived {
+    animation: notif-arrive 0.8s ease;
+}
+
+@keyframes notif-arrive {
+    from { background: var(--notif-primary-light); transform: translateY(-6px); }
+    to   { transform: none; }
+}
+
+
+/* Inside the dashboard layout (.main) the page already has its own padding. */
+.u-main .notifications-content {
+    max-width: none;
+    padding: 0;
 }

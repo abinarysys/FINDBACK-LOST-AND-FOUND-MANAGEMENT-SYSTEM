@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | FindBack</title>
+
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/user-ui.css">
+    <link rel="stylesheet" href="/css/user/user-shell.css">
+</head>
+<body>
+    <%- include('partials/user-header', { user: user, activePage: 'settings' }) %>
+
+    <main class="u-main">
+        <header class="page-head">
+            <div>
+                <h1>Settings</h1>
+                <p>Choose how FindBack looks for you. Your choices are saved to your account.</p>
+            </div>
+        </header>
+
+        <section class="grid-eq">
+
+            <!-- Appearance -->
+            <article class="panel" id="themeSettings" data-mode="<%= theme.mode %>" data-color="<%= theme.color %>">
+                <div class="panel-head">
+                    <div>
+                        <h2>Appearance</h2>
+                        <p>Saved to your account, on every device</p>
+                    </div>
+                </div>
+                <div class="panel-body">
+
+                    <div class="setting-row">
+                        <div>
+                            <strong>Dark mode</strong>
+                            <span class="d">Easier on the eyes at night.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="darkToggle" aria-label="Dark mode" <%= theme.mode === 'dark' ? 'checked' : '' %>>
+                            <i></i>
+                        </label>
+                    </div>
+
+                    <div class="setting-row" style="align-items:flex-start;flex-direction:column;gap:12px">
+                        <div>
+                            <strong>Accent colour</strong>
+                            <span class="d">Buttons, links and highlights.</span>
+                        </div>
+                        <div class="swatches" role="group" aria-label="Accent colour">
+                            <% accents.forEach(function (a) { %>
+                                <button type="button"
+                                        class="swatch <%= a.value.toLowerCase() === theme.color.toLowerCase() ? 'active' : '' %>"
+                                        data-color="<%= a.value %>"
+                                        title="<%= a.name %>"
+                                        aria-label="<%= a.name %>"
+                                        aria-pressed="<%= a.value.toLowerCase() === theme.color.toLowerCase() ? 'true' : 'false' %>"></button>
+                            <% }) %>
+                        </div>
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <strong>Reset appearance</strong>
+                            <span class="d">Back to light mode with the default indigo accent.</span>
+                        </div>
+                        <button type="button" class="btn btn-ghost btn-sm" id="resetTheme">Reset</button>
+                    </div>
+
+                    <p class="help" id="themeStatus" role="status" aria-live="polite" style="min-height:18px;margin-top:10px"></p>
+                </div>
+            </article>
+
+            <!-- Account -->
+            <article class="panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Account</h2>
+                        <p>Manage your details and activity</p>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="setting-row">
+                        <div>
+                            <strong>Profile details</strong>
+                            <span class="d">Update your name, contact number and photo.</span>
+                        </div>
+                        <a class="btn btn-ghost btn-sm" href="/user/profile/edit">Edit</a>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <strong>My claims</strong>
+                            <span class="d">See the status of every claim you made.</span>
+                        </div>
+                        <a class="btn btn-ghost btn-sm" href="/user/claims">Open</a>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <strong>Notifications</strong>
+                            <span class="d">Claim results and pickup updates.</span>
+                        </div>
+                        <a class="btn btn-ghost btn-sm" href="/user/notifications">Open</a>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <strong>Sign out</strong>
+                            <span class="d">End this session on this device.</span>
+                        </div>
+                        <a class="btn btn-danger btn-sm" href="/auth/logout">Log out</a>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script src="/js/theme.js" defer></script>
+</body>
+</html>

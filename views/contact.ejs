@@ -4,34 +4,14 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/user/tokens.css">
+    <link rel="stylesheet" href="/css/public-base.css">
     <link rel="stylesheet" href="/css/contact.css">
     <title>CONTACT US</title>
 </head>
-<body>
-    <div class="nav">
-        <div class="logo">
-            <img src="/img/logo.png" alt="FindBack Logo">
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/browse">Browse Items</a>
-            <a href="/howitworks">How It Works</a>
-            <a href="/contacts">Contact Us</a>
-        </div>
-        <div class="right-buttons">
-            <% if (user) { %>
-                <div class="profilepic">
-                    <a href="/user/profile">
-                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
-                    </a>
-                    <a href="/auth/logout">Log Out</a>
-                </div>
-            <% } else { %>
-                <a href="/auth/login">Login</a>
-                <a href="/auth/register">Get Started</a>
-            <% } %>
-        </div>
-    </div>
+<body class="page-contact" data-theme-aware>
+    <%- include('user/partials/navbar', { user: user }) %>
+
     <main class="contact-page">
 
         <!-- Heading -->
@@ -114,38 +94,6 @@
         </section>
     </main>
 
-    <footer class="footer">
-        <div class="help-band">
-            <div class="help-item help-main">
-                <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
-                <div>
-                    <h4>Need Help? We're Here for You.</h4>
-                    <p>Have a question, concern, or need help with a lost or found item? Contact us.</p>
-                </div>
-            </div>
-
-            <div class="help-item">
-                <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
-                <span class="help-label">Email</span>
-            </div>
-
-            <div class="help-item">
-                <span class="help-icon"><img src="/img/icon/location.png" alt="Location icon"></span>
-                <span class="help-label">Location</span>
-            </div>
-
-            <div class="help-item">
-                <span class="help-icon"><img src="/img/icon/contact.png" alt="Phone icon"></span>
-                <span class="help-label">Contact</span>
-            </div>
-
-            <a href="/contacts" class="help-btn">Contact Us &rarr;</a>
-        </div>
-
-        <div class="footer-bar">
-            <h4>FindBack</h4>
-            <p>Helping people reunite with their lost belongings.</p>
-        </div>
-    </footer>
+    <%- include('user/partials/public-footer') %>
 </body>
 </html>

@@ -1,374 +1,42 @@
+/* public/css/index.css  -  FindBack home page
+   Colours come from /css/user/tokens.css so the accent colour (and dark mode, for
+   logged-in users) apply here too. The navbar is styled by site-nav.css. */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-/* =====================================================
-   ORIGINAL CODE (unchanged)
-   ===================================================== */
-body{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+:root {
+    /* side padding: 5% normally, centred at 1400px on very wide screens */
+    --page-x: max(5%, calc((100% - 1400px) / 2));
 }
 
-.categories{
-    width: 500px;
-    height: 400px;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid rgb(189, 187, 187);
-    display: flex;
-    flex-direction: row;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-.categories img{
-    height: 70px;
-    width: 70px;
-}
-.stars {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: center;
-    width: fit-content;
-}
-.stars input {
-    display: none;
-}
-.stars label {
-    font-size: 40px;
-    color: #ccc;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-.stars label:hover,
-.stars label:hover ~ label {
-    color: #ffc107;
-}
-.stars input:checked ~ label {
-    color: #ffc107;
-}
-textarea {
-    display: block;
-    width: 300px;
-    height: 100px;
-    margin: 15px 0;
-    padding: 10px;
-    resize: vertical;
-}
-button {
-    padding: 10px 20px;
-    cursor: pointer;
-}
-.nav{
-    display: flex;
-    justify-content: space-between;
-}
-.nav .right-buttons{
-    width: 25%;
-    display: flex;
-    justify-content: end;
-    margin-right: 30px;
-    margin-top: 20px;
-}
-.nav .logo img{
-    margin-top: 20px;
-    margin-left: 30px;
-    height: 20px;
-    width: 85px;
-}
-.nav-links{
-    margin-top: 20px;
-    width: 40%;
-    
-}
+html { -webkit-text-size-adjust: 100%; }
 
-.nav-links a{
-    text-decoration: none;
-    margin-right: 12px;
-    font-size: 12px;
-    color: black;
-    font-weight: 600;
-}
-
-.right-buttons a{
-    text-decoration: none;
-    margin-left: 12px;
-    font-size: 12px;
-    color: black;
-    font-weight: 600;
-}
-.profilepic img{
-    height: 30px;
-    width: 30px;
-    border-radius: 50px;
-}
-
-/* Recent Lost & Found Items */
-.recent-items {
-    padding: 50px 8%;
-    background-color: #fff9fb;
-}
-
-.recent-items .recent-head h3 {
-    font-size: 28px;
-    color: #333;
-    margin: 0 0 10px;
-}
-
-.recent-items .recent-head p {
-    color: #777;
-    font-size: 15px;
-    margin: 0;
-}
-
-/* Items Grid */
-.items-container {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 24px;
-}
-
-/* Item Card */
-.item-card {
-    background: #fff;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    min-width: 0;
-}
-
-.item-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
-}
-
-/* Photo Area */
-.item-picture {
-    position: relative;
-    width: 100%;
-    height: 210px;
-    overflow: hidden;
-    background: #f2edf0;
-}
-
-.item-picture img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s ease;
-}
-
-.item-card:hover .item-picture img {
-    transform: scale(1.04);
-}
-
-/* LOST / FOUND Badge */
-.item-label {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 2;
-    padding: 7px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.7px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
-.item-label.lost {
-    background-color: #ffe0e5;
-    color: #c62845;
-}
-
-.item-label.found {
-    background-color: #d9f5e7;
-    color: #16794b;
-}
-
-/* Item Details */
-.item-details {
-    padding: 18px;
-}
-
-.item-details h4 {
-    color: #333;
-    font-size: 18px;
-    margin: 0 0 14px;
-    overflow-wrap: anywhere;
-}
-
-.item-details p {
-    color: #666;
-    font-size: 13px;
-    line-height: 1.6;
-    margin: 8px 0;
-    overflow-wrap: anywhere;
-}
-
-.item-details p b {
-    color: #444;
-}
-
-/* Tablet */
-@media (max-width: 1024px) {
-    .items-container {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-    }
-
-    .recent-items {
-        padding: 40px 5%;
-    }
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-    .items-container {
-        grid-template-columns: 1fr;
-    }
-
-    .recent-items {
-        padding: 30px 5%;
-    }
-
-    .recent-items .recent-head h3 {
-        font-size: 23px;
-    }
-
-    .item-picture {
-        height: 230px;
-    }
-}
-
-.flash-message {
-    width: fit-content;
-    max-width: 90%;
-    min-width: 280px;
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    padding: 15px 18px;
-    margin: 20px auto;
-
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.5;
-
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
-    animation: flashSlideIn 0.35s ease-out;
-}
-
-.flash-success {
-    background-color: #ecfdf3;
-    color: #166534;
-    border: 1px solid #bbf7d0;
-    border-left: 5px solid #22c55e;
-}
-
-.flash-error {
-    background-color: #fff1f2;
-    color: #9f1239;
-    border: 1px solid #fecdd3;
-    border-left: 5px solid #f43f5e;
-}
-
-.flash-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.flash-success .flash-icon {
-    background-color: #dcfce7;
-    color: #15803d;
-}
-
-.flash-error .flash-icon {
-    background-color: #ffe4e6;
-    color: #be123c;
-}
-
-.flash-text {
-    flex: 1;
-    overflow-wrap: anywhere;
-}
-
-.flash-close {
-    flex-shrink: 0;
-    border: none;
-    background: transparent;
-    color: inherit;
-    font-size: 23px;
-    cursor: pointer;
-    opacity: 0.65;
-    padding: 0 2px;
-}
-
-.flash-close:hover {
-    opacity: 1;
-}
-
-@keyframes flashSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (max-width: 480px) {
-    .flash-message {
-        width: calc(100% - 30px);
-        min-width: 0;
-        max-width: none;
-        margin: 15px auto;
-        padding: 12px;
-    }
-}
-
-
-/* =====================================================
-   FINDBACK REDESIGN (added below the original code)
-   ===================================================== */
 body {
-    font-family: 'Poppins', Arial, Helvetica, sans-serif;
-    color: #1b2559;
+    margin: 0;
+    font-family: var(--font, 'Poppins', Arial, Helvetica, sans-serif);
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: clip;          /* clip (not hidden) so the sticky navbar keeps working */
 }
 
-/* ---------- HERO ---------- */
+img { max-width: 100%; }
+
+/* =====================  HERO  ===================== */
 .top-layer {
     display: flex;
     align-items: stretch;
     gap: 40px;
-    padding: 30px 5% 40px;
+    padding: 30px var(--page-x) 40px;
 }
-.top-layer .left {
-    flex: 1;
-    min-width: 0;
-}
+.top-layer .left  { flex: 1; min-width: 0; }
 .top-layer .right {
     flex: 1;
     min-width: 0;
     display: flex;
+    border-radius: 20px;
+    background: url('/img/local-img/index.png') center / cover no-repeat;
 }
 .top-layer .right img {
     width: 100%;
@@ -376,71 +44,56 @@ body {
     object-fit: cover;
     border-radius: 20px;
     display: block;
-    background: linear-gradient(135deg, #efe6ff, #b79cf7);
-}
-
-/* Hero poster via CSS (delete this block if you set the <img src> in the HTML instead) */
-.top-layer .right {
-    background: url('/img/local-img/index.png') center / cover no-repeat;
-    border-radius: 20px;
-}
-.top-layer .right img {
-    visibility: hidden;
+    visibility: hidden;        /* poster comes from the CSS background above */
 }
 
 .header h3 {
+    margin: 0;
     font-size: 38px;
     line-height: 1.2;
-    margin: 0;
-    color: #1b2559;
+    color: var(--text);
 }
-.header h3:nth-of-type(2) {
-    color: #7a14e6;
-}
+.header h3:nth-of-type(2) { color: var(--primary); }
 .header p {
-    color: #6b6f8d;
-    font-size: 14px;
     max-width: 380px;
     margin: 14px 0 0;
+    font-size: 14px;
+    color: var(--text-2);
 }
 
-/* Search pill */
+/* search pill */
 .search {
     display: flex;
     align-items: center;
     max-width: 480px;
     margin: 24px 0;
     padding: 6px 6px 6px 20px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 999px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    background: var(--surface);
+    box-shadow: var(--shadow);
 }
 .search::before {
     content: "what do you lose or find?";
     flex: 1;
     font-size: 12px;
-    color: #999;
+    color: var(--muted);
 }
 .search a {
-    background: #7a14e6;
-    color: #fff;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 600;
     padding: 9px 22px;
     border-radius: 999px;
-}
-
-/* Lost / Found buttons */
-.lostFound-button {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-.lostFound-button a {
+    background: var(--primary);
+    color: var(--on-primary);
+    font-size: 12px;
+    font-weight: 600;
     text-decoration: none;
 }
+.search a:hover { background: var(--primary-600); }
+
+/* lost / found buttons */
+.lostFound-button { display: flex; flex-wrap: wrap; gap: 16px; }
+.lostFound-button a { text-decoration: none; }
+
 .lost-button,
 .found-button {
     display: flex;
@@ -450,62 +103,49 @@ body {
     padding: 18px;
     border-radius: 10px;
     color: #fff;
-    box-sizing: border-box;
 }
-.lost-button  { background: #7a14e6; }
-.found-button { background: #16a085; }
+.lost-button  { background: var(--primary); color: var(--on-primary); }
+.found-button { background: #0F766E; }
+
 .lost-button .search-icon img,
 .found-button .search-icon img {
+    display: block;
     width: 28px;
     height: 28px;
-    display: block;
     filter: brightness(0) invert(1);
 }
 .lost-button .text h4,
-.found-button .text h4 {
-    margin: 0 0 4px;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-}
+.found-button .text h4 { margin: 0 0 4px; font-size: 12px; letter-spacing: 0.3px; }
 .lost-button .text p,
-.found-button .text p {
-    margin: 0;
-    font-size: 10px;
-    line-height: 1.5;
-    opacity: 0.9;
-}
+.found-button .text p  { margin: 0; font-size: 10px; line-height: 1.5; opacity: 0.9; }
 
-/* ---------- CATEGORIES ---------- */
+/* =====================  CATEGORIES  ===================== */
 .categories {
-    box-sizing: border-box;
-    width: 100%;
-    height: auto;
-    padding: 30px 5% 40px;
-    border: none;
-    border-radius: 0;
+    display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: flex-start;
     gap: 24px;
+    --tile: 130px;
+    padding: 30px var(--page-x) 40px;
 }
 .categories::before {
     content: "Browse Items by Category";
     width: 100%;
     font-size: 22px;
     font-weight: 700;
-    color: #1b2559;
+    color: var(--text);
 }
 .categories a {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100px;
+    width: var(--tile);
     text-decoration: none;
 }
 .categories a img {
-    box-sizing: border-box;
-    width: 100px;
-    height: 100px;
+    width: var(--tile);
+    height: var(--tile);
     padding: 14px;
     object-fit: contain;
     border-radius: 12px;
@@ -513,11 +153,12 @@ body {
 }
 .categories a p {
     margin: 8px 0 0;
-    font-size: 12px;
-    color: #1b2559;
+    font-size: 13px;
     text-align: center;
     text-transform: capitalize;
+    color: var(--text);
 }
+/* category tile colours (decorative, same in light and dark) */
 .categories a:nth-of-type(1) img { background: #7a7a7a; }
 .categories a:nth-of-type(2) img { background: #f04444; }
 .categories a:nth-of-type(3) img { background: #b8b8b8; }
@@ -526,30 +167,11 @@ body {
 .categories a:nth-of-type(6) img { background: #22b0c8; }
 .categories a:nth-of-type(7) img { background: #a86a1a; }
 
-/* ---------- RECENT ITEMS ---------- */
+/* =====================  RECENT ITEMS  ===================== */
 .recent-items {
-    background: #fff;
+    padding: 50px var(--page-x);
+    background: var(--surface-2, var(--bg));
 }
-.recent-items .recent-head h3 {
-    color: #1b2559;
-    font-weight: 700;
-    font-size: 22px;
-}
-.item-card {
-    border: 1px solid #eee;
-    border-radius: 10px;
-}
-.item-label {
-    top: 8px;
-    left: 8px;
-    padding: 4px 10px;
-    font-size: 10px;
-    color: #fff;
-}
-.item-label.lost  { background-color: #f04444; color: #fff; }
-.item-label.found { background-color: #16a085; color: #fff; }
-
-/* ---------- RECENT ITEMS: heading row + View All button ---------- */
 .recent-head {
     display: flex;
     justify-content: space-between;
@@ -557,193 +179,233 @@ body {
     gap: 16px;
     margin-bottom: 30px;
 }
+.recent-head h3 { margin: 0 0 10px; font-size: 22px; font-weight: 700; color: var(--text); }
+.recent-head p  { margin: 0; font-size: 15px; color: var(--text-2); }
 
 .view-all-btn {
     flex-shrink: 0;
     padding: 10px 22px;
     border-radius: 8px;
-    background: #7a14e6;
-    color: #fff;
-    text-decoration: none;
+    background: var(--primary);
+    color: var(--on-primary);
     font-size: 13px;
     font-weight: 600;
+    text-decoration: none;
     white-space: nowrap;
-    transition: opacity 0.2s ease;
+}
+.view-all-btn:hover { background: var(--primary-600); }
+
+.items-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
 }
 
-.view-all-btn:hover {
-    opacity: 0.85;
+.item-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+.item-card:hover { transform: translateY(-5px); }
 
-@media (max-width: 600px) {
-    .recent-head {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+.item-picture {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    overflow: hidden;
+    background: var(--primary-soft);
 }
+.item-picture img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    font-size: 0;              /* hides broken-image alt text */
+    color: transparent;
+    transition: transform 0.3s ease;
+}
+.item-card:hover .item-picture img { transform: scale(1.04); }
 
-/* ---------- FEEDBACK ---------- */
-h2 {
+.item-label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+.item-label.lost    { background: #DC2626; }
+.item-label.found   { background: #047857; }
+.item-label.claimed { background: #475569; }
+
+.item-card.is-claimed .item-picture img { filter: grayscale(0.7); opacity: 0.75; }
+
+.item-details { flex: 1; padding: 18px; }
+.item-details h4 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    color: var(--text);
+    overflow-wrap: anywhere;
+}
+.item-details p {
+    margin: 8px 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-2);
+    overflow-wrap: anywhere;
+}
+.item-details p b { color: var(--text); }
+
+.item-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px;
+    padding: 0 18px 18px;
+}
+.claim-btn,
+.message-btn {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
     text-align: center;
-    color: #1b2559;
-    font-size: 22px;
-    margin: 50px 5% 20px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
-form {
+.claim-btn { background: var(--primary); color: var(--on-primary); }
+.claim-btn:hover { background: var(--primary-600); transform: translateY(-2px); }
+
+.message-btn {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-color: var(--border);
+}
+.message-btn:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+.claim-btn.disabled {
+    background: var(--border);
+    color: var(--muted);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* =====================  FEEDBACK FORM  ===================== */
+.feedback h2 {
+    margin: 50px 5% 20px;
+    text-align: center;
+    font-size: 22px;
+    color: var(--text);
+}
+.feedback-form {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-form textarea {
+.stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    width: fit-content;
+}
+.stars input { display: none; }
+.stars label {
+    font-size: 40px;
+    color: var(--border);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.stars label:hover,
+.stars label:hover ~ label,
+.stars input:checked ~ label { color: #F59E0B; }
+
+.feedback-form textarea {
+    display: block;
     width: min(500px, 90%);
-    border: 1px solid #ddd;
+    height: 100px;
+    margin: 15px 0;
+    padding: 10px;
+    resize: vertical;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
     border-radius: 10px;
     font-family: inherit;
 }
-form button[type="submit"] {
-    background: #7a14e6;
-    color: #fff;
+.feedback-form textarea::placeholder { color: var(--muted); }
+.feedback-form button[type="submit"] {
+    padding: 10px 20px;
     border: none;
     border-radius: 8px;
+    background: var(--primary);
+    color: var(--on-primary);
     font-family: inherit;
     font-weight: 600;
+    cursor: pointer;
 }
-.feedback-list {
-    padding: 30px 8%;
-}
-.feedback-list h3 {
-    color: #1b2559;
-}
+.feedback-form button[type="submit"]:hover { background: var(--primary-600); }
 
-/* ---------- FOOTER (generated, no HTML needed) ---------- */
-body::after {
-    content: "FindBack\A Helping people reunite with their lost belongings.";
-    white-space: pre-line;
-    display: block;
-    margin-top: 40px;
-    padding: 24px 8%;
-    background: #1b2559;
-    color: #fff;
-    font-size: 11px;
-    line-height: 1.7;
-}
+/* =====================  CUSTOMER FEEDBACK  ===================== */
+.feedback-list { padding: 30px var(--page-x) 40px; }
+.feedback-list h3 { margin: 0 0 6px; color: var(--text); }
+.feedback-sub { margin: 0 0 20px; font-size: 14px; color: var(--text-2); }
+.feedback-empty { color: var(--muted); font-size: 14px; }
 
-/* =====================================================
-   NAVBAR (copied from the submit page)
-   ===================================================== */
-body {
-    padding-top: 60px; /* room for the fixed bar */
-}
-
-.nav {
-    box-sizing: border-box;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    padding: 0 30px;
+.feedback-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #FFFFFF;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    z-index: 1000;
+    gap: 20px;
+    overflow-x: auto;          /* swipe sideways when there are many */
+    padding-bottom: 10px;
 }
-.nav .logo img {
-    display: block;
-    height: 24px;
-    width: auto;
-    margin: 0;
+.feedback-card {
+    flex: 0 0 260px;
+    padding: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
 }
-.nav-links {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: block;
-    width: auto;
-    margin: 0;
-    white-space: nowrap;
-    text-align: center;
+.feedback-card p {
+    margin: 0 0 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-2);
+    overflow-wrap: anywhere;
 }
-.nav-links a {
-    margin: 0 14px;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 500;
-    color: #2d2a4a;
-}
-.nav .right-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    width: auto;
-    margin: 0;
-}
-.right-buttons a {
-    margin: 0;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 500;
-    color: #2d2a4a;
-}
-.right-buttons > a:last-child {
-    background: #7C18FF;
-    color: #FFFFFF;
-    padding: 8px 18px;
-    border-radius: 6px;
-}
-.profilepic {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.profilepic img {
-    display: block;
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-.nav-links a:hover,
-.right-buttons a:hover {
-    color: #7C18FF;
-}
-.right-buttons > a:last-child:hover {
-    color: #FFFFFF;
-    opacity: 0.85;
-}
-/* ===== FOOTER: help band + dark bar ===== */
-body::after {
-    display: none;            /* turns off the old generated footer bar */
-}
+.feedback-card p:last-child { margin-bottom: 0; }
+.feedback-card b { color: var(--primary); }
 
-.footer {
-    margin-top: 40px;
-}
+/* =====================  FOOTER  ===================== */
+.footer { margin-top: 40px; }
 
 .help-band {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    padding: 18px 5%;
-    background: #c4b0ff;
+    padding: 18px var(--page-x);
+    background: var(--primary-soft);
+    border-top: 1px solid var(--border);
 }
-
-.help-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.help-main {
-    flex: 1.6;
-    min-width: 0;
-}
-
+.help-item { display: flex; align-items: center; gap: 14px; }
+.help-main { flex: 1.6; min-width: 0; }
 .help-icon {
     display: flex;
     align-items: center;
@@ -752,655 +414,160 @@ body::after {
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    background: #d6c9ff;
-    font-size: 20px;
+    background: #fff;          /* stays white so the icons are visible in dark mode too */
+    font-size: 0;
 }
-
-.help-main h4 {
-    margin: 0 0 4px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #1b2559;
-}
-
-.help-main p {
-    margin: 0;
-    font-size: 10px;
-    line-height: 1.5;
-    color: #1b2559;
-}
-
-.help-label {
-    font-size: 12px;
-    color: #1b2559;
-}
-
+.help-icon img { display: block; width: 75px; height: 75px; object-fit: contain; }
+.help-main h4 { margin: 0 0 4px; font-size: 13px; font-weight: 700; color: var(--text); }
+.help-main p  { margin: 0; font-size: 10px; line-height: 1.5; color: var(--text-2); }
+.help-label   { font-size: 12px; color: var(--text); }
 .help-btn {
     flex-shrink: 0;
     padding: 10px 20px;
     border-radius: 8px;
-    background: #7a14e6;
-    color: #fff;
-    text-decoration: none;
+    background: var(--primary);
+    color: var(--on-primary);
     font-size: 12px;
     font-weight: 500;
-    white-space: nowrap;
-}
-
-.help-btn:hover {
-    opacity: 0.85;
-}
-
-.footer-bar {
-    padding: 22px 5%;
-    background: #1b2559;
-    color: #fff;
-}
-
-.footer-bar h4 {
-    margin: 0 0 4px;
-    font-size: 13px;
-}
-
-.footer-bar p {
-    margin: 0;
-    font-size: 10px;
-    opacity: 0.85;
-}
-
-/* footer responsive */
-@media (max-width: 900px) {
-    .help-band {
-        flex-wrap: wrap;
-        justify-content: flex-start;
-    }
-    .help-main {
-        flex: 1 1 100%;
-    }
-}
-
-@media (max-width: 600px) {
-    .help-item {
-        flex: 1 1 45%;
-    }
-    .help-btn {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-.item-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    flex-wrap: wrap;
-}
-
-.claim-btn,
-.message-btn {
-    display: inline-block;
-    flex: 1;
-    min-width: 100px;
-    padding: 10px 14px;
-    text-align: center;
     text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.claim-btn {
-    background-color: #8a66f5;
-    color: white;
-}
-
-.claim-btn:hover {
-    background-color: #aa91f5;
-    transform: translateY(-2px);
-}
-
-.message-btn {
-    background-color: #ddd4fa;
-    color: #8a66f5;
-    border: 1px solid #f3b4e9;
-}
-
-.message-btn:hover {
-    background-color: #f8c9f2;
-    transform: translateY(-2px);
-}
-
-@media (max-width: 480px) {
-    .item-actions {
-        flex-direction: column;
-    }
-
-    .claim-btn,
-    .message-btn {
-        width: 100%;
-        box-sizing: border-box;
-    }
-}
-/* nav responsive */
-@media (max-width: 900px) {
-    .nav-links a {
-        margin: 0 8px;
-    }
-}
-@media (max-width: 700px) {
-    body {
-        padding-top: 100px;
-    }
-    .nav {
-        height: auto;
-        flex-wrap: wrap;
-        padding: 10px 15px;
-    }
-    .nav-links {
-        position: static;
-        transform: none;
-        order: 3;
-        width: 100%;
-        margin-top: 8px;
-        white-space: normal;
-        text-align: center;
-    }
-    .nav-links a {
-        display: inline-block;
-        margin: 2px 8px;
-    }
-}
-@media (max-width: 360px) {
-    .nav-links a {
-        font-size: 11px;
-        margin: 2px 5px;
-    }
-    .right-buttons {
-        gap: 8px;
-    }
-    .right-buttons > a:last-child {
-        padding: 6px 12px;
-    }
-}
-
-/* ===== CUSTOMER FEEDBACK: box row ===== */
-.feedback-list {
-    display: grid;
-    grid-auto-flow: column;            /* fill each column top-to-bottom = one feedback per column */
-    grid-template-columns: 260px;
-    grid-auto-columns: 260px;          /* every box is 260px wide */
-    grid-template-rows: auto auto repeat(3, auto);
-    column-gap: 20px;
-    align-items: stretch;
-    overflow-x: auto;                  /* scroll sideways when there are many */
-    padding: 30px 8% 40px;
-}
-
-/* heading + subtitle sit above the boxes */
-.feedback-list h3 {
-    grid-column: 1;
-    grid-row: 1;
-    margin: 0 0 6px;
     white-space: nowrap;
 }
-.feedback-list > p:first-of-type {
-    grid-column: 1;
-    grid-row: 2;
-    margin: 0 0 20px;
-    font-size: 14px;
-    color: #6b6f8d;
-    white-space: nowrap;
-}
+.help-btn:hover { background: var(--primary-600); }
 
-/* every Sender / Rating / Message line */
-.feedback-list > p:not(:first-of-type) {
-    margin: 0;
-    padding: 6px 18px;
-    background: #f6f3ff;
-    border-left: 1px solid #d9ccff;
-    border-right: 1px solid #d9ccff;
-    font-size: 13px;
-    color: #444;
-    overflow-wrap: anywhere;
-}
-/* Sender = top of the box */
-.feedback-list > p:nth-of-type(3n+2) {
-    padding-top: 18px;
-    border-top: 1px solid #d9ccff;
-    border-radius: 14px 14px 0 0;
-}
-/* Message = bottom of the box */
-.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) {
-    padding-bottom: 18px;
-    border-bottom: 1px solid #d9ccff;
-    border-radius: 0 0 14px 14px;
-}
-.feedback-list > p b {
-    color: #7a14e6;
-}
-/* ===== FEEDBACK: alignment ===== */
-.feedback-list {
-    justify-content: safe center;   /* centers the row of boxes; scrolls normally if there are many */
-    align-content: start;
-}
+.footer-bar { padding: 22px var(--page-x); background: #1b2559; color: #fff; }
+.footer-bar h4 { margin: 0 0 4px; font-size: 13px; }
+.footer-bar p  { margin: 0; font-size: 10px; opacity: 0.85; }
 
-/* title + subtitle line up with the left edge of the first box */
-.feedback-list h3,
-.feedback-list > p:first-of-type {
-    justify-self: start;
-    text-align: left;
-}
-
-/* same left alignment and spacing for text inside every box */
-.feedback-list > p:not(:first-of-type) {
-    text-align: left;
-    line-height: 1.6;
-    align-self: stretch;
-}
-
-/* Message row grows so all boxes end at the same height */
-.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) {
-    align-self: stretch;
-}/* ===== FEEDBACK: fix alignment ===== */
-.feedback-list {
-    grid-template-rows: auto auto auto auto auto;  /* 2 heading rows + 3 box rows */
-    align-items: stretch;
-    justify-content: start;
-}
-
-/* heading + subtitle span the top, above all the boxes */
-.feedback-list h3 {
-    grid-column: 1 / span 3;
-    grid-row: 1;
-}
-.feedback-list > p:first-of-type {
-    grid-column: 1 / span 3;
-    grid-row: 2;
-}
-
-/* every feedback uses the same three rows, one column each */
-.feedback-list > p:nth-of-type(3n+2) { grid-row: 3; }                          /* Sender  */
-.feedback-list > p:nth-of-type(3n)   { grid-row: 4; }                          /* Rating  */
-.feedback-list > p:nth-of-type(3n+1):not(:first-of-type) { grid-row: 5; }      /* Message */
-
-
-.admin-dashboard-btn {
-    display: inline-block;
-    padding: 10px 16px;
-    margin-right: 12px;
-    background: #2563eb;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: background 0.2s ease;
-}
-
-.admin-dashboard-btn:hover {
-    background: #1d4ed8;
-}
-
-
-
-/* ===== EXTRA RESPONSIVE  ===== */
-
-@media (max-width: 1200px) {
-    .top-layer {
-        gap: 30px;
-    }
-    .header h3 {
-        font-size: 34px;
-    }
-}
-
-@media (max-width: 900px) {
-    /* hero: poster goes under the text */
-    .top-layer {
-        flex-direction: column;
-        gap: 28px;
-        padding: 24px 5% 30px;
-    }
-    .top-layer .right img {
-        min-height: 260px;
-    }
-    .header p,
-    .search {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 600px) {
-    /* hero */
-    .header h3 {
-        font-size: 28px;
-    }
-    .top-layer .right img {
-        min-height: 220px;
-    }
-
-    /* categories: 3 tiles per row */
-    .categories {
-        padding: 24px 5% 30px;
-        gap: 16px;
-    }
-    .categories::before {
-        font-size: 19px;
-    }
-    .categories a {
-        width: calc((100% - 32px) / 3);
-    }
-    .categories a img {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 1 / 1;
-    }
-
-    /* feedback: swipe sideways, one box roughly per screen */
-    h2 {
-        margin: 36px 5% 16px;
-        font-size: 19px;
-    }
-    .stars label {
-        font-size: 34px;
-    }
-    .feedback-list {
-        grid-auto-columns: 82%;
-        padding: 24px 5% 30px;
-        scroll-snap-type: x mandatory;
-    }
-    .feedback-list h3,
-    .feedback-list > p:first-of-type {
-        grid-column: 1;
-        white-space: normal;
-    }
-    .feedback-list > p:not(:first-of-type) {
-        scroll-snap-align: start;
-    }
-
-    /* footer */
-    body::after {
-        padding: 20px 5%;
-    }
-}
-
-@media (max-width: 480px) {
-    /* hero buttons stack */
-    .lostFound-button {
-        flex-direction: column;
-    }
-    .lost-button,
-    .found-button {
-        width: 100%;
-    }
-}
-
-@media (max-width: 360px) {
-    .header h3 {
-        font-size: 25px;
-    }
-    .categories a {
-        width: calc((100% - 16px) / 2);   /* 2 tiles per row */
-    }
-}
-
-
-/* footer icon images */
-.help-icon {
-    font-size: 0;            /* no emoji sizing needed anymore */
-}
-
-.help-icon img {
-    display: block;
-    width: 75px;
-    height: 75px;
-    object-fit: contain;
-}
-
-/* resize category boxes (change --tile to make them bigger or smaller) */
-@media (min-width: 601px) {
-    .categories {
-        --tile: 130px;
-    }
-
-    .categories a {
-        width: var(--tile);
-    }
-
-    .categories a img {
-        width: var(--tile);
-        height: var(--tile);
-    }
-
-    .categories a p {
-        font-size: 13px;   /* label size, optional */
-    }
-}
-
-/* ===== RESPONSIVE: NAVBAR TO FOOTER (added at the bottom) ===== */
-
-/* ---------- Safety net ---------- */
-html {
-    -webkit-text-size-adjust: 100%;
-}
-body {
-    overflow-x: hidden;
-}
-img {
-    max-width: 100%;
-}
-
-/* ---------- NAVBAR ---------- */
-
-/* links no longer fit centered between logo and buttons, so give them their own row
-   (moved up from 700px so they never collide on tablets) */
-@media (max-width: 800px) {
-    .nav {
-        height: auto;
-        flex-wrap: wrap;
-        padding: 10px 20px;
-        gap: 6px 12px;
-    }
-    .nav-links {
-        position: static;
-        transform: none;
-        order: 3;
-        width: 100%;
-        margin-top: 0;
-        white-space: normal;
-        text-align: center;
-    }
-    .nav-links a {
-        display: inline-block;
-        margin: 3px 10px;
-    }
-
-    /* the taller fixed navbar would cover the top of the page, so push content down */
-    body {
-        padding-top: 110px;
-    }
-}
-
-@media (max-width: 600px) {
-    .nav {
-        padding: 10px 14px;
-    }
-    .nav-links a {
-        margin: 3px 7px;
-    }
-}
-
-@media (max-width: 400px) {
-    .nav-links a {
-        font-size: 11px;
-        margin: 3px 5px;
-    }
-    .right-buttons {
-        gap: 8px;
-    }
-    .right-buttons > a:last-child {
-        padding: 6px 12px;
-    }
-    body {
-        padding-top: 115px;
-    }
-}
-
-/* ---------- LARGE SCREENS ---------- */
-@media (min-width: 1600px) {
-    /* keeps the content from stretching edge to edge on big monitors / TVs */
-    .top-layer,
-    .categories,
-    .recent-items,
-    .feedback-list {
-        padding-left: calc((100% - 1400px) / 2);
-        padding-right: calc((100% - 1400px) / 2);
-    }
-    .help-band,
-    .footer-bar {
-        padding-left: calc((100% - 1400px) / 2);
-        padding-right: calc((100% - 1400px) / 2);
-    }
-}
-
-/* ---------- LAPTOPS: 3 cards per row before dropping to 2 ---------- */
-@media (min-width: 1025px) and (max-width: 1280px) {
-    .items-container {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-/* ---------- PHONES ---------- */
-@media (max-width: 600px) {
-    /* 16px stops iPhones from zooming in when the feedback box is tapped */
-    form textarea {
-        font-size: 16px;
-    }
-    form button[type="submit"],
-    .claim-btn,
-    .message-btn {
-        min-height: 44px;
-    }
-    .item-details h4 {
-        font-size: 17px;
-    }
-}
-
-@media (max-width: 400px) {
-    .search {
-        padding-left: 14px;
-    }
-    .search a {
-        padding: 9px 16px;
-    }
-    .lost-button,
-    .found-button {
-        padding: 14px;
-    }
-    .stars label {
-        font-size: 30px;
-    }
-}
-
-/* ---------- FOOTER ---------- */
-@media (max-width: 400px) {
-    .help-item {
-        flex: 1 1 100%;
-    }
-    .help-btn {
-        padding: 12px 16px;
-    }
-}
-
-/* ---------- PHONES IN LANDSCAPE (short screens) ---------- */
-@media (max-height: 500px) and (orientation: landscape) {
-    .top-layer {
-        padding-top: 16px;
-    }
-    .top-layer .right img {
-        min-height: 200px;
-    }
-}
-
-/* ---------- TOUCH DEVICES: no hover effects stuck after a tap ---------- */
-@media (hover: none) {
-    .item-card:hover {
-        transform: none;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    }
-    .item-card:hover .item-picture img {
-        transform: none;
-    }
-    .claim-btn:hover,
-    .message-btn:hover {
-        transform: none;
-    }
-    .claim-btn:hover   { background-color: #c4b0ff; }
-    .message-btn:hover { background-color: #fce4ec; }
-}
-
-/* ---------- RESPECT "REDUCE MOTION" ---------- */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        transition: none !important;
-        animation: none !important;
-    }
-}
-
-
-/* ===== RECENT ITEMS: CARD BUTTON FIX ===== */
-
-/* card becomes a column so the buttons always sit at the bottom */
-.item-card {
+/* =====================  FLASH MESSAGES  ===================== */
+.flash-message {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    min-width: 280px;
+    max-width: 90%;
+    margin: 20px auto;
+    padding: 15px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    animation: flashSlideIn 0.35s ease-out;
 }
-.item-details {
-    flex: 1;                         /* takes the leftover space, pushing buttons down */
-}
-
-/* buttons: inset to match the text, same height, aligned across cards */
-.item-actions {
-    margin-top: 0;
-    padding: 0 18px 18px;
-    align-items: stretch;
-}
-.claim-btn,
-.message-btn {
-    display: flex;                   /* centers the text vertically */
+.flash-success { background: #ecfdf3; color: #166534; border: 1px solid #bbf7d0; border-left: 5px solid #22c55e; }
+.flash-error   { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; border-left: 5px solid #f43f5e; }
+.flash-icon {
+    display: flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
-    border: 1px solid transparent;   /* claim gets a border too, so both match */
-    line-height: 1.2;
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    font-size: 15px;
+    font-weight: 700;
 }
-.message-btn {
-    border-color: #c4b0ff;
+.flash-success .flash-icon { background: #dcfce7; color: #15803d; }
+.flash-error .flash-icon   { background: #ffe4e6; color: #be123c; }
+.flash-text { flex: 1; overflow-wrap: anywhere; }
+.flash-close {
+    flex-shrink: 0;
+    padding: 0 2px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 23px;
+    cursor: pointer;
+    opacity: 0.65;
+}
+.flash-close:hover { opacity: 1; }
+
+/* =====================  DARK MODE (logged-in users who chose it)  ===================== */
+[data-theme="dark"] .lost-button .search-icon img {
+    filter: brightness(0);   /* dark icon on the lighter dark-mode accent */
 }
 
-/* hide broken-image alt text so it doesn't overlap the LOST/FOUND badge */
-.item-picture img {
-    font-size: 0;
-    color: transparent;
+@keyframes flashSlideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
+/* =====================  RESPONSIVE  ===================== */
+@media (min-width: 1025px) and (max-width: 1280px) {
+    .items-container { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1200px) {
+    .top-layer { gap: 30px; }
+    .header h3 { font-size: 34px; }
+}
+@media (max-width: 1024px) {
+    .items-container { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .recent-items { padding: 40px var(--page-x); }
+}
+@media (max-width: 900px) {
+    .top-layer { flex-direction: column; gap: 28px; padding: 24px var(--page-x) 30px; }
+    .top-layer .right img { min-height: 260px; }
+    .header p, .search { max-width: 100%; }
+    .help-band { flex-wrap: wrap; justify-content: flex-start; }
+    .help-main { flex: 1 1 100%; }
+}
+@media (max-width: 600px) {
+    .header h3 { font-size: 28px; }
+    .top-layer .right img { min-height: 220px; }
 
-/* ===== CLAIMED ITEMS (label + disabled claim button) ===== */
-.item-label.claimed {
-    background-color: #6d7088;
-    color: #fff;
+    .categories { gap: 16px; padding: 24px var(--page-x) 30px; }
+    .categories::before { font-size: 19px; }
+    .categories a { width: calc((100% - 32px) / 3); }
+    .categories a img { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+
+    .items-container { grid-template-columns: 1fr; }
+    .recent-items { padding: 30px var(--page-x); }
+    .recent-head { flex-direction: column; align-items: flex-start; }
+    .recent-head h3 { font-size: 20px; }
+    .item-picture { height: 230px; }
+    .item-details h4 { font-size: 17px; }
+
+    .feedback h2 { margin: 36px 5% 16px; font-size: 19px; }
+    .stars label { font-size: 34px; }
+    .feedback-form textarea { font-size: 16px; }   /* stops iPhone zoom on focus */
+    .feedback-list { padding: 24px var(--page-x) 30px; }
+    .feedback-row { scroll-snap-type: x mandatory; }
+    .feedback-card { flex-basis: 82%; scroll-snap-align: start; }
+
+    .help-item { flex: 1 1 45%; }
+    .help-btn { width: 100%; text-align: center; }
+    .feedback-form button[type="submit"], .claim-btn, .message-btn { min-height: 44px; }
 }
-.item-card.is-claimed .item-picture img {
-    filter: grayscale(.7);
-    opacity: .75;
+@media (max-width: 480px) {
+    .lostFound-button { flex-direction: column; }
+    .lost-button, .found-button { width: 100%; }
+    .item-actions { flex-direction: column; }
+    .claim-btn, .message-btn { width: 100%; }
+    .flash-message { width: calc(100% - 30px); min-width: 0; max-width: none; margin: 15px auto; padding: 12px; }
 }
-.claim-btn.disabled {
-    background: #c9c9d6;
-    color: #fff;
-    cursor: not-allowed;
-    pointer-events: none;
+@media (max-width: 400px) {
+    .search { padding-left: 14px; }
+    .search a { padding: 9px 16px; }
+    .lost-button, .found-button { padding: 14px; }
+    .stars label { font-size: 30px; }
+    .help-item { flex: 1 1 100%; }
 }
-.claim-btn.disabled:hover {
-    background: #c9c9d6;
-    transform: none;
+@media (max-width: 360px) {
+    .header h3 { font-size: 25px; }
+    .categories a { width: calc((100% - 16px) / 2); }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+    .top-layer { padding-top: 16px; }
+    .top-layer .right img { min-height: 200px; }
+}
+
+/* touch screens: no hover effects stuck after a tap */
+@media (hover: none) {
+    .item-card:hover { transform: none; }
+    .item-card:hover .item-picture img { transform: none; }
+    .claim-btn:hover, .message-btn:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
 }

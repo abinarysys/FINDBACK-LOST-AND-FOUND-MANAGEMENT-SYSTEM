@@ -1,61 +1,99 @@
+<%
+    /* The FindBack top navigation. Include it on any page with:  include('partials/navbar', { user: user })
+       Guests see Login / Get Started. Logged-in users see the bell (added automatically by
+       config/global-bell.js) and an Account menu. */
+    const navUser = (typeof user !== 'undefined' && user) ? user : null;
+    const navPath = (typeof currentPath !== 'undefined' && currentPath) ? currentPath : '';
+    const navActive = (href) => href === '/' ? navPath === '/' : (navPath === href || navPath.indexOf(href + '/') === 0);
+    const navInitial = navUser && navUser.full_name ? navUser.full_name.charAt(0).toUpperCase() : 'U';
+%>
+<!-- navbar.css is kept because other pages rely on its .flash-message styles -->
 <link rel="stylesheet" href="/css/user/navbar.css">
+<link rel="stylesheet" href="/css/user/site-nav.css">
 
-<header class="navbar">
-    <div class="nav">
+<header class="u-nav" id="uNav">
+    <div class="u-wrap u-nav-in">
 
-        <!-- Logo -->
-        <div class="logo">
-            <a href="/">
-                <img src="/img/logo.png" alt="FindBack Logo">
-            </a>
-        </div>
+        <a href="/" class="u-brand" aria-label="FindBack home">
+            <img src="/img/logo.png" alt="FindBack">
+        </a>
 
-        <!-- Navigation Links -->
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/browse">Browse Items</a>
-            <a href="/howitworks">How It Works</a>
-            <a href="/contacts">Contact Us</a>
-        </div>
+        <nav class="u-links" aria-label="Main">
+            <a href="/" class="<%= navActive('/') ? 'active' : '' %>">Home</a>
+            <a href="/browse" class="<%= navActive('/browse') ? 'active' : '' %>">Browse Items</a>
+            <a href="/howitworks" class="<%= navActive('/howitworks') ? 'active' : '' %>">How It Works</a>
+            <a href="/contacts" class="<%= navActive('/contacts') ? 'active' : '' %>">Contact Us</a>
+        </nav>
 
-        <!-- Right Buttons -->
-
-        <div class="right-buttons">
-
-            <% if (user && user.role === 'admin') { %>
-                <a href="/admin" class="admin-dashboard-btn">
-                    Admin Dashboard
-                </a>
-            <% } %>
-
-            <% if (user) { %>
-
-
-                <div class="profilepic">
-                    <a href="/user/profile">
-                        <% if (user.profile_image) { %>
-                            <img
-                                src="<%= user.profile_image %>"
-                                alt="<%= user.full_name %> Profile Picture"
-                            >
+        <!-- For logged-in users the notification bell is placed at the start of this box -->
+        <div class="u-nav-actions">
+            <% if (navUser) { %>
+                <details class="u-account" id="uAccount">
+                    <summary>
+                        <% if (navUser.profile_image) { %>
+                            <img class="u-account-av" src="<%= navUser.profile_image %>" alt="">
                         <% } else { %>
-                            <img
-                                src="/img/default-profile.png"
-                                alt="Default Profile Picture"
-                            >
+                            <span class="u-account-av"><%= navInitial %></span>
                         <% } %>
-                    </a>
-
-                    <a href="/auth/logout">Log Out</a>
-                </div>
-
+                        <span class="u-account-label">Account</span>
+                        <svg class="u-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </summary>
+                    <div class="u-menu">
+                        <div class="u-menu-user">
+                            <strong><%= navUser.full_name %></strong>
+                            <small><%= navUser.email || '' %></small>
+                        </div>
+                        <a href="/user/profile">My Profile</a>
+                        <a href="/user/notifications">Notifications</a>
+                        <a href="/user/claims">My Claims</a>
+                        <a href="/user/settings">Settings</a>
+                        <% if (navUser.role === 'admin') { %>
+                            <a href="/admin">Admin Dashboard</a>
+                        <% } %>
+                        <a href="/auth/logout" class="u-menu-logout">Log out</a>
+                    </div>
+                </details>
             <% } else { %>
-
-                <a href="/auth/login">Login</a>
-                <a href="/auth/register" class="get-started">Get Started</a>
-
+                <a href="/auth/login" class="u-btn">Login</a>
+                <a href="/auth/register" class="u-btn u-btn-primary">Get Started</a>
             <% } %>
 
+            <button type="button" class="u-burger" id="uBurger" aria-label="Menu" aria-expanded="false">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
         </div>
     </div>
 </header>
+
+<script>
+(function () {
+    var nav = document.getElementById('uNav');
+    var burger = document.getElementById('uBurger');
+    var acct = document.getElementById('uAccount');   // null for guests
+
+    function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 8); }
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    burger.addEventListener('click', function () {
+        var open = nav.classList.toggle('open');
+        burger.setAttribute('aria-expanded', String(open));
+    });
+
+    document.addEventListener('click', function (e) {
+        if (acct && acct.open && !acct.contains(e.target)) acct.open = false;
+        if (!nav.contains(e.target)) {
+            nav.classList.remove('open');
+            burger.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            if (acct) acct.open = false;
+            nav.classList.remove('open');
+            burger.setAttribute('aria-expanded', 'false');
+        }
+    });
+})();
+</script>

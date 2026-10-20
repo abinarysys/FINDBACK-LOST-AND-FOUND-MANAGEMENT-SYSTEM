@@ -1,0 +1,130 @@
+<%
+    const fmtDate = (value) => value
+        ? new Date(value).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
+        : '—';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Items | FindBack</title>
+
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/user-ui.css">
+    <link rel="stylesheet" href="/css/user/user-shell.css">
+</head>
+<body>
+    <%- include('partials/user-header', { user: user, activePage: 'items' }) %>
+
+    <main class="u-main">
+        <header class="page-head">
+            <div>
+                <h1>My Items</h1>
+                <p>Every lost and found item you have reported.</p>
+            </div>
+        </header>
+
+        <section class="stats" aria-label="Summary">
+            <div class="stat">
+                <div class="stat-icon">
+                    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg>
+                </div>
+                <div><p>Total reported</p><strong><%= stats.total %></strong></div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon warn">
+                    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+                <div><p>Lost items</p><strong><%= stats.lost %></strong></div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon ok">
+                    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div><p>Found items</p><strong><%= stats.found %></strong></div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <% if (items.length) { %>
+                <div class="toolbar">
+                    <div class="chips" role="group" aria-label="Filter items">
+                        <button type="button" class="chip active" data-filter="all">All <em><%= stats.total %></em></button>
+                        <button type="button" class="chip" data-filter="lost">Lost <em><%= stats.lost %></em></button>
+                        <button type="button" class="chip" data-filter="found">Found <em><%= stats.found %></em></button>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Item</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Reported</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody">
+                            <% items.forEach(function (item) { %>
+                                <tr data-type="<%= item.type %>">
+                                    <td><span class="badge <%= item.type === 'found' ? 'badge-success' : 'badge-warning' %> type-chip"><%= item.type %></span></td>
+                                    <td>
+                                        <div class="cell-user">
+                                            <div>
+                                                <strong><%= item.title %></strong>
+                                                <% if (item.category_name) { %><small><%= item.category_name %></small><% } %>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><%= item.location || '—' %></td>
+                                    <td>
+                                        <% if (item.status) { %>
+                                            <span class="badge <%= item.status === 'available' ? 'badge-success' : (item.status === 'claimed' ? 'badge-primary' : 'badge-neutral') %>"><%= item.status %></span>
+                                        <% } else { %>—<% } %>
+                                    </td>
+                                    <td><%= fmtDate(item.created_at) %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty" id="itemsEmpty" hidden><p>No items in this filter.</p></div>
+            <% } else { %>
+                <div class="empty">
+                    <h2 style="font-family:var(--font-display);font-weight:400;color:var(--text);font-size:24px;margin-bottom:6px">Nothing reported yet.</h2>
+                    <p>Lost or found something? Report it and it will show up here.</p>
+                </div>
+            <% } %>
+        </section>
+    </main>
+
+    <script>
+    (function () {
+        var chips = document.querySelectorAll('.chip[data-filter]');
+        var rows = document.querySelectorAll('#itemsBody tr');
+        var empty = document.getElementById('itemsEmpty');
+        if (!chips.length) return;
+
+        chips.forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                var f = chip.getAttribute('data-filter');
+                var shown = 0;
+                chips.forEach(function (c) { c.classList.toggle('active', c === chip); });
+                rows.forEach(function (row) {
+                    var show = f === 'all' || row.getAttribute('data-type') === f;
+                    row.hidden = !show;
+                    if (show) shown++;
+                });
+                empty.hidden = shown > 0;
+            });
+        });
+    })();
+    </script>
+</body>
+</html>

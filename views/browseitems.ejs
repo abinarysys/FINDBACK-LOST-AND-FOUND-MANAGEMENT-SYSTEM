@@ -3,38 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/browseItem.css">
+    <link rel="stylesheet" href="/css/user/tokens.css">
+    <link rel="stylesheet" href="/css/public-base.css">
+    <link rel="stylesheet" href="/css/browse.css">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <title>BROWSE ITEMS</title>
 </head>
-<body>
-    <div class="nav">
-        <div class="logo">
-            <img src="/img/logo.png" alt="FindBack Logo">
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/browse">Browse Items</a>
-            <a href="/howitworks">How It Works</a>
-            <a href="/contacts">Contact Us</a>
-        </div>
-        <div class="right-buttons">
-            <% if (user) { %>
-                <div class="profilepic">
-                    <a href="/user/profile">
-                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
-                    </a>
-                    <a href="/auth/logout">Log Out</a>
-                </div>
-            <% } else { %>
-                <a href="/auth/login">Login</a>
-                <a href="/auth/register">Get Started</a>
-            <% } %>
-        </div>
-    </div>
+<body class="page-browse" data-theme-aware>
+    <%- include('user/partials/navbar', { user: user }) %>
+
     <% if (success && success.length > 0) { %>
         <div class="flash-message flash-success">
             <span class="flash-icon">✓</span>
@@ -159,22 +136,9 @@
                 <button type="button" class="bi-btn" id="clearFilters">Clear filters</button>
             </div>
         </main>
-
-        <section class="help-bar">
-            <div class="help-main">
-                <strong>Need Help? We're Here for You.</strong>
-                <span>Have a question, concern, or need help with a lost or found item? Contact us.</span>
-            </div>
-            <a class="help-item" href="mailto:support@findback.com"><span class="help-dot">✉</span> Email</a>
-            <a class="help-item" href="/contacts"><span class="help-dot">📍</span> Location</a>
-            <a class="help-item" href="/contacts"><span class="help-dot">📞</span> Contact</a>
-            <a class="bi-btn" href="/contacts">Contact Us →</a>
-        </section>
-        <footer class="bi-footer">
-            <strong>FindBack</strong>
-            <span>Helping people reconnect with their lost belongings.</span>
-        </footer>
     </div>
+
+    <%- include('user/partials/public-footer') %>
 
     <script>
         (function () {
@@ -242,7 +206,5 @@
     </script>
     <!-- ================= BROWSE ITEMS (end) ================= -->
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/notify.js"></script>
 </body>
 </html>

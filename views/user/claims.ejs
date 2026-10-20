@@ -1,0 +1,80 @@
+<%
+    const fmtDate = (value) => value
+        ? new Date(value).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
+        : '—';
+    const claimBadge = { pending: 'badge-warning', verified: 'badge-success', rejected: 'badge-danger' };
+    const claimLabel = { pending: 'Pending', verified: 'Approved', rejected: 'Not approved' };
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Claims | FindBack</title>
+
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/user-ui.css">
+    <link rel="stylesheet" href="/css/user/user-shell.css">
+</head>
+<body>
+    <%- include('partials/user-header', { user: user, activePage: 'claims' }) %>
+
+    <main class="u-main">
+        <header class="page-head">
+            <div>
+                <h1>My Claims</h1>
+                <p>Every claim you have submitted and where it stands.</p>
+            </div>
+        </header>
+
+        <section class="panel">
+            <% if (claims.length) { %>
+                <div class="table-wrap">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Submitted</th>
+                                <th>Status</th>
+                                <th>Reviewed</th>
+                                <th class="num">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% claims.forEach(function (c) { %>
+                                <tr>
+                                    <td>
+                                        <div class="cell-user">
+                                            <div>
+                                                <strong><%= c.item_name %></strong>
+                                                <% if (c.item_location) { %><small><%= c.item_location %></small><% } %>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><%= fmtDate(c.created_at) %></td>
+                                    <td><span class="badge <%= claimBadge[c.status] || 'badge-neutral' %>"><%= claimLabel[c.status] || c.status %></span></td>
+                                    <td><%= fmtDate(c.reviewed_at) %></td>
+                                    <td class="num">
+                                        <div class="row-actions">
+                                            <a class="btn btn-ghost btn-sm" href="/user/claims/<%= c.claim_id %>">View Claim</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="empty">
+                    <h2 style="font-family:var(--font-display);font-weight:400;color:var(--text);font-size:24px;margin-bottom:6px">No claims yet.</h2>
+                    <p>When you claim a found item, it will appear here with its status.</p>
+                    <a class="btn btn-primary" style="margin-top:16px" href="/browse">Browse items</a>
+                </div>
+            <% } %>
+        </section>
+    </main>
+</body>
+</html>

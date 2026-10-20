@@ -1,0 +1,140 @@
+/* public/css/user/user-shell.css
+   The account-page layout under the top navigation: sky hero, pill tabs, content area.
+   Load AFTER user-ui.css. Only design tokens are used, so dark mode and the user's
+   accent colour apply automatically. */
+
+:root {
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+    /* sky behind the hero. To use a real photo, see ".u-hero" below. */
+    --sky-top: #9FB4DF;
+    --sky-mid: #DCE5F5;
+    --cloud-1: rgba(255, 255, 255, 0.85);
+    --cloud-2: rgba(255, 255, 255, 0.70);
+    --cloud-3: rgba(255, 255, 255, 0.50);
+}
+
+[data-theme="dark"] {
+    --sky-top: #16203F;
+    --sky-mid: #1B2547;
+    --cloud-1: rgba(255, 255, 255, 0.09);
+    --cloud-2: rgba(255, 255, 255, 0.06);
+    --cloud-3: rgba(255, 255, 255, 0.04);
+}
+
+html { scroll-padding-top: var(--nav-h, 60px); }
+
+/* ---------- Hero ---------- */
+
+/* The hero slides up under the translucent nav so the sky reaches the top of the page.
+   To use your own photo, replace the 4 gradients with:
+   background: linear-gradient(180deg, transparent 60%, var(--bg)), url('/img/sky.jpg') center / cover; */
+.u-hero {
+    margin-top: calc(var(--nav-h, 60px) * -1);
+    padding: calc(var(--nav-h, 60px) + 48px) 0 80px;
+    background:
+        radial-gradient(60% 55% at 12% 20%, var(--cloud-1) 0, transparent 70%),
+        radial-gradient(45% 50% at 82% 12%, var(--cloud-2) 0, transparent 70%),
+        radial-gradient(50% 40% at 55% 50%, var(--cloud-3) 0, transparent 70%),
+        linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--bg) 100%);
+}
+
+.u-hero-in { display: flex; align-items: center; gap: 28px; }
+
+.u-hero-avatar {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 3px solid color-mix(in srgb, var(--primary) 50%, #fff);
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 38px;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+    text-decoration: none;
+}
+
+.u-hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.u-hero-text h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4.2vw, 46px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    overflow-wrap: anywhere;
+}
+
+.u-hero-text p {
+    margin: 8px 0 0;
+    font-size: clamp(15px, 1.6vw, 18px);
+    color: var(--text-2);
+}
+
+/* ---------- Pill tabs ---------- */
+
+.u-tabs {
+    margin-top: -26px;
+    display: flex;
+    gap: 6px;
+    padding: 4px 2px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.u-tabs::-webkit-scrollbar { display: none; }
+
+.u-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
+    padding: 0 22px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--text-2);
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+
+.u-tab .ico { width: 19px; height: 19px; }
+.u-tab:hover { background: var(--primary-soft); color: var(--primary); }
+.u-tab.active { background: var(--text); color: var(--surface); font-weight: 600; }
+.u-tab .nav-count { margin-left: 2px; display: inline-grid; }
+.u-tab.active .nav-count { background: var(--danger); color: #fff; }
+
+/* ---------- Page content ---------- */
+
+.u-main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 34px clamp(16px, 4vw, 36px) 90px;
+}
+
+.u-main h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--text);
+}
+
+.u-main .page-head h1 { font-size: clamp(28px, 3.4vw, 38px); }
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 700px) {
+    .u-hero { padding-bottom: 64px; }
+    .u-hero-in { flex-direction: column; text-align: center; gap: 16px; }
+    .u-hero-avatar { width: 92px; height: 92px; }
+    .u-tab { height: 46px; padding: 0 18px; font-size: 14px; }
+}
+
+@media print { .u-tabs, .u-hero { display: none; } }

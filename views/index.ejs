@@ -3,40 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/user/tokens.css">
     <link rel="stylesheet" href="/css/index.css">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <title>FINDBACK</title>
 </head>
-<body>
-    <div class="nav">
-        <div class="logo">
-            <img src="/img/logo.png" alt="FindBack Logo">
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/browse">Browse Items</a>
-            <a href="/howitworks">How It Works</a>
-            <a href="/contacts">Contact Us</a>
-        </div>
-        <div class="right-buttons">
-            <% if (user && user.role === 'admin') { %>
-                <a href="/admin" class="admin-dashboard-btn">
-                    Admin Dashboard
-                </a>
-            <% } %>
-            <% if (user) { %>
-                <div class="profilepic">
-                    <a href="/user/profile">
-                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
-                    </a>
-                    <a href="/auth/logout">Log Out</a>
-                </div>
-            <% } else { %>
-                <a href="/auth/login">Login</a>
-                <a href="/auth/register">Get Started</a>
-            <% } %>
-        </div>
-    </div>
+<body class="page-home" data-theme-aware>
+
+    <%- include('user/partials/navbar', { user: user }) %>
 
     <% if (success && success.length > 0) { %>
         <div class="flash-message flash-success">
@@ -54,6 +28,7 @@
         </div>
     <% } %>
 
+    <!-- HERO -->
     <div class="top-layer">
         <div class="left">
             <div class="header">
@@ -61,9 +36,11 @@
                 <h3>Let's find it back</h3>
                 <p>Report lost or found items and help reunite them with their owners.</p>
             </div>
+
             <div class="search">
                 <a href="/browse">Search</a>
             </div>
+
             <div class="lostFound-button">
                 <a href="/lost">
                     <div class="lost-button">
@@ -89,11 +66,13 @@
                 </a>
             </div>
         </div>
+
         <div class="right">
             <img src="#" alt="Lost and Found Together Poster">
         </div>
     </div>
 
+    <!-- CATEGORIES -->
     <div class="categories">
         <% categories.forEach(category => { %>
             <a href="/<%= category.category_name %>">
@@ -103,6 +82,7 @@
         <% }) %>
     </div>
 
+    <!-- RECENT ITEMS -->
     <div class="recent-items">
         <div class="recent-head">
             <div>
@@ -139,6 +119,7 @@
                         <p><b>Date Lost/Found:</b> <%= item.itemDate || 'Not specified' %></p>
                         <p><b>Date Posted:</b> <%= item.postedAt || 'Not specified' %></p>
                     </div>
+
                     <div class="item-actions">
                         <% if (item.isClaimed) { %>
                             <span class="claim-btn disabled" aria-disabled="true">Already Claimed</span>
@@ -147,83 +128,83 @@
                                 Make a Claim
                             </a>
                         <% } %>
-                        <a href="/user/chat" class="message-btn">
-                            Message
-                        </a>
+                        <a href="/user/chat" class="message-btn">Message</a>
                     </div>
                 </div>
             <% }) %>
         </div>
     </div>
 
-    <h2>Help us make FINDBACK better. Share your ideas with us!</h2>
-
-    <form action="/fb/feedback" method="POST">
-        <div class="stars">
-            <input type="radio" id="s5" name="rate" value="5" required>
-            <label for="s5">&#9733;</label>
-
-            <input type="radio" id="s4" name="rate" value="4">
-            <label for="s4">&#9733;</label>
-
-            <input type="radio" id="s3" name="rate" value="3">
-            <label for="s3">&#9733;</label>
-
-            <input type="radio" id="s2" name="rate" value="2">
-            <label for="s2">&#9733;</label>
-
-            <input type="radio" id="s1" name="rate" value="1">
-            <label for="s1">&#9733;</label>
-        </div>
-
-        <textarea name="msg" placeholder="Enter your feedback here" required></textarea>
-        <button type="submit">Submit Feedback</button>
-    </form>
-
-    <div class="feedback-list">
-        <h3>Customer Feedback</h3>
-        <p>Know that your feedbacks are prioritized!</p>
-
-        <% feedbackList.forEach(fList => { %>
-            <p><b>Sender:</b> <%= fList.full_name %></p>
-            <p><b>Rating:</b> <%= fList.rating %></p>
-            <p><b>Message:</b> <%= fList.message %></p>
-        <% }) %>
-    </div>
-    <footer class="footer">
-    <div class="help-band">
-        <div class="help-item help-main">
-            <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
-            <div>
-                <h4>Need Help? We're Here for You.</h4>
-                <p>Have a question, concern, or need help with a lost or found item? Contact us.</p>
+    <!-- FEEDBACK FORM -->
+    <section class="feedback">
+        <h2>Help us make FINDBACK better. Share your ideas with us!</h2>
+        <form action="/fb/feedback" method="POST" class="feedback-form">
+            <div class="stars">
+                <input type="radio" id="s5" name="rate" value="5" required>
+                <label for="s5">&#9733;</label>
+                <input type="radio" id="s4" name="rate" value="4">
+                <label for="s4">&#9733;</label>
+                <input type="radio" id="s3" name="rate" value="3">
+                <label for="s3">&#9733;</label>
+                <input type="radio" id="s2" name="rate" value="2">
+                <label for="s2">&#9733;</label>
+                <input type="radio" id="s1" name="rate" value="1">
+                <label for="s1">&#9733;</label>
             </div>
+            <textarea name="msg" placeholder="Enter your feedback here" required></textarea>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </section>
+
+    <!-- CUSTOMER FEEDBACK: one card per feedback -->
+    <section class="feedback-list">
+        <h3>Customer Feedback</h3>
+        <p class="feedback-sub">Know that your feedbacks are prioritized!</p>
+
+        <% if (feedbackList && feedbackList.length > 0) { %>
+            <div class="feedback-row">
+                <% feedbackList.forEach(fList => { %>
+                    <article class="feedback-card">
+                        <p><b>Sender:</b> <%= fList.full_name %></p>
+                        <p><b>Rating:</b> <%= fList.rating %></p>
+                        <p><b>Message:</b> <%= fList.message %></p>
+                    </article>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p class="feedback-empty">No feedback yet. Be the first to share your thoughts!</p>
+        <% } %>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="help-band">
+            <div class="help-item help-main">
+                <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+                <div>
+                    <h4>Need Help? We're Here for You.</h4>
+                    <p>Have a question, concern, or need help with a lost or found item? Contact us.</p>
+                </div>
+            </div>
+            <div class="help-item">
+                <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
+                <span class="help-label">Email</span>
+            </div>
+            <div class="help-item">
+                <span class="help-icon"><img src="/img/icon/location.png" alt="Location icon"></span>
+                <span class="help-label">Location</span>
+            </div>
+            <div class="help-item">
+                <span class="help-icon"><img src="/img/icon/contact.png" alt="Phone icon"></span>
+                <span class="help-label">Contact</span>
+            </div>
+            <a href="/contacts" class="help-btn">Contact Us &rarr;</a>
         </div>
 
-        <div class="help-item">
-            <span class="help-icon"><img src="/img/icon/email.png" alt="Email icon"></span>
-            <span class="help-label">Email</span>
+        <div class="footer-bar">
+            <h4>FindBack</h4>
+            <p>Helping people reunite with their lost belongings.</p>
         </div>
-
-        <div class="help-item">
-            <span class="help-icon"><img src="/img/icon/location.png" alt="Location icon"></span>
-            <span class="help-label">Location</span>
-        </div>
-
-        <div class="help-item">
-            <span class="help-icon"><img src="/img/icon/contact.png" alt="Phone icon"></span>
-            <span class="help-label">Contact</span>
-        </div>
-
-        <a href="/contacts" class="help-btn">Contact Us &rarr;</a>
-    </div>
-
-    <div class="footer-bar">
-        <h4>FindBack</h4>
-        <p>Helping people reunite with their lost belongings.</p>
-    </div>
-</footer>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/notify.js"></script>
+    </footer>
 </body>
 </html>

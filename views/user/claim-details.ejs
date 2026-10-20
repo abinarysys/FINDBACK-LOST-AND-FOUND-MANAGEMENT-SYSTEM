@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Claim #<%= claim.claim_id %> | FINDBACK</title>
+
+    <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <link rel="stylesheet" href="/css/user/user-ui.css">
+    <link rel="stylesheet" href="/css/user/user-shell.css">
+    <link rel="stylesheet" href="/css/user/notif.css">
+    <link rel="stylesheet" href="/css/user/claim-view.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <%- include('partials/user-header', {
+        user: user,
+        activePage: 'claims'
+    }) %>
+
+    <main class="u-main">
+
+        <section class="notifications-content">
+            <div class="page-heading">
+                <div>
+                    <h1>Claim #<%= claim.claim_id %></h1>
+                    <p>Submitted <%= new Date(claim.created_at).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
+                </div>
+                <a class="mark-all-btn claim-back" href="/user/notifications">← Back to notifications</a>
+            </div>
+
+            <!-- Status banner -->
+            <% if (claim.status === 'verified') { %>
+                <div class="claim-banner verified">
+                    <h2>Claim Approved</h2>
+                    <p>
+                        You may proceed to the designated office to claim your item. Please follow the
+                        office's collection instructions and bring any required identification or
+                        supporting documents.
+                    </p>
+                    <p class="claim-banner-note">
+                        Approval means you are authorized to collect the item. It does not mean the
+                        item has been handed over yet.
+                    </p>
+                </div>
+            <% } else if (claim.status === 'rejected') { %>
+                <div class="claim-banner rejected">
+                    <h2>Claim Not Approved</h2>
+                    <p>This claim was reviewed and was not approved.</p>
+                </div>
+            <% } else { %>
+                <div class="claim-banner pending">
+                    <h2>Under Review</h2>
+                    <p>An admin is reviewing your claim. You will be notified as soon as there is a result.</p>
+                </div>
+            <% } %>
+
+            <div class="notifications-card claim-card">
+                <div class="notifications-card-header">
+                    <h2>Item</h2>
+                </div>
+
+                <div class="notification-item-card claim-item">
+                    <div class="notification-item-photo">
+                        <% if (claim.photo_path) { %>
+                            <img
+                                src="<%= claim.photo_path.startsWith('/') ? claim.photo_path : '/' + claim.photo_path %>"
+                                alt="<%= claim.item_name %>"
+                                loading="lazy"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                            >
+                            <div class="item-photo-placeholder" style="display:none;">
+                                <span>▧</span>
+                                <small>No image available</small>
+                            </div>
+                        <% } else { %>
+                            <div class="item-photo-placeholder">
+                                <span>▧</span>
+                                <small>No image available</small>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <div class="notification-item-info">
+                        <span class="item-card-label">FOUND ITEM</span>
+                        <h4><%= claim.item_name %></h4>
+
+                        <% if (claim.category_name) { %>
+                            <p><span class="detail-label">Category:</span> <%= claim.category_name %></p>
+                        <% } %>
+                        <% if (claim.item_location) { %>
+                            <p><span class="detail-label">Location:</span> <%= claim.item_location %></p>
+                        <% } %>
+                        <% if (claim.date_found) { %>
+                            <p>
+                                <span class="detail-label">Date found:</span>
+                                <%= new Date(claim.date_found).toLocaleDateString('en-PH', {
+                                    year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC'
+                                }) %>
+                            </p>
+                        <% } %>
+                        <% if (claim.item_description) { %>
+                            <p class="item-description"><%= claim.item_description %></p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notifications-card claim-card">
+                <div class="notifications-card-header">
+                    <h2>Your Claim</h2>
+                </div>
+
+                <dl class="claim-facts">
+                    <div>
+                        <dt>Status</dt>
+                        <dd>
+                            <span class="claim-status <%= claim.status === 'verified' ? 'verified' : (claim.status === 'rejected' ? 'rejected' : 'pending') %>">
+                                <%= claim.status === 'verified' ? 'Approved' : (claim.status === 'rejected' ? 'Not approved' : 'Pending') %>
+                            </span>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Your explanation</dt>
+                        <dd><%= claim.claim_details %></dd>
+                    </div>
+                    <% if (claim.reviewed_at) { %>
+                        <div>
+                            <dt>Reviewed</dt>
+                            <dd><%= new Date(claim.reviewed_at).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) %></dd>
+                        </div>
+                    <% } %>
+                    <% if (claim.admin_note) { %>
+                        <div>
+                            <dt><%= claim.status === 'rejected' ? 'Reason' : 'Admin note' %></dt>
+                            <dd><%= claim.admin_note %></dd>
+                        </div>
+                    <% } %>
+                </dl>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
