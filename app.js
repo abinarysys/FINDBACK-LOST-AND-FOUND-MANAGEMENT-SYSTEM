@@ -1,3 +1,4 @@
+require('dotenv').config();   // must be first so process.env is filled
 const express = require('express');
 const session = require('express-session');
 const http = require('http');
@@ -12,8 +13,12 @@ const io = new Server(server);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+if (!process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET is missing. Add SESSION_SECRET=<long random text> to your .env file.');
+}
+
 const sessionMiddleware = session({
-    secret: 's3cr3t',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 });
@@ -34,6 +39,14 @@ app.set('view engine', 'ejs');
 app.set('io', io);
 
 // web socket
+// Only logged-in users (verified from the SESSION, never from anything the browser sends) may connect.
+io.use((socket, next) => {
+    if (!socket.request.session?.user?.user_id) {
+        return next(new Error('unauthorized'));
+    }
+    next();
+});
+
 io.on('connection', (socket) => {
     const sessUser = socket.request.session?.user;
     if (sessUser) {
@@ -51,6 +64,50 @@ const upload = require('./middleware/upload-middleware.js');
 //using the middleware
 app.use(userMiddleware);
 
+// currentPath lets the navigation highlight the page you are on; the theme is loaded per user.
+app.use((req, res, next) => { res.locals.currentPath = req.path; next(); });
+app.use(require('./middleware/user-theme.js'));
+
+// Extras added to every page for logged-in users (admin pages are skipped):
+//  1. the user's saved theme, applied at the top of <head> so there is no flash of the wrong theme
+//     (dark mode only on pages built on the new design, i.e. pages that contain the .u-hero banner)
+//  2. the notification bell
+const globalBell = require('./config/global-bell.js');
+const { themeScript } = require('./config/theme.js');
+
+app.use((req, res, next) => {
+    const user = req.session?.user;
+    if (!user || req.path.startsWith('/admin')) return next();
+
+    const render = res.render.bind(res);
+    res.render = (view, options, callback) => {
+        if (typeof options === 'function') { callback = options; options = undefined; }
+        if (callback) return render(view, options, callback);   // caller wants the raw HTML
+
+        render(view, options, (err, html) => {
+            if (err) return next(err);
+
+            if (typeof html === 'string') {
+                const head = html.match(/<head[^>]*>/i);
+                if (head) {
+                    // Dark mode is opt-in per page: account pages (.u-hero) or any page whose
+                    // <body> tag has the data-theme-aware attribute. Guests never reach this code.
+                    const darkOk = html.includes('class="u-hero"') || /<body[^>]*\sdata-theme-aware/i.test(html);
+                    const script = themeScript(user.theme, darkOk);
+                    html = html.replace(head[0], () => head[0] + script);
+                }
+
+                const end = html.toLowerCase().lastIndexOf('</body>');
+                if (end !== -1 && !html.includes('id="notifBell"')) {
+                    html = html.slice(0, end) + globalBell + html.slice(end);
+                }
+            }
+            res.send(html);
+        });
+    };
+    next();
+});
+
 // routers
 app.use('/', require('./routers/landing-router'));
 app.use('/auth', require('./routers/auth-router'));
@@ -63,6 +120,7 @@ app.use("/claim", require('./routers/claim-router.js'))
 app.use("/user/settings", require('./routers/usersettings-router.js'))
 app.use("/user/chat", require('./routers/userchat-router.js'))
 app.use("/user/notifications", require("./routers/notification-router.js"))
+app.use("/user/claims", require("./routers/user-claims-router.js"))
 
 server.listen(4000, () => {
     console.log('FINDBACK running at http://localhost:4000');

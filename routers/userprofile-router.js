@@ -3,141 +3,201 @@ const router = require('express').Router();
 const path = require('path');
 const fs = require('fs');
 const db = require('../config/db.js');
-
+const query = require('../config/query.js');
 // MIDDLEWARES
 const authMiddleware = require('../middleware/auth-middleware.js');
 const upload = require('../middleware/upload-middleware.js');
-
 // VIEW PROFILE
-router.get('/profile', authMiddleware, (req, res) => {
-    const userId = req.session.user.user_id;
-    const getUser = `SELECT * FROM users WHERE user_id = ?`
-    db.query(getUser, [userId], (err, results) => {
-        if (err) {
-            console.error(err);
-            req.flash("error", 'Failed to retrieve user profile.');
-            return res.redirect('auth/login');
-        }
-        if (results.length === 0) {
-            req.flash('error', "User not found.");
-            return res.redirect('auth/login');
-        }
-        res.render('user/user-profile', { user: results[0]});       
-    })
-})
+// Loads only the columns the page needs (never password_hash), plus the user's
+// reported items and claims. Everything is filtered by the SESSION user's id.
+router.get('/profile', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.session.user.user_id;
 
+        const users = await query(
+            `SELECT user_id, full_name, email, contact_number, role, profile_image,
+                    account_status, verification_status, created_at
+             FROM users WHERE user_id = ?`,
+            [userId]
+        );
+
+        if (!users.length) {
+            req.flash('error', 'User not found.');
+            return res.redirect('/auth/login');
+        }
+
+        const [foundRows, lostRows, claimRows] = await Promise.all([
+            query(
+                `SELECT fi.*, c.category_name
+                 FROM found_items fi
+                 LEFT JOIN item_categories c ON c.category_id = fi.category_id
+                 WHERE fi.user_id = ?`,
+                [userId]
+            ),
+            query(
+                `SELECT li.*, c.category_name
+                 FROM lost_items li
+                 LEFT JOIN item_categories c ON c.category_id = li.category_id
+                 WHERE li.user_id = ?`,
+                [userId]
+            ),
+            query(
+                `SELECT cl.claim_id, cl.status, cl.created_at, cl.reviewed_at, fi.item_name
+                 FROM claims cl
+                 INNER JOIN found_items fi ON fi.found_item_id = cl.found_item_id
+                 WHERE cl.user_id = ?
+                 ORDER BY cl.created_at DESC, cl.claim_id DESC`,
+                [userId]
+            )
+        ]);
+
+        const shape = (item, type) => ({
+            type,
+            title: item.item_name || item.category_name || 'Unnamed item',
+            category_name: item.category_name,
+            location: item.location,
+            status: item.status,
+            created_at: item.created_at
+        });
+
+        const items = [
+            ...foundRows.map((i) => shape(i, 'found')),
+            ...lostRows.map((i) => shape(i, 'lost'))
+        ]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, 6);
+
+        res.render('user/user-profile', {
+            user: users[0],
+            stats: {
+                found: foundRows.length,
+                lost: lostRows.length,
+                claims: claimRows.length,
+                approved: claimRows.filter((c) => c.status === 'verified').length
+            },
+            claims: claimRows.slice(0, 5),
+            items
+        });
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        req.flash('error', 'Failed to retrieve user profile.');
+        res.redirect('/');
+    }
+});
 // GO TO EDIT PROFILE PAGE
 router.get('/profile/edit', authMiddleware, (req, res) => {
-    const userId = req.session.user.user_id;
-    const edit = `SELECT * FROM users WHERE user_id = ?`
-    db.query(edit, [userId],(err, results) => {
-        if (err) {
-            console.error(err);
-            req.flash('error', 'Failed to load edit profile page.');
-            return res.redirect('user/profile');
-        }
-        if (results.length === 0) {
-            req.flash('error', 'User not found.');
-            return res.redirect('auth/login');
-        }
-        res.render('user/profile_edit', {user: results[0]})
-    })
+    const userId = req.session.user.user_id;
+    const edit = `SELECT user_id, full_name, email, contact_number, profile_image FROM users WHERE user_id = ?`
+    db.query(edit, [userId],(err, results) => {
+        if (err) {
+            console.error(err);
+            req.flash('error', 'Failed to load edit profile page.');
+            return res.redirect('/user/profile');
+        }
+        if (results.length === 0) {
+            req.flash('error', 'User not found.');
+            return res.redirect('/auth/login');
+        }
+        res.render('user/profile_edit', {user: results[0]})
+    })
 })
-
 // EDIT PROFILE
 router.post('/profile/update', authMiddleware, (req, res, next) => {
-        upload.single('profile_image')(req, res, (err) => {
-            if (err) {
-                console.error("Upload profile picture error: ", err);
-                req.flash('error', err.message || 'Profile picture upload failed.');
-                return res.redirect('/user/profile/edit');
-            }
-            next();
-        })
-    },
-    (req, res) => {
-        const userId = req.session.user.user_id;
-        const { full_name, contact_number } = req.body;
-        if (!full_name?.trim() || !contact_number?.trim()) {
-            req.flash('error', 'Full name and contact number are required.');
-            return res.redirect('/user/profile/edit');
-        }
-
-        if (full_name.trim().length > 100 || contact_number.trim().length > 20) {
-            req.flash('error', 'Please check the length of your information.');
-            return res.redirect('/user/profile/edit');
-        }
-        let sql = `UPDATE users SET full_name = ?, contact_number = ?`
-        const params = [full_name.trim(), contact_number.trim()]
-        if (req.file) {
-            sql += ', profile_image = ?'
-            params.push('/uploads/' + req.file.filename)
-        }
-        sql += ' WHERE user_id = ?'
-        params.push(userId)
-        db.query(sql, params, (err) => {
-            if (err) {
-                console.error('Database update error:', err);
-                req.flash('error', 'Failed to update your profile.');
-                return res.redirect('/user/profile/edit');
-            }
-            req.session.user.full_name = full_name.trim();
-            req.session.user.username = full_name.trim();
-            req.session.user.num = contact_number.trim();
-            if (req.file) {
-                req.session.user.profile_image =
-                    '/uploads/' + req.file.filename;
-            }
-            req.flash('success', 'Profile updated successfully.');
-            return res.redirect('/user/profile');
-        });
-    }
+        upload.single('profile_image')(req, res, (err) => {
+            if (err) {
+                console.error("Upload profile picture error: ", err);
+                req.flash('error', err.message || 'Profile picture upload failed.');
+                return res.redirect('/user/profile/edit');
+            }
+            next();
+        })
+    },
+    (req, res) => {
+        const userId = req.session.user.user_id;
+        const { full_name, contact_number } = req.body;
+        if (!full_name?.trim() || !contact_number?.trim()) {
+            req.flash('error', 'Full name and contact number are required.');
+            return res.redirect('/user/profile/edit');
+        }
+        if (full_name.trim().length > 100 || contact_number.trim().length > 11) {
+            req.flash('error', 'Please check the length of your information.');
+            return res.redirect('/user/profile/edit');
+        }
+        let sql = `UPDATE users SET full_name = ?, contact_number = ?`
+        const params = [full_name.trim(), contact_number.trim()]
+        if (req.file) {
+            sql += ', profile_image = ?'
+            params.push('/uploads/' + req.file.filename)
+        }
+        sql += ' WHERE user_id = ?'
+        params.push(userId)
+        db.query(sql, params, (err) => {
+            if (err) {
+                console.error('Database update error:', err);
+                req.flash('error', 'Failed to update your profile.');
+                return res.redirect('/user/profile/edit');
+            }
+            req.session.user.full_name = full_name.trim();
+            req.session.user.username = full_name.trim();
+            req.session.user.num = contact_number.trim();
+            if (req.file) {
+                req.session.user.profile_image =
+                    '/uploads/' + req.file.filename;
+            }
+            req.flash('success', 'Profile updated successfully.');
+            return res.redirect('/user/profile');
+        });
+    }
 );
+// MY ITEMS (replaces the old "activity logs" page)
+router.get('/items', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.session.user.user_id;
 
-const query = require('../config/query.js');
+        const [lostRows, foundRows] = await Promise.all([
+            query(
+                `SELECT li.*, c.category_name
+                 FROM lost_items li
+                 LEFT JOIN item_categories c ON c.category_id = li.category_id
+                 WHERE li.user_id = ?`,
+                [userId]
+            ),
+            query(
+                `SELECT fi.*, c.category_name
+                 FROM found_items fi
+                 LEFT JOIN item_categories c ON c.category_id = fi.category_id
+                 WHERE fi.user_id = ?`,
+                [userId]
+            )
+        ]);
 
-router.get("/activity-logs", (req, res) => {
-    const sessionUser = req.session && req.session.user;
-    if (!sessionUser) return res.redirect('/auth/login');
-    const userId = sessionUser.user_id;
-
-    const lostSql = `SELECT lost_items.*, item_categories.category_name
-        FROM lost_items
-        LEFT JOIN item_categories ON lost_items.category_id = item_categories.category_id
-        WHERE lost_items.user_id = ?`;
-    const foundSql = `SELECT found_items.*, item_categories.category_name
-        FROM found_items
-        LEFT JOIN item_categories ON found_items.category_id = item_categories.category_id
-        WHERE found_items.user_id = ?`;
-
-    db.query(lostSql, [userId], (err, lostRows) => {
-        if (err) { console.error(err); return res.status(500).send("Could not load your activity"); }
-
-        db.query(foundSql, [userId], (err, foundRows) => {
-            if (err) { console.error(err); return res.status(500).send("Could not load your activity"); }
-
-            const shape = (item, type) => ({
-                type,
-                itemId: item.item_id ?? item.lost_id ?? item.found_id ?? item.id,
-                title: item.item_name || item.category_name || 'Unnamed item',
-                category_name: item.category_name,
-                location: item.location,
-                status: item.status,          // shows only if your table has a "status" column
-                created_at: item.created_at
-            });
-
-            const activities = [
-                ...lostRows.map(i => shape(i, 'lost')),
-                ...foundRows.map(i => shape(i, 'found'))
-            ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-            res.render("user/activity", {
-                activities,
-                stats: { total: activities.length, lost: lostRows.length, found: foundRows.length }
-            });
+        const shape = (item, type) => ({
+            type,
+            title: item.item_name || item.category_name || 'Unnamed item',
+            category_name: item.category_name,
+            location: item.location,
+            status: item.status,
+            created_at: item.created_at
         });
-    });
+
+        const items = [
+            ...lostRows.map((i) => shape(i, 'lost')),
+            ...foundRows.map((i) => shape(i, 'found'))
+        ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        res.render('user/items', {
+            user: req.session.user,
+            items,
+            stats: { total: items.length, lost: lostRows.length, found: foundRows.length }
+        });
+    } catch (error) {
+        console.error('Error loading items:', error);
+        req.flash('error', 'Could not load your items.');
+        res.redirect('/user/profile');
+    }
 });
 
+// Old address kept only so bookmarks / the old sidebar link don't break. Safe to delete later.
+router.get('/activity-logs', (req, res) => res.redirect(301, '/user/items'));
 
 module.exports = router;
