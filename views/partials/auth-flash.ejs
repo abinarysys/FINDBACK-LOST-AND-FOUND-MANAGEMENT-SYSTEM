@@ -1,0 +1,15 @@
+<% const okMsgs = locals.success || []; const errMsgs = locals.error || []; %>
+<% if (okMsgs.length > 0) { %>
+    <div class="flash-message flash-success" role="status">
+        <span class="flash-icon">&#10003;</span>
+        <span class="flash-text"><%= okMsgs[0] %></span>
+        <button type="button" class="flash-close" aria-label="Close" onclick="this.parentElement.remove()">&times;</button>
+    </div>
+<% } %>
+<% if (errMsgs.length > 0) { %>
+    <div class="flash-message flash-error" role="alert">
+        <span class="flash-icon">!</span>
+        <span class="flash-text"><%= errMsgs[0] %></span>
+        <button type="button" class="flash-close" aria-label="Close" onclick="this.parentElement.remove()">&times;</button>
+    </div>
+<% } %>

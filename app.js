@@ -5,27 +5,40 @@ const http = require('http');
 const { Server } = require('socket.io');
 const flash = require('connect-flash');
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
-
-// middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const { applySecurity } = require('./middleware/security');
 
 if (!process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET is missing. Add SESSION_SECRET=<long random text> to your .env file.');
 }
 
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+// ---------- security ----------
+app.set('trust proxy', 1);     // only needed if you deploy behind a proxy (Render, Nginx, etc.); harmless on localhost
+applySecurity(app);            // secure headers: BEFORE session and routes
+
+// middleware
+app.use(express.urlencoded({ extended: true, limit: '50kb' }));
+app.use(express.json({ limit: '100kb' }));
+
+// ---------- session (one config, shared with socket.io) ----------
 const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,                                   // JavaScript in the page can't read the cookie
+        sameSite: 'lax',                                  // blocks most cross-site request tricks
+        secure: process.env.NODE_ENV === 'production',    // HTTPS only in production
+        maxAge: 1000 * 60 * 60 * 8                        // 8 hours
+    }
 });
 app.use(sessionMiddleware);
 io.engine.use(sessionMiddleware);   // needs socket.io 4.6+ (run: npm ls socket.io)
 
-// flash 
+// flash
 app.use(flash());
 app.use((req, res, next) => {
     res.locals.success = req.flash('success');
@@ -109,8 +122,8 @@ app.use((req, res, next) => {
 });
 
 // routers
-app.use('/', require('./routers/landing-router'));
-app.use('/auth', require('./routers/auth-router'));
+app.use('/', require('./routers/landing-router.js'));
+app.use('/auth', require('./routers/auth-router.js'));        // the new secure login/register (see routers/auth-router.js)
 app.use('/fb', require('./routers/feedback-router.js'))
 app.use('/lost', require('./routers/lostItem-router.js'))
 app.use("/found", require("./routers/foundItem-router.js"))

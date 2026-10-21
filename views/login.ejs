@@ -3,69 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
-    <link rel="stylesheet" href="/css/login.css">
-    <title>LOGIN</title>
+    <link rel="stylesheet" href="/css/user/tokens.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <title>Log in | FindBack</title>
 </head>
-<body>
-    <div class="nav">
-        <div class="logo">
-            <img src="/img/logo.png" alt="FindBack Logo">
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/browse">Browse Items</a>
-            <a href="/howitworks">How It Works</a>
-            <a href="/contacts">Contact Us</a>
-        </div>
-        <div class="right-buttons">
-            <% if (user) { %>
-                <div class="profilepic">
-                    <a href="/user/profile">
-                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
-                    </a>
-                    <a href="/auth/logout">Log Out</a>
+<body class="auth-page">
+    <%- include('partials/auth-nav') %>
+    <%- include('partials/auth-flash') %>
+
+    <main class="auth-shell">
+        <aside class="auth-aside">
+            <img class="aside-logo" src="/img/logo.png" alt="FindBack Logo">
+            <h1>Lost it? Found it?<br>Let's get it back.</h1>
+            <p>One sign in for everyone. Members land on the community page, administrators go straight to their dashboard.</p>
+            <ul class="aside-points">
+                <li><span>&#10003;</span> Verified community members</li>
+                <li><span>&#10003;</span> Claims reviewed by admins</li>
+                <li><span>&#10003;</span> Your password is stored with Argon2id</li>
+            </ul>
+        </aside>
+
+        <section class="auth-card">
+            <h2>Welcome back</h2>
+            <p class="auth-sub">Log in to continue finding what matters.</p>
+
+            <form action="/auth/login" method="POST" autocomplete="on" id="loginForm">
+                <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+
+                <div class="field">
+                    <label for="email">Email address</label>
+                    <input class="input" id="email" name="email" type="email" inputmode="email"
+                           autocomplete="username" maxlength="254" placeholder="ex. juandelacruz@email.com"
+                           required autofocus>
                 </div>
-            <% } else { %>
-                <a href="/auth/login">Login</a>
-                <a href="/auth/register">Get Started</a>
+
+                <div class="field">
+                    <label for="pw">Password</label>
+                    <div class="pw-wrap">
+                        <input class="input" id="pw" name="pw" type="password"
+                               autocomplete="current-password" maxlength="128" placeholder="Your password" required>
+                        <button type="button" class="pw-toggle" data-target="pw" aria-label="Show password">Show</button>
+                    </div>
+                    <p class="hint caps-hint" id="capsHint" hidden>Caps Lock is on.</p>
+                </div>
+
+                <button class="btn" type="submit" id="loginBtn">Log in</button>
+            </form>
+
+            <p class="auth-foot">Don't have an account? <a href="/auth/register">Register here</a></p>
+            <% if (locals.allowSetup) { %>
+                <p class="auth-foot">No admin yet? <a href="/admin/register">Create the first admin</a></p>
             <% } %>
-        </div>
-    </div>
-    <% if (success && success.length > 0) { %>
-        <div class="flash-message flash-success">
-            <span class="flash-icon">✓</span>
-            <span class="flash-text"><%= success[0] %></span>
-            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
-        </div>
-    <% } %>
-    <% if (error && error.length > 0) { %>
-        <div class="flash-message flash-error">
-            <span class="flash-icon">!</span>
-            <span class="flash-text"><%= error[0] %></span>
-            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
-        </div>
-    <% } %> 
-    <img src="/img/logo.png" alt="FindBack Logo">
-    <h2>Welcome to FindBack</h2>
-    <p>Login to continue finding what matters</p>
-    <form action="/auth/loginUser" method="POST">
-        <label>Email</label>
-        <input type="email" name="email" placeholder="ex. juandelacrus@email.com" required>
-        <label>Password</label>
-        <input type="password" name="pw" placeholder="ex. jkb3H98#nd" required>
-        <button type="submit">Log In</button>
-        <label for="register">
-    don't have a account?<a href="/auth/register">register here</a>
-    </label>
-    </form>
-    
-    <script src="/socket.io/socket.io.js"></script>
+            <p class="auth-foot secure-note">&#128274; Too many wrong attempts will temporarily lock the account.</p>
+        </section>
+    </main>
+
     <script>
-        const socket = io();
-        socket.on('connect', () => {
-            console.log('Connected to FINDBACK Socket.IO!');
-        });
+        (function () {
+            var pw = document.getElementById('pw');
+            var caps = document.getElementById('capsHint');
+            var form = document.getElementById('loginForm');
+            var btn = document.getElementById('loginBtn');
+
+            document.querySelectorAll('.pw-toggle').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    var input = document.getElementById(b.dataset.target);
+                    var show = input.type === 'password';
+                    input.type = show ? 'text' : 'password';
+                    b.textContent = show ? 'Hide' : 'Show';
+                    b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+                });
+            });
+
+            function checkCaps(e) { caps.hidden = !(e.getModifierState && e.getModifierState('CapsLock')); }
+            pw.addEventListener('keyup', checkCaps);
+            pw.addEventListener('keydown', checkCaps);
+            pw.addEventListener('blur', function () { caps.hidden = true; });
+
+            form.addEventListener('submit', function () {
+                btn.disabled = true;
+                btn.textContent = 'Signing in...';
+            });
+        })();
     </script>
 </body>
 </html>

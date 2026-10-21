@@ -1,74 +1,227 @@
+<% const f = locals.form || {}; %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
-    <link rel="stylesheet" href="/css/register.css">
-    <title>REGISTER</title>
+    <link rel="stylesheet" href="/css/user/tokens.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <title>Create account | FindBack</title>
 </head>
-<body>
-    <div class="nav">
-        <div class="logo">
-            <img src="/img/logo.png" alt="FindBack Logo">
-        </div>
-        <div class="nav-links">
-             <a href="/">Home</a>
-            <a href="/browse">Browse Items</a>
-            <a href="/howitworks">How It Works</a>
-            <a href="/contacts">Contact Us</a>
-        </div>
-        <div class="right-buttons">
-            <% if (user) { %>
-                <div class="profilepic">
-                    <a href="/user/profile">
-                        <img src="<%= user.profile_image %>" alt="<%= user.full_name %> Profile Picture">
-                    </a>
-                    <a href="/auth/logout">Log Out</a>
+<body class="auth-page">
+    <%- include('partials/auth-nav') %>
+    <%- include('partials/auth-flash') %>
+
+    <main class="auth-shell">
+        <aside class="auth-aside">
+            <img class="aside-logo" src="/img/logo.png" alt="FindBack Logo">
+            <h1>Join FindBack and help reunite lost items.</h1>
+            <p>Create your account in a minute. An admin will verify it before you can post reports and claims.</p>
+            <ul class="aside-points">
+                <li><span>&#10003;</span> Report lost and found items</li>
+                <li><span>&#10003;</span> Message finders and owners</li>
+                <li><span>&#10003;</span> Strong passwords keep your account safe</li>
+            </ul>
+        </aside>
+
+        <section class="auth-card auth-card-wide">
+            <h2>Create your account</h2>
+            <p class="auth-sub">Join FindBack and help reunite lost items!</p>
+
+            <form action="/auth/register" method="POST" enctype="multipart/form-data" autocomplete="on" id="regForm" novalidate>
+                <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+
+                <div class="avatar-row">
+                    <div class="avatar" id="avatarPreview" aria-hidden="true">+</div>
+                    <div>
+                        <label for="pfp">Profile picture</label>
+                        <input class="file" id="pfp" name="pfp" type="file" accept="image/png,image/jpeg,image/webp" required>
+                        <p class="hint">JPG, PNG or WebP, up to 2 MB.</p>
+                    </div>
                 </div>
-        <% } else { %>
-            <a href="/auth/login">Login</a>
-            <a href="/auth/register">Get Started</a>
-        <% } %>
-        </div>
-    </div>
-    <% if (success && success.length > 0) { %>
-        <div class="flash-message flash-success">
-            <span class="flash-icon">✓</span>
-            <span class="flash-text"><%= success[0] %></span>
-            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
-        </div>
-    <% } %>
-    <% if (error && error.length > 0) { %>
-        <div class="flash-message flash-error">
-            <span class="flash-icon">!</span>
-            <span class="flash-text"><%= error[0] %></span>
-            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
-        </div>
-    <% } %> 
-    <img src="/img/logo.png" alt="FindBack Logo">
-    <h2>Create Your Account</h2>
-    <p>Join FindBack and help reunite lost items!</p>
-    <form action="/auth/registerUser" method="POST" enctype="multipart/form-data">
-        <label>Profile Picture</label>
-        <input type="file" name="pfp" required>
-        <label>Full Name</label>
-        <input type="text" name="name" placeholder="ex. Juan De La Cruz" required>
-        <label>Email Addresss</label>
-        <input type="email" name="email" placeholder="ex. juandelacruz@email.com" required>
-        <label>Contact Number</label>
-        <input type="text" name="num" placeholder="ex. 09123456789" required>
-        <label>Password</label>
-        <input type="password" name="pw" placeholder="ex. x1w23WLm9" required>
-        <button type="submit">Submit</button>
-    </form>
-    <p>Already have an account?<a href="/auth/login">Login Here</a></p>
-    <script src="/socket.io/socket.io.js"></script>
+
+                <div class="field">
+                    <label for="name">Full name</label>
+                    <input class="input" id="name" name="name" type="text" autocomplete="name" maxlength="80"
+                           placeholder="ex. Juan De La Cruz" value="<%= f.name || '' %>" required>
+                </div>
+
+                <div class="two-col">
+                    <div class="field">
+                        <label for="email">Email address</label>
+                        <input class="input" id="email" name="email" type="email" inputmode="email" autocomplete="email"
+                               maxlength="254" placeholder="ex. juandelacruz@email.com" value="<%= f.email || '' %>" required>
+                    </div>
+                    <div class="field">
+                        <label for="num">Contact number</label>
+                        <input class="input" id="num" name="num" type="tel" inputmode="numeric" autocomplete="tel"
+                               pattern="\d{10,11}" maxlength="11" placeholder="ex. 09123456789" value="<%= f.num || '' %>" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="pw">Password</label>
+                    <div class="pw-wrap">
+                        <input class="input" id="pw" name="pw" type="password" autocomplete="new-password" minlength="8" maxlength="128" placeholder="At least 8 characters" required>
+                        <button type="button" class="pw-toggle" data-target="pw" aria-label="Show password">Show</button>
+                    </div>
+                    <div class="meter" id="meter" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                    <p class="meter-label" id="meterLabel">Enter a password</p>
+                    <ul class="rules" id="rules">
+                        <li data-rule="length">At least 8 characters</li>
+                        <li data-rule="letter">At least one letter</li>
+                        <li data-rule="number">At least one number</li>
+                    </ul>
+                </div>
+
+                <div class="field">
+                    <label for="confirm_pw">Confirm password</label>
+                    <div class="pw-wrap">
+                        <input class="input" id="confirm_pw" name="confirm_pw" type="password" autocomplete="new-password"
+                               maxlength="128" placeholder="Type it again" required>
+                        <button type="button" class="pw-toggle" data-target="confirm_pw" aria-label="Show password">Show</button>
+                    </div>
+                    <p class="hint" id="matchHint"></p>
+                </div>
+
+                <button class="btn" type="submit" id="regBtn" disabled>Create account</button>
+            </form>
+
+            <p class="auth-foot">Already have an account? <a href="/auth/login">Login here</a></p>
+        </section>
+    </main>
+
     <script>
-        const socket = io();
-        socket.on('connect', () => {
-            console.log('Connected to FINDBACK Socket.IO!');
-        });
+        (function () {
+            var form = document.getElementById('regForm');
+            var pw = document.getElementById('pw');
+            var confirmPw = document.getElementById('confirm_pw');
+            var nameEl = document.getElementById('name');
+            var emailEl = document.getElementById('email');
+            var numEl = document.getElementById('num');
+            var pfp = document.getElementById('pfp');
+            var btn = document.getElementById('regBtn');
+            var meter = document.getElementById('meter');
+            var label = document.getElementById('meterLabel');
+            var matchHint = document.getElementById('matchHint');
+            var avatar = document.getElementById('avatarPreview');
+
+            // show / hide password
+            document.querySelectorAll('.pw-toggle').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    var input = document.getElementById(b.dataset.target);
+                    var show = input.type === 'password';
+                    input.type = show ? 'text' : 'password';
+                    b.textContent = show ? 'Hide' : 'Show';
+                    b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+                });
+            });
+
+            // picture preview + quick client check (the server checks again)
+            pfp.addEventListener('change', function () {
+                var file = pfp.files[0];
+                if (!file) { avatar.style.backgroundImage = ''; avatar.textContent = '+'; update(); return; }
+                if (['image/jpeg', 'image/png', 'image/webp'].indexOf(file.type) === -1 || file.size > 2 * 1024 * 1024) {
+                    pfp.value = '';
+                    avatar.style.backgroundImage = '';
+                    avatar.textContent = '+';
+                    alert('Please choose a JPG, PNG or WebP picture up to 2 MB.');
+                    update();
+                    return;
+                }
+                avatar.style.backgroundImage = 'url(' + URL.createObjectURL(file) + ')';
+                avatar.textContent = '';
+                update();
+            });
+
+            // ---- same rules as the server (the server is the one that really enforces them) ----
+            var BANNED = ['password', 'passw0rd', 'admin', 'welcome', 'letmein', 'iloveyou', 'findback', 'qwerty', 'asdfgh',
+                'zxcvbn', 'azerty', 'login', 'secret', 'monkey', 'dragon', 'football', 'abc123', 'unknown', 'changeme',
+                'lostandfound', 'phinma'];
+            var ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm', '1234567890'];
+
+            function deleet(s) {
+                return s.toLowerCase().replace(/@/g, 'a').replace(/0/g, 'o').replace(/[1!|]/g, 'i')
+                    .replace(/3/g, 'e').replace(/[$5]/g, 's').replace(/7/g, 't');
+            }
+            function hasSequence(s) {
+                var t = s.toLowerCase(), up = 1, down = 1;
+                for (var i = 1; i < t.length; i++) {
+                    var d = t.charCodeAt(i) - t.charCodeAt(i - 1);
+                    var alnum = /[a-z0-9]/.test(t[i]) && /[a-z0-9]/.test(t[i - 1]);
+                    up = alnum && d === 1 ? up + 1 : 1;
+                    down = alnum && d === -1 ? down + 1 : 1;
+                    if (up >= 3 || down >= 3) return true;
+                }
+                return false;
+            }
+            function hasKeyboardRun(s) {
+                var t = s.toLowerCase();
+                return ROWS.some(function (row) {
+                    var rev = row.split('').reverse().join('');
+                    for (var i = 0; i + 3 <= row.length; i++) {
+                        if (t.indexOf(row.slice(i, i + 3)) > -1 || t.indexOf(rev.slice(i, i + 3)) > -1) return true;
+                    }
+                    return false;
+                });
+            }
+            function personal(p) {
+                var lower = p.toLowerCase(), plain = deleet(p);
+                if (BANNED.some(function (w) { return lower.indexOf(w) > -1 || plain.indexOf(w) > -1; })) return true;
+                var local = (emailEl.value.split('@')[0] || '').toLowerCase();
+                if (local.length >= 4 && (lower.indexOf(local) > -1 || plain.indexOf(deleet(local)) > -1)) return true;
+                return nameEl.value.toLowerCase().split(/\s+/).some(function (part) {
+                    return part.length >= 4 && (lower.indexOf(part) > -1 || plain.indexOf(deleet(part)) > -1);
+                });
+            }
+            function results(p) {
+                return {
+                    length: p.length >= 8 && p.length <= 128,
+                    letter: /[a-zA-Z]/.test(p),
+                    number: /\d/.test(p)
+            };
+}
+
+            var LEVELS = [
+                { text: 'Enter a password', cls: '' },
+                { text: 'Too weak', cls: 'lvl1' },
+                { text: 'Getting there', cls: 'lvl2' },
+                { text: 'Almost strong', cls: 'lvl3' },
+                { text: 'Strong password', cls: 'lvl4' }
+            ];
+
+            function update() {
+                var p = pw.value, r = results(p), keys = Object.keys(r), passed = 0;
+                keys.forEach(function (k) {
+                    var li = document.querySelector('[data-rule="' + k + '"]');
+                    li.classList.toggle('ok', r[k]);
+                    if (r[k]) passed++;
+                });
+
+                var level = p.length === 0 ? 0 : passed === keys.length ? 4 : passed >= 5 ? 3 : passed >= 3 ? 2 : 1;
+                meter.className = 'meter ' + LEVELS[level].cls;
+                label.textContent = LEVELS[level].text;
+
+                var match = confirmPw.value.length > 0 && confirmPw.value === p;
+                matchHint.textContent = confirmPw.value.length === 0 ? '' : match ? 'Passwords match.' : 'Passwords do not match.';
+                matchHint.className = 'hint ' + (confirmPw.value.length === 0 ? '' : match ? 'good' : 'bad');
+
+                var ready = passed === keys.length && match && pfp.files.length > 0 &&
+                    nameEl.value.trim().length >= 2 && emailEl.validity.valid && /^\d{10,11}$/.test(numEl.value);
+                btn.disabled = !ready;
+            }
+
+            [pw, confirmPw, nameEl, emailEl, numEl].forEach(function (el) { el.addEventListener('input', update); });
+            update();
+
+            form.addEventListener('submit', function (e) {
+                if (btn.disabled) { e.preventDefault(); return; }
+                btn.disabled = true;
+                btn.textContent = 'Creating account...';
+            });
+        })();
     </script>
 </body>
-</html> 
+</html>

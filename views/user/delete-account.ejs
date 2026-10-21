@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Profile | FindBack</title>
+    <link rel="stylesheet" href="/css/user/user-ui.css">
+    <link rel="stylesheet" href="/css/user/user-shell.css">
+    <link rel="stylesheet" href="/css/user/delete-account.css">
+</head>
+<body>
+    <%- include('partials/user-header', {
+        user: user,
+        activePage: 'settings'
+    }) %>
+
+    <main class="u-main">
+        <section class="panel">
+            <div class="panel-head">
+                <div>
+                    <h2>Delete your profile</h2>
+                    <p>This action will anonymize your account.</p>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <p>
+                    Your profile name, email, password credentials,
+                    and profile photo will be changed or removed.
+                    Existing items, claims, and conversations will
+                    remain in the database.
+                </p>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <p class="delete-error" role="alert"><%= error %></p>
+                <% } %>
+
+                <form action="/user/settings/delete-account" method="POST">
+                    <!-- Include your existing CSRF hidden field here. -->
+
+                    <label for="password">Confirm your password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <div class="delete-actions">
+                        <button type="submit" class="btn btn-danger">
+                            Confirm deletion
+                        </button>
+
+                        <a href="/user/settings" class="btn btn-ghost">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,10 +1,9 @@
 // controllers/admin-controller.js
-const crypto = require('crypto');
 const query = require('../config/query');
+const { hashPassword, verifyPassword, checkPasswordStrength } = require('../config/password');
 const { imgUrl } = require('../config/admin-ui');
 const { logAdminAction } = require('../middleware/admin-activity');
 
-const sha256 = (text) => crypto.createHash('sha256').update(String(text)).digest('hex');
 const toId = (v) => { const n = Number(v); return Number.isInteger(n) && n > 0 ? n : null; };
 const validPhone = (v) => /^\d{10,11}$/.test(v);
 const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -38,65 +37,10 @@ const adminCount = async () => {
     return Number(rows[0].total) || 0;
 };
 
-exports.getLogin = async (req, res) => {
-    try {
-        res.render('admin/adminLogin', { allowSetup: (await adminCount()) === 0 });
-    } catch (err) {
-        showError(res, err, 'Could not load the login page.');
-    }
-};
-
-exports.login = async (req, res) => {
-    try {
-        const { email, pw } = req.body;
-        if (!email || !pw) {
-            req.flash('error', 'Please enter your email and password.');
-            return res.redirect('/admin/login');
-        }
-
-        const rows = await query(
-            `SELECT user_id, full_name, email, password_hash, profile_image,
-                    contact_number, role, account_status
-               FROM users WHERE email = ?`,
-            [email.trim().toLowerCase()]
-        );
-        const user = rows[0];
-
-        if (!user || user.role !== 'admin' || user.password_hash !== sha256(pw)) {
-            req.flash('error', 'Invalid email or password.');
-            return res.redirect('/admin/login');
-        }
-        if (user.account_status !== 'active') {
-            req.flash('error', 'Your admin account is inactive.');
-            return res.redirect('/admin/login');
-        }
-
-        req.session.regenerate((err) => {
-            if (err) return showError(res, err, 'Could not create a secure login session.');
-
-            req.session.user = {
-                user_id: user.user_id,
-                username: user.full_name,
-                full_name: user.full_name,
-                email: user.email,
-                profile_image: user.profile_image,
-                num: user.contact_number,
-                role: 'admin'
-            };
-
-            req.session.save(async (saveErr) => {
-                if (saveErr) return showError(res, saveErr, 'Could not save the login session.');
-                await logAdminAction(req, 'LOGIN', { adminId: user.user_id, details: 'Signed in' });
-                req.flash('success', `Welcome back, ${user.full_name}!`);
-                res.redirect('/admin');
-            });
-        });
-    } catch (err) {
-        console.error('Admin login error:', err);
-        req.flash('error', 'Login failed. Please try again.');
-        res.redirect('/admin/login');
-    }
-};
+// Admins no longer have their own login page. Everyone signs in at /auth/login and the backend
+// (controllers/secure-auth.js) sends admins to /admin. These stubs keep old links and routes working.
+exports.getLogin = (req, res) => res.redirect('/auth/login');
+exports.login = (req, res) => res.redirect(303, '/auth/login');
 
 // First-admin setup only. After one admin exists, new admins are added in Settings.
 exports.getRegister = async (req, res) => {
@@ -135,8 +79,9 @@ exports.register = async (req, res) => {
             req.flash('error', 'Contact number must be 10 to 11 digits.');
             return res.redirect('/admin/register');
         }
-        if (pw.length < 8) {
-            req.flash('error', 'Password must be at least 8 characters.');
+        const weak = checkPasswordStrength(pw, { email, name });
+        if (weak) {
+            req.flash('error', weak);
             return res.redirect('/admin/register');
         }
 
@@ -145,7 +90,7 @@ exports.register = async (req, res) => {
                 (full_name, email, password_hash, profile_image, contact_number,
                  role, account_status, verification_status)
              VALUES (?, ?, ?, ?, ?, 'admin', 'active', 'verified')`,
-            [name, email, sha256(pw), req.file ? '/uploads/' + req.file.filename : null, num || null]
+            [name, email, await hashPassword(pw), req.file ? '/uploads/' + req.file.filename : null, num || null]
         );
 
         await logAdminAction(req, 'SETUP_ADMIN', {
@@ -167,7 +112,7 @@ exports.logout = async (req, res) => {
     req.session.destroy((err) => {
         if (err) return showError(res, err, 'Could not log out. Please try again.');
         res.clearCookie('connect.sid');
-        res.redirect('/admin/login');
+        res.redirect('/auth/login');
     });
 };
 
@@ -558,7 +503,7 @@ exports.addAdmin = async (req, res) => {
             "SELECT password_hash FROM users WHERE user_id = ? AND role = 'admin' LIMIT 1",
             [req.admin.user_id]
         );
-        if (!me.length || me[0].password_hash !== sha256(confirmPw)) {
+        if (!me.length || !(await verifyPassword(confirmPw, me[0].password_hash)).ok) {
             await logAdminAction(req, 'ADD_ADMIN_DENIED', {
                 targetType: 'admin', details: 'Add admin blocked: wrong confirmation password'
             });
@@ -568,7 +513,8 @@ exports.addAdmin = async (req, res) => {
         if (!name || !email || !pw) return back('Name, email and password are required.');
         if (!validEmail(email)) return back('Please enter a valid email address.');
         if (num && !validPhone(num)) return back('Contact number must be 10 to 11 digits.');
-        if (pw.length < 8) return back('Password must be at least 8 characters.');
+        const weak = checkPasswordStrength(pw, { email, name });
+        if (weak) return back(weak);
 
         const dup = await query('SELECT user_id FROM users WHERE email = ? LIMIT 1', [email]);
         if (dup.length) return back('That email is already registered.');
@@ -577,7 +523,7 @@ exports.addAdmin = async (req, res) => {
             `INSERT INTO users
                 (full_name, email, password_hash, contact_number, role, account_status, verification_status)
              VALUES (?, ?, ?, ?, 'admin', 'active', 'verified')`,
-            [name, email, sha256(pw), num || null]
+            [name, email, await hashPassword(pw), num || null]
         );
 
         await logAdminAction(req, 'ADD_ADMIN', {
@@ -672,13 +618,15 @@ exports.changePassword = async (req, res) => {
         const back = (msg) => { req.flash('error', msg); return res.redirect('/admin/profile'); };
 
         if (!current || !next || !confirm) return back('Please fill in all password fields.');
-        if (next.length < 8) return back('New password must be at least 8 characters.');
         if (next !== confirm) return back('New password and confirmation do not match.');
+        if (next === current) return back('New password must be different from your current password.');
+        const weak = checkPasswordStrength(next, { email: req.admin.email, name: req.admin.full_name });
+        if (weak) return back(weak);
 
         const rows = await query('SELECT password_hash FROM users WHERE user_id = ?', [req.admin.user_id]);
-        if (!rows.length || rows[0].password_hash !== sha256(current)) return back('Your current password is incorrect.');
+        if (!rows.length || !(await verifyPassword(current, rows[0].password_hash)).ok) return back('Your current password is incorrect.');
 
-        await query('UPDATE users SET password_hash = ? WHERE user_id = ?', [sha256(next), req.admin.user_id]);
+        await query('UPDATE users SET password_hash = ? WHERE user_id = ?', [await hashPassword(next), req.admin.user_id]);
         await logAdminAction(req, 'CHANGE_PASSWORD', { targetType: 'admin', targetId: req.admin.user_id, details: 'Changed password' });
 
         req.flash('success', 'Password changed.');

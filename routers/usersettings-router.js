@@ -1,5 +1,8 @@
 // routers/usersettings-router.js
 // Mounted in app.js at /user/settings
+const argon2 = require('argon2');
+const crypto = require('crypto');
+const { verifyPassword } = require('../config/password.js');
 const router = require('express').Router();
 const query = require('../config/query.js');
 const authMiddleware = require('../middleware/auth-middleware.js');
@@ -42,5 +45,87 @@ router.post('/theme', apiAuth, async (req, res) => {
         res.status(500).json({ success: false, message: 'Unable to save your appearance settings.' });
     }
 });
+
+
+/* Show delete-profile confirmation page */
+router.get('/delete-account', authMiddleware, (req, res) => {
+    res.render('user/delete-account', {
+        user: req.session.user
+    });
+});
+
+/* Verify password and anonymize the account */
+router.post('/delete-account', authMiddleware, async (req, res) => {
+    const userId = req.session.user.user_id;
+    const password = req.body.password;
+
+    if (typeof password !== 'string' || !password) {
+        return res.status(400).render('user/delete-account', {
+            user: req.session.user,
+            error: 'Please enter your password.'
+        });
+    }
+
+    try {
+        const users = await query(
+            'SELECT password_hash FROM users WHERE user_id = ? LIMIT 1',
+            [userId]
+        );
+
+        if (!users.length) {
+            return res.status(404).send('Account not found.');
+        }
+
+        const result = await verifyPassword(password, users[0].password_hash);
+
+        if (!result.ok) {
+            return res.status(400).render('user/delete-account', {
+                user: req.session.user,
+                error: 'Incorrect password. Your account has not been changed.'
+            });
+        }
+
+        // Generate credentials that the account owner does not know.
+        const randomPassword = crypto.randomBytes(48).toString('hex');
+        const passwordHash = await argon2.hash(randomPassword);
+
+        await query(
+            `UPDATE users
+             SET full_name = ?,
+                 email = ?,
+                 password_hash = ?,
+                 profile_image = NULL,
+                 contact_number = ''
+             WHERE user_id = ?`,
+            [
+                'Deleted User',
+                `deleted-${userId}@deleted.invalid`,
+                passwordHash,
+                userId
+            ]
+        );
+
+        // End the session only after the database update succeeds.
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Session destruction error:', err);
+                return res.status(500).send(
+                    'Your account was anonymized, but logout failed. Please close your browser session.'
+                );
+            }
+
+            res.clearCookie('connect.sid');
+            return res.redirect('/');
+        });
+    } catch (error) {
+        console.error('Delete profile error:', error);
+
+        return res.status(500).render('user/delete-account', {
+            user: req.session.user,
+            error: 'Unable to process your request. Please try again.'
+        });
+    }
+});
+
 
 module.exports = router;
