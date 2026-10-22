@@ -1,27 +1,35 @@
+// File guide: This module renders and processes found-item reports.
+// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
+// Connections: Imports and router mounts in app.js show how other modules call this code.
+
 // MODULES
-const router = require('express').Router()
-const db = require('../config/db.js');
+const router = require("express").Router();
+const db = require("../config/db.js");
 
 //MIDDLEWARES
-const upload = require('../middleware/upload-middleware.js');
-const authMiddleware = require('../middleware/auth-middleware.js')
+const upload = require("../middleware/upload-middleware.js");
+const authMiddleware = require("../middleware/auth-middleware.js");
 
 // RETRIEVE SUBMITFOUNDITEM PAGE
 // submitFoundItem.ejs
-router.get("/", authMiddleware, (req,res) =>{
-    res.render("submitFoundItem")
-})
+router.get("/", authMiddleware, (req, res) => {
+  res.render("submitFoundItem");
+});
 
 // FOR THE FORM
 // submitFoundItem.ejs
-router.post("/submit", authMiddleware, upload.single('foundPhoto'), (req, res) => {
-    console.log(req.body)
-    const { name, category_id, description, locFound, dateFound} = req.body;
+router.post(
+  "/submit",
+  authMiddleware,
+  upload.single("foundPhoto"),
+  (req, res) => {
+    console.log(req.body);
+    const { name, category_id, description, locFound, dateFound } = req.body;
 
     //IF NOT USER, LOGIN
     if (!req.session.user) {
-        req.flash('error', 'Please log in to submit feedback.')
-    return res.redirect('/auth/login')
+      req.flash("error", "Please log in to submit feedback.");
+      return res.redirect("/auth/login");
     }
 
     // USER'S ID
@@ -29,26 +37,37 @@ router.post("/submit", authMiddleware, upload.single('foundPhoto'), (req, res) =
 
     // IF ONE FIELD IS EMPTY, IT WILL NOT BE ACCEPTED
     if (!name || !category_id || !req.file || !locFound || !dateFound) {
-        req.flash("error",'Please complete all required fields.')
-        return res.redirect("/found")
+      req.flash("error", "Please complete all required fields.");
+      return res.redirect("/found");
     }
 
     // FOLDER WHERE UPLOADED PICTURES WILL BE SENT OR DIRECTED
-    const foundItemPic = req.file
-        ? '/uploads/' + req.file.filename
-        : null
+    const foundItemPic = req.file ? "/uploads/" + req.file.filename : null;
     console.log("FORM DATA:", req.body);
-        console.log("UPLOADED FILE:", req.file);
+    console.log("UPLOADED FILE:", req.file);
     const submitFoundItem = `INSERT INTO found_items (user_id, category_id, 
-    item_name, description, location, date_found, photo_path) VALUES (?,?,?,?,?,?,?)`
-    db.query(submitFoundItem, [userId, category_id, name, description, locFound, dateFound, foundItemPic], (err) =>{
-        if(err){
-            req.flash("error","Unable to submit")
-            return res.status(500).send("Error: "+err.message)
+    item_name, description, location, date_found, photo_path) VALUES (?,?,?,?,?,?,?)`;
+    db.query(
+      submitFoundItem,
+      [
+        userId,
+        category_id,
+        name,
+        description,
+        locFound,
+        dateFound,
+        foundItemPic,
+      ],
+      (err) => {
+        if (err) {
+          req.flash("error", "Unable to submit");
+          return res.status(500).send("Error: " + err.message);
         }
-        req.flash("success", "Submitted Successfully")
-        return res.redirect("/found")
-    })
-})
+        req.flash("success", "Submitted Successfully");
+        return res.redirect("/found");
+      },
+    );
+  },
+);
 
 module.exports = router;

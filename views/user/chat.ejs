@@ -1,8 +1,10 @@
+<%# Template: Provides the chat page skeleton. Locals: user, openId, draft. Route: GET /user/chat. Browser behavior: public/js/chat.js; styles: public/css/user/chat.css. %>
 <%
     /* Chat page. Expects: user, activePage ('chat'), openId (conversation to open, or null),
        draft (text to prefill in the message box, or ''). The conversations and messages are loaded by
        /js/chat.js from the JSON API, so this file only holds the page skeleton. */
 %>
+<%# EJS renders this page skeleton; chat data is fetched by the browser script below. %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +21,7 @@
     <link rel="stylesheet" href="/css/user/chat.css">
 </head>
 <body>
+    <%# Shared account navigation; activePage selects the Chat tab. %>
     <%- include('partials/user-header', { user: user, activePage: 'chat' }) %>
 
     <main class="u-main">
@@ -29,11 +32,13 @@
             </div>
         </header>
 
+        <%# The root ID lets chat.js find the page; data attributes pass initial server values to browser JavaScript. %>
         <section class="panel chat" id="chat"
                  data-me="<%= user.user_id %>"
                  data-open="<%= openId || '' %>"
                  data-draft="<%= draft || '' %>">
 
+            <%# The left pane contains search and a conversation list populated from the chat API. %>
             <!-- left: conversation list -->
             <aside class="chat-list-pane" aria-label="Conversations">
                 <div class="chat-list-head">
@@ -47,6 +52,7 @@
                 </div>
             </aside>
 
+            <%# The right pane switches between the empty prompt and the selected conversation thread. %>
             <!-- right: the open conversation -->
             <section class="chat-thread-pane" aria-label="Messages">
                 <div class="chat-empty" id="chatEmpty">
@@ -72,6 +78,7 @@
 
                     <p class="chat-error" id="chatError" role="alert" hidden></p>
 
+                    <%# The browser script submits this form to the authenticated chat API. %>
                     <form class="chat-compose" id="chatForm" autocomplete="off">
                         <label class="sr-only" for="chatInput">Message</label>
                         <textarea class="textarea" id="chatInput" rows="1" maxlength="1000" placeholder="Write a message…"></textarea>
@@ -82,6 +89,7 @@
         </section>
     </main>
 
+    <%# Load the Socket.IO client first, then the page script that uses it. %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.js" defer></script>
 </body>

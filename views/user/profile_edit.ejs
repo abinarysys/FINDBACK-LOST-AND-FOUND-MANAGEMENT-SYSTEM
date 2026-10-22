@@ -1,6 +1,9 @@
+<%# Template: Renders the profile edit form. Local: user. GET/POST routes: /user/profile/edit and /user/profile/update. Browser preview: inline script; shared styles: user-shell.css. %>
 <%
+    // Provide a letter fallback when the account has no saved profile image.
     const initial = user.full_name ? user.full_name.charAt(0).toUpperCase() : 'U';
 %>
+<%# EJS turns this template into the edit-profile HTML page. %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +19,7 @@
     <link rel="stylesheet" href="/css/user/user-shell.css">
 </head>
 <body>
+    <%# Reuse the account header and mark Profile as the current account section. %>
     <%- include('partials/user-header', { user: user, activePage: 'profile' }) %>
 
     <main class="u-main">
@@ -34,6 +38,7 @@
             </div>
         </header>
 
+        <%# Form field names match req.body/Multer fields read in userprofile-router.js. %>
         <!-- Field names (full_name, contact_number, profile_image) match POST /user/profile/update -->
         <form class="grid-2" method="post" action="/user/profile/update" enctype="multipart/form-data">
 
@@ -45,18 +50,21 @@
                     </div>
                 </div>
                 <div class="panel-body">
+                    <%# Each label is connected to its input by matching for and id attributes. %>
                     <div class="field">
                         <label for="full_name">Full name</label>
                         <input class="input" type="text" id="full_name" name="full_name"
                                value="<%= user.full_name || '' %>" maxlength="100" required autocomplete="name">
                     </div>
 
+                    <%# Each label is connected to its input by matching for and id attributes. %>
                     <div class="field">
                         <label for="email">Email address</label>
                         <input class="input" type="email" id="email" value="<%= user.email || '' %>" disabled>
                         <span class="help">Your email is your login, so it can't be changed here.</span>
                     </div>
 
+                    <%# Each label is connected to its input by matching for and id attributes. %>
                     <div class="field">
                         <label for="contact_number">Contact number</label>
                         <input class="input" type="tel" id="contact_number" name="contact_number"
@@ -95,12 +103,14 @@
     </main>
 
     <script>
+    // Keep preview logic local to this page instead of creating global variables.
     (function () {
         var input = document.getElementById('profile_image');
         var preview = document.getElementById('avatarPreview');
         var initial = document.getElementById('avatarInitial');
         var label = document.getElementById('fileName');
 
+        // Run whenever the selected file changes.
         input.addEventListener('change', function () {
             var file = input.files && input.files[0];
             if (!file) { label.textContent = 'No new photo selected.'; return; }
@@ -109,6 +119,7 @@
                 label.textContent = 'Please choose an image file.';
                 return;
             }
+            // Create a temporary browser URL so the selected image can be previewed before upload.
             preview.src = URL.createObjectURL(file);
             preview.hidden = false;
             if (initial) initial.hidden = true;

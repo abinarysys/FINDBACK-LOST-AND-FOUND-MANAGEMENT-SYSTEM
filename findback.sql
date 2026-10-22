@@ -1,3 +1,4 @@
+-- File guide: This SQL file defines the base MySQL schema and includes seed rows. It changes database structure or defines baseline schema/data; the Node.js app does not execute it automatically.
 -- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
 -- Host: localhost    Database: findback_db
