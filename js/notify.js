@@ -35,7 +35,7 @@ function showNotificationToast(notification) {
     borderLeft: "4px solid #7C18FF",
     borderRadius: "12px",
     boxShadow: "0 5px 20px rgba(45, 32, 75, 0.12)",
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: "Arial, Helvetica, sans-serif",
     cursor: notification.link ? "pointer" : "default",
   });
 

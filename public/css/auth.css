@@ -2,7 +2,6 @@
 /* public/css/auth.css  -  login + register (replaces login.css and register.css)
    Uses the same colour tokens as index.css (/css/user/tokens.css); the fallbacks below keep
    the pages looking right even if that file is missing. */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 :root {
   --a-primary: var(--primary, #7c18ff);
@@ -31,7 +30,7 @@ body.auth-page {
   margin: 0;
   min-height: 100vh;
   padding: 90px 20px 40px;
-  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   color: var(--a-text);
   background:
     radial-gradient(
@@ -583,4 +582,13 @@ label {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ---------- Keyboard focus ---------- */
+.auth-page a:focus-visible,
+.auth-page button:focus-visible,
+.auth-page summary:focus-visible {
+  outline: 2px solid var(--a-primary, #7c18ff);
+  outline-offset: 3px;
+  border-radius: 4px;
 }

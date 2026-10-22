@@ -153,8 +153,14 @@
 
 .btn:focus-visible,
 .swatch:focus-visible {
-  outline: 3px solid rgba(124, 24, 255, 0.25);
+  outline: 2px solid var(--primary, #7c18ff);
   outline-offset: 3px;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Dark mode switch */
@@ -205,7 +211,7 @@
 }
 
 .switch input:focus-visible + i {
-  outline: 3px solid rgba(124, 24, 255, 0.25);
+  outline: 2px solid var(--primary, #7c18ff);
   outline-offset: 3px;
 }
 
@@ -357,4 +363,34 @@
   .swatches {
     gap: 10px;
   }
+}
+
+/* ---------- Dark-mode corrections for settings controls ---------- */
+
+[data-theme="dark"] .switch i {
+  background: #3a4666;
+}
+
+[data-theme="dark"] .switch i::before {
+  background: #f8fafc;
+}
+
+[data-theme="dark"] .settings-alert-error {
+  color: #fca5a5;
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.45);
+}
+
+[data-theme="dark"] .settings-alert-success {
+  color: #6ee7b7;
+  background: rgba(52, 211, 153, 0.12);
+  border-color: rgba(52, 211, 153, 0.45);
+}
+
+[data-theme="dark"] .delete-profile-row strong {
+  color: var(--danger, #f87171);
+}
+
+[data-theme="dark"] .delete-profile-row {
+  border-top-color: rgba(248, 113, 113, 0.3);
 }

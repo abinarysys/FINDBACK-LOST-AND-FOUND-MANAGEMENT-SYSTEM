@@ -3,7 +3,6 @@
    Colours come from /css/user/tokens.css so the accent colour (and dark mode, for
    logged-in users) apply here too. The navbar is styled by site-nav.css. */
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 :root {
   /* side padding: 5% normally, centred at 1400px on very wide screens */
@@ -22,7 +21,7 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font, "Poppins", Arial, Helvetica, sans-serif);
+  font-family: var(--font, Arial, Helvetica, sans-serif);
   background: var(--bg);
   color: var(--text);
   overflow-x: clip; /* clip (not hidden) so the sticky navbar keeps working */
@@ -874,4 +873,14 @@ img {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ---------- Keyboard focus (CSS only) ---------- */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input[type="submit"]:focus-visible {
+  outline: 2px solid var(--primary, #7c18ff);
+  outline-offset: 3px;
+  border-radius: 4px;
 }

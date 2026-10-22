@@ -1,5 +1,4 @@
 /* File guide: This stylesheet styles the s ub mi tL os tI te ms interface and its page components. It styles classes and elements emitted by related EJS templates; it controls browser presentation and does not save application data. */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 /* ===== BASE ===== */
 * {
@@ -10,7 +9,7 @@ body {
   margin: 0;
   padding: 60px 0 0;
   background-color: #f6f3ff;
-  font-family: "Poppins", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   color: #2d2a4a;
   min-height: 100vh;
 }
@@ -203,7 +202,7 @@ body {
   padding: 6px 16px;
   border-radius: 20px;
   background: #d9ccff;
-  color: #7c18ff;
+  color: #5b0fc0;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1.5px;
@@ -361,13 +360,13 @@ body {
   border: 1px solid #9f87f6;
   background: #ffffff;
   border-radius: 8px;
-  font-family: "Poppins", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   color: #2d2a4a;
 }
 .lostItem-form input::placeholder,
 .lostItem-form textarea::placeholder {
-  color: #9a96ab;
+  color: #6b7280;
 }
 .lostItem-form textarea {
   resize: vertical;
@@ -388,7 +387,7 @@ body {
   border-radius: 6px;
   background: #7c18ff;
   color: #ffffff;
-  font-family: "Poppins", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   cursor: pointer;
 }
@@ -420,7 +419,7 @@ body {
   border: none;
   border-radius: 8px;
   color: #ffffff;
-  font-family: "Poppins", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -856,4 +855,366 @@ body::after {
   width: 75px;
   height: 75px;
   object-fit: contain;
+}
+
+/* =========================================================
+   DESIGN POLISH + ACCESSIBILITY + DARK MODE
+   Frontend styling only. No layout or behaviour is changed.
+   ========================================================= */
+
+/* Smooth, short transitions for interactive elements and cards. */
+.nav-links a,
+.right-buttons a,
+.profilepic img,
+.lostItem-form button,
+.lostItem-form > a,
+.flash-close,
+.help-btn,
+.help-icon,
+.help-icon img,
+.lostItem-form,
+.steps-and-tips,
+.tips,
+.lostItem-form input,
+.lostItem-form select,
+.lostItem-form textarea {
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+
+/* Clear keyboard focus everywhere. */
+.nav a:focus-visible,
+.nav button:focus-visible,
+.flash-close:focus-visible,
+.lostItem-form > a:focus-visible,
+.help-band a:focus-visible {
+  outline: 2px solid #7c18ff;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.lostItem-form button[type="submit"]:focus-visible {
+  outline: 3px solid #7c18ff;
+  outline-offset: 3px;
+}
+
+.lostItem-form input:focus-visible,
+.lostItem-form select:focus-visible,
+.lostItem-form textarea:focus-visible {
+  outline: 2px solid #7c18ff;
+  outline-offset: 1px;
+}
+
+/* Buttons: visible hover/active feedback instead of fading the label. */
+.lostItem-form button[type="submit"]:hover {
+  opacity: 1;
+  background-color: #6a13e0;
+}
+
+.lostItem-form button[type="submit"]:active {
+  background-color: #5a0fc0;
+}
+
+.lostItem-form input[type="file"]::file-selector-button {
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.lostItem-form input[type="file"]::file-selector-button:hover {
+  background: #6a13e0;
+}
+
+/* Disabled controls stay recognisable and readable. */
+.lostItem-form input:disabled,
+.lostItem-form select:disabled,
+.lostItem-form textarea:disabled {
+  background: #f3f1f8;
+  color: #6b7280;
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+/* Native validation uses the same red in both themes, with a text bubble. */
+.lostItem-form input:user-invalid,
+.lostItem-form select:user-invalid,
+.lostItem-form textarea:user-invalid {
+  border-color: #dc2626;
+}
+
+/* ---------- Dark mode ---------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] body {
+  background-color: #0b1020;
+  color: #e8ecf6;
+}
+
+[data-theme="dark"] .nav {
+  background: #121a2e;
+  box-shadow: 0 1px 0 #26324d, 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .nav .logo img {
+  filter: brightness(0) invert(1);
+}
+
+[data-theme="dark"] .nav-links a,
+[data-theme="dark"] .right-buttons a {
+  color: #e8ecf6;
+}
+
+[data-theme="dark"] .nav-links a:hover,
+[data-theme="dark"] .right-buttons a:hover {
+  color: #c4b5fd;
+}
+
+[data-theme="dark"] .right-buttons > a:last-child {
+  background: #a78bfa;
+  color: #0b1020;
+}
+
+[data-theme="dark"] .right-buttons > a:last-child:hover {
+  background: #c4b5fd;
+  color: #0b1020;
+}
+
+[data-theme="dark"] .top {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(11, 16, 32, 0.96) 0%,
+      rgba(11, 16, 32, 0.9) 45%,
+      rgba(11, 16, 32, 0.75) 100%
+    ),
+    url("/img/local-img/submitlost.png") right center / cover no-repeat;
+}
+
+[data-theme="dark"] .top h4 {
+  background: rgba(167, 139, 250, 0.18);
+  color: #c4b5fd;
+}
+
+[data-theme="dark"] .top h2 {
+  background: linear-gradient(90deg, #e8ecf6 0 30%, #c4b5fd 70% 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+[data-theme="dark"] .top p {
+  color: #b5bfd6;
+}
+
+[data-theme="dark"] .steps-and-tips {
+  background-color: #141d33;
+  border: 1px solid #26324d;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .steps {
+  border-bottom-color: #3a4666;
+}
+
+[data-theme="dark"] .steps h4,
+[data-theme="dark"] .tips h4 {
+  color: #e8ecf6;
+}
+
+[data-theme="dark"] .step p,
+[data-theme="dark"] .tips p {
+  color: #b5bfd6;
+}
+
+[data-theme="dark"] .steps-and-tips .step h3 {
+  background-color: #8b5cf6;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .tips {
+  background-color: #1b2547;
+  border: 1px solid #26324d;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .steps-and-tips > h3 {
+  color: #c4b5fd;
+}
+
+[data-theme="dark"] .lostItem-form {
+  background-color: #121a2e;
+  border: 1px solid #26324d;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .lostItem-form h2,
+[data-theme="dark"] .lostItem-form h4,
+[data-theme="dark"] .lostItem-form label {
+  color: #e8ecf6;
+}
+
+[data-theme="dark"] .lostItem-form input,
+[data-theme="dark"] .lostItem-form select,
+[data-theme="dark"] .lostItem-form textarea {
+  background: #18223a;
+  border-color: #3a4666;
+  color: #e8ecf6;
+}
+
+[data-theme="dark"] .lostItem-form input::placeholder,
+[data-theme="dark"] .lostItem-form textarea::placeholder {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .lostItem-form option {
+  background: #18223a;
+  color: #e8ecf6;
+}
+
+[data-theme="dark"] .lostItem-form input:focus,
+[data-theme="dark"] .lostItem-form select:focus,
+[data-theme="dark"] .lostItem-form textarea:focus {
+  border-color: #c4b5fd;
+  box-shadow: 0 0 0 3px rgba(196, 181, 253, 0.28);
+}
+
+[data-theme="dark"] .lostItem-form input[type="file"]::file-selector-button {
+  background: #a78bfa;
+  color: #0b1020;
+}
+
+[data-theme="dark"] .lostItem-form input[type="file"]::file-selector-button:hover {
+  background: #c4b5fd;
+}
+
+[data-theme="dark"] .lostItem-form form > p {
+  background: #18223a;
+  border-color: #3a4666;
+  color: #e8ecf6;
+}
+
+[data-theme="dark"] .lostItem-form button[type="submit"] {
+  background-color: #a78bfa;
+  color: #0b1020;
+}
+
+[data-theme="dark"] .lostItem-form button[type="submit"]:hover {
+  background-color: #c4b5fd;
+}
+
+[data-theme="dark"] .lostItem-form button[type="submit"]:active {
+  background-color: #b9a4ff;
+}
+
+[data-theme="dark"] .lostItem-form > a {
+  color: #c4b5fd;
+}
+
+[data-theme="dark"] .lostItem-form input:-webkit-autofill,
+[data-theme="dark"] .lostItem-form input:-webkit-autofill:hover,
+[data-theme="dark"] .lostItem-form input:-webkit-autofill:focus,
+[data-theme="dark"] .lostItem-form textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #18223a inset;
+  -webkit-text-fill-color: #e8ecf6;
+  caret-color: #e8ecf6;
+}
+
+[data-theme="dark"] .flash-success {
+  background-color: #0d2b22;
+  color: #a7f3d0;
+  border-color: #14532d;
+  border-left-color: #34d399;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .flash-success .flash-icon {
+  background-color: #14532d;
+  color: #a7f3d0;
+}
+
+[data-theme="dark"] .flash-error {
+  background-color: #3b1119;
+  color: #fecdd3;
+  border-color: #7f1d1d;
+  border-left-color: #f87171;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .flash-error .flash-icon {
+  background-color: #7f1d1d;
+  color: #fecdd3;
+}
+
+[data-theme="dark"] .help-band {
+  background: #141d33;
+  border-top: 1px solid #26324d;
+}
+
+[data-theme="dark"] .help-icon {
+  background: #e2e8f0;
+}
+
+[data-theme="dark"] .help-main h4,
+[data-theme="dark"] .help-main p,
+[data-theme="dark"] .help-label {
+  color: #e8ecf6;
+}
+
+[data-theme="dark"] .help-btn {
+  background: #a78bfa;
+  color: #0b1020;
+}
+
+[data-theme="dark"] .help-btn:hover {
+  background: #c4b5fd;
+}
+
+[data-theme="dark"] .footer-bar {
+  background: #070b14;
+}
+
+/* Dark-mode focus rings need a lighter colour on dark surfaces. */
+[data-theme="dark"] .nav a:focus-visible,
+[data-theme="dark"] .nav button:focus-visible,
+[data-theme="dark"] .flash-close:focus-visible,
+[data-theme="dark"] .lostItem-form > a:focus-visible,
+[data-theme="dark"] .help-band a:focus-visible,
+[data-theme="dark"] .lostItem-form button[type="submit"]:focus-visible,
+[data-theme="dark"] .lostItem-form input:focus-visible,
+[data-theme="dark"] .lostItem-form select:focus-visible,
+[data-theme="dark"] .lostItem-form textarea:focus-visible {
+  outline-color: #c4b5fd;
+}
+
+/* Respect the visitor's reduced-motion preference. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Phones: let the hero paragraph wrap naturally instead of forcing a break. */
+@media (max-width: 600px) {
+  .top p br {
+    display: none;
+  }
+
+  /* 16px keeps iOS Safari from zooming when a field is focused. */
+  .lostItem-form input,
+  .lostItem-form select,
+  .lostItem-form textarea {
+    font-size: 16px;
+  }
 }

@@ -4,7 +4,6 @@
    Self-contained: it only styles .u-* classes, so it can't restyle the page around it. */
 
 @import url("/css/user/tokens.css");
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 :root {
   --nav-h: 60px;

@@ -6,7 +6,6 @@
    All colours come from tokens.css, so the user's accent colour (and dark mode, for
    logged-in users) apply automatically. */
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 :root {
   /* two soft tints of the accent colour, used for banners and section backgrounds */
@@ -29,7 +28,7 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font, "Poppins", system-ui, sans-serif);
+  font-family: var(--font, Arial, Helvetica, sans-serif);
   overflow-x: clip; /* clip (not hidden) so the sticky navbar keeps working */
 }
 
@@ -222,9 +221,22 @@ img {
   }
 }
 
+/* Consistent keyboard focus for links and controls on shared public pages. */
+body a:focus-visible,
+body button:focus-visible,
+body summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-    animation: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

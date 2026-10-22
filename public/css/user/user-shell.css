@@ -167,6 +167,10 @@ body {
   color: #fff;
 }
 
+[data-theme="dark"] .u-tab.active .nav-count {
+  color: #0b1020;
+}
+
 /* ---------- Page content ---------- */
 
 .u-main {
@@ -723,5 +727,57 @@ body {
 
   .u-main .page-actions .btn {
     width: 100%;
+  }
+}
+
+/* ---------- Interaction polish (CSS only) ---------- */
+
+.u-main .chip,
+.u-main .table td,
+.u-main .list li,
+.u-main .input,
+.u-main .textarea,
+.u-main .stat {
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+/* Keep keyboard focus obvious without changing the layout. */
+.u-main a:focus-visible,
+.u-main button:focus-visible,
+.u-main summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* A gentle lift for summary cards on devices that support hover. */
+@media (hover: hover) {
+  .u-main .stat:hover {
+    border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .u-main .stat:hover {
+    box-shadow: none;
+  }
+}
+
+/* Tablet: keep all six dashboard tabs visible without changing their order. */
+@media (max-width: 900px) {
+  .u-tabs {
+    gap: 4px;
+  }
+
+  .u-tab {
+    height: 46px;
+    padding: 0 14px;
+    gap: 8px;
+    font-size: 13.5px;
   }
 }
