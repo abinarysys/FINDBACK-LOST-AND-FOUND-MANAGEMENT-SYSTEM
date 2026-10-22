@@ -44,19 +44,18 @@ Install the following before setting up the project
 ## SETUP
 
 ### 1. CLONE THE REPOSITORY
-- git clone https://github.com/abinarysys/FINDBACK-LOST-AND-FOUND-SYSTEM.git
-- cd FINDBACK-LOST-AND-FOUND-SYSTEM
+- git clone https://github.com/abinarysys/FINDBACK-LOST-AND-FOUND-MANAGEMENT-SYSTEM.git
+- cd FINDBACK-LOST-AND-FOUND-MANAGEMENT-SYSTEM
 
 ### 2. INITIALIZE THE PROJECT
 *If package.json does not exist:*
 npm init -y
 
 ### 3. INSTALL DEPENDENCIES
-- npm install express ejs mysql2 express-session socket.io nodemon mutler connect-flash
+- npm install
 - *Or you can just check the package.json file to check the dependencies installed*
 
 ### 4. EXPORT DATABASE
 Look for the file with .sql in the folder
-
 ### 5. DATABASE PASSWORD
 Look for the /config/db.js file, if you have password, put your password in the db object
