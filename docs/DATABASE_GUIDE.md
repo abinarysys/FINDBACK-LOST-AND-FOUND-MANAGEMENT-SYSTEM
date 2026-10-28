@@ -1,7 +1,7 @@
 # Database Guide
 
 ## Connection
-config/db.js reads DB_HOST (default localhost), DB_USER, DB_PASSWORD, DB_NAME (default findback_db) and creates mysql2 pool. query.js is a Promise wrapper. Pass data using ? placeholders.
+config/db.js reads DB_HOST (default localhost), DB_USER, DB_PASSWORD, DB_NAME (default copy) and creates mysql2 pool. query.js is a Promise wrapper. Pass data using ? placeholders.
 
 ## Tables and relationships
 findback.sql defines users, item_categories, lost_items, found_items, item_images, claims, conversations, conversation_participants, messages and feedback. claims-update.sql creates notifications; admin-update.sql creates admin_activity_logs.

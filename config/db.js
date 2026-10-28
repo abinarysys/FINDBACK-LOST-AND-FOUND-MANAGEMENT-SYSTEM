@@ -18,7 +18,7 @@ const db = mysql.createPool({
     // Database password is read at runtime and must not be committed or documented.
     password: process.env.DB_PASSWORD,
     // Select the configured schema, or use the project's local default database name.
-    database: process.env.DB_NAME || 'findback_db',
+    database: process.env.DB_NAME || 'copy',
     // Queue a query when all pooled connections are busy instead of failing immediately.
     waitForConnections: true,
     // Keep at most ten open connections in this pool.
