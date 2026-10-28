@@ -3,8 +3,6 @@
    Colours come from tokens.css (accent + dark mode). Nav and footer styles live in
    site-nav.css and public-base.css. */
 
-@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&display=swap");
-
 body.page-hiw {
   background: var(--tint);
 }

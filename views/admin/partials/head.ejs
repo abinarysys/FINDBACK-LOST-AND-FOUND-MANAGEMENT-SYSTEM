@@ -7,17 +7,8 @@
     <title><%= locals.title ? title + ' | ' : '' %>FindBack Admin</title>
 
     <link rel="stylesheet" href="/css/admin.css">
-
-    <!-- apply saved dark mode / accent colour before the page paints (no flash) -->
-    <script>
-        (function () {
-            try {
-                var r = document.documentElement;
-                if (localStorage.getItem('fb-theme') === 'dark') r.dataset.theme = 'dark';
-                var c = localStorage.getItem('fb-accent');
-                if (c) r.style.setProperty('--primary', c);
-            } catch (e) {}
-        })();
-    </script>
+    <link rel="stylesheet" href="/css/admin-polish.css">
+    <link id="fb-theme-overrides" rel="stylesheet" href="/css/theme-overrides.css">
     <script src="/js/admin.js" defer></script>
+    <script src="/js/scroll-reveal.js" defer></script>
 </head>

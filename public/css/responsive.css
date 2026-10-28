@@ -1,0 +1,382 @@
+/* Shared narrow-screen safeguards and layout fixes for every FindBack surface. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+}
+
+img,
+video,
+iframe,
+canvas {
+  max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
+pre,
+code,
+td,
+th,
+p,
+h1,
+h2,
+h3,
+h4,
+a,
+label {
+  overflow-wrap: anywhere;
+}
+
+.main,
+.u-main,
+.admin-main,
+.panel,
+.grid-2,
+.grid-eq,
+.stats,
+.stats-grid,
+.items-container,
+.browse .grid,
+.chat,
+.chat > *,
+.u-main > *,
+.admin-main > * {
+  min-width: 0;
+}
+
+.table-wrap,
+.ma-table-wrap,
+.u-main .table-wrap,
+.u-main .table-scroll,
+.table-responsive,
+.data-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .main,
+  .admin-main,
+  .u-main {
+    max-width: 100%;
+  }
+
+  .u-main .page-head,
+  .u-main .page-heading,
+  .admin-main .page-head,
+  .admin-main .page-heading,
+  .page-heading,
+  .page-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .page-actions,
+  .page-heading-actions {
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .browse .hero {
+    gap: 12px;
+  }
+
+  .browse .hero-deco {
+    width: clamp(72px, 18vw, 140px);
+    flex: 0 1 auto;
+  }
+
+  .browse .posts-head,
+  .toolbar,
+  .u-main .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .u-main .grid-2,
+  .admin-main .grid-2,
+  .admin-main .grid-eq {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  body > .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding: 12px 16px;
+  }
+
+  body > .nav .logo {
+    flex: 0 0 auto;
+  }
+
+  body > .nav .nav-links {
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    width: 100%;
+  }
+
+  body > .nav .right-buttons {
+    flex: 0 1 auto;
+    margin-left: auto;
+  }
+
+  .u-main {
+    padding: 26px 16px 60px;
+  }
+
+  .u-main .page-head,
+  .page-head {
+    gap: 12px;
+  }
+
+  .u-main .page-head > *,
+  .page-head > * {
+    min-width: 0;
+  }
+
+  .panel-head,
+  .panel-foot,
+  .toolbar,
+  .page-actions,
+  .page-heading-actions,
+  .btn-row,
+  .row-actions {
+    flex-wrap: wrap;
+  }
+
+  .contact-page,
+  .hiw-page,
+  .claim-container,
+  .category-page,
+  .browse .posts {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .browse .search-wrap {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .browse .search-bar {
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .browse .search-bar input {
+    min-width: 0;
+  }
+
+  .browse .grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  }
+
+  .browse .card-actions {
+    flex-wrap: wrap;
+  }
+
+  .browse .card-actions > * {
+    flex: 1 1 120px;
+  }
+
+  .contact-grid,
+  .contact-content,
+  .contact-layout,
+  .contact-row,
+  .hiw-grid,
+  .hiw-about-bottom,
+  .hiw-features,
+  .claim-layout,
+  .claim-grid,
+  .claim-card,
+  .category-layout,
+  .form-grid,
+  .form-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .hiw-features {
+    grid-auto-flow: row;
+    grid-template-rows: none;
+  }
+
+  .main {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .main .panel,
+  .admin-main .panel,
+  .u-main .panel {
+    min-width: 0;
+  }
+
+  .table-wrap table,
+  .ma-table-wrap table {
+    min-width: 600px;
+  }
+
+  .modal-card,
+  .ma-modal-card,
+  .auth-card {
+    width: min(100% - 28px, 560px);
+    max-width: 560px;
+    min-width: 0;
+    max-height: calc(100dvh - 28px);
+    overflow-y: auto;
+  }
+
+  .ma-panel-heading,
+  .ma-actions {
+    flex-wrap: wrap;
+  }
+
+  .ma-search {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  body > .nav .nav-links {
+    justify-content: flex-start;
+    column-gap: 12px;
+    row-gap: 8px;
+  }
+
+  body > .nav .nav-links a,
+  body > .nav .right-buttons a {
+    font-size: 12px;
+  }
+
+  .u-main .stats,
+  .stats,
+  .stats-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .u-main .grid-eq,
+  .grid-eq {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .page-actions > *,
+  .page-heading-actions > *,
+  .toolbar > *,
+  .btn-row > * {
+    max-width: 100%;
+  }
+
+  .page-actions .btn,
+  .page-heading-actions .btn {
+    min-height: 42px;
+  }
+
+  .field-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .input,
+  .textarea,
+  input,
+  select,
+  textarea {
+    min-width: 0;
+  }
+
+  .u-main .table {
+    min-width: 600px;
+  }
+
+  .contact-page,
+  .hiw-page,
+  .claim-container,
+  .category-page,
+  .browse .posts,
+  .browse .search-wrap {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .browse .categories {
+    grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+    gap: 12px 8px;
+  }
+
+  .browse .posts-head {
+    align-items: stretch;
+  }
+
+  .browse .filters {
+    min-width: 0;
+  }
+
+  .contact-info-item,
+  .notification-item,
+  .claim-summary-row {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-sidebar .sidebar-nav a,
+  .sidebar .nav-link {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  body > .nav {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .u-main,
+  .main,
+  .admin-main {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .panel-head,
+  .panel-body,
+  .panel-foot {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .btn,
+  button {
+    white-space: normal;
+  }
+}

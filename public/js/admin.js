@@ -171,7 +171,41 @@
   /* ---------- theme (dark mode + accent colour) ---------- */
   const root = document.documentElement;
   const THEME_KEY = "fb-theme",
-    ACCENT_KEY = "fb-accent";
+    ACCENT_KEY = "fb-accent",
+    DEFAULT_ACCENT = "#4F46E5";
+
+  function currentTheme() {
+    return {
+      mode: root.dataset.theme === "dark" ? "dark" : "light",
+      color:
+        root.style.getPropertyValue("--accent").trim() ||
+        getComputedStyle(root).getPropertyValue("--accent").trim() ||
+        DEFAULT_ACCENT,
+    };
+  }
+
+  async function persistTheme(theme) {
+    try {
+      const response = await fetch("/user/settings/theme", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(theme),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Unable to save appearance.");
+      }
+      return true;
+    } catch (error) {
+      toast("Appearance previewed, but could not be saved to your account.", "error");
+      return false;
+    }
+  }
+
   window.FBTheme = {
     isDark: () => root.dataset.theme === "dark",
     setDark(on) {
@@ -180,22 +214,39 @@
       try {
         localStorage.setItem(THEME_KEY, on ? "dark" : "light");
       } catch (e) {}
+      persistTheme(currentTheme());
     },
     setAccent(c) {
-      if (c) root.style.setProperty("--primary", c);
-      else root.style.removeProperty("--primary");
+      const color = c || DEFAULT_ACCENT;
+      root.style.setProperty("--accent", color);
+      // Let the active light/dark palette derive --primary from the accent.
+      root.style.removeProperty("--primary");
       try {
-        c
-          ? localStorage.setItem(ACCENT_KEY, c)
-          : localStorage.removeItem(ACCENT_KEY);
+        localStorage.setItem(ACCENT_KEY, color);
       } catch (e) {}
       $$(".swatch").forEach((s) =>
         s.classList.toggle(
           "active",
-          (s.dataset.color || "").toLowerCase() ===
-            (c || "#7c18ff").toLowerCase(),
+          (s.dataset.color || "").toLowerCase() === color.toLowerCase(),
         ),
       );
+      persistTheme(currentTheme());
+    },
+    reset() {
+      root.removeAttribute("data-theme");
+      root.style.setProperty("--accent", DEFAULT_ACCENT);
+      root.style.removeProperty("--primary");
+      try {
+        localStorage.setItem(THEME_KEY, "light");
+        localStorage.setItem(ACCENT_KEY, DEFAULT_ACCENT);
+      } catch (e) {}
+      $$(".swatch").forEach((s) =>
+        s.classList.toggle(
+          "active",
+          (s.dataset.color || "").toLowerCase() === DEFAULT_ACCENT.toLowerCase(),
+        ),
+      );
+      persistTheme({ mode: "light", color: DEFAULT_ACCENT });
     },
   };
   document.addEventListener("DOMContentLoaded", () => {
@@ -216,20 +267,15 @@
     const reset = $("#resetTheme");
     if (reset)
       reset.addEventListener("click", () => {
-        FBTheme.setAccent(null);
-        FBTheme.setDark(false);
+        FBTheme.reset();
         if (dark) dark.checked = false;
         toast("Appearance reset.", "success");
       });
-    let saved = null;
-    try {
-      saved = localStorage.getItem(ACCENT_KEY);
-    } catch (e) {}
+    const saved = currentTheme().color;
     $$(".swatch").forEach((s) =>
       s.classList.toggle(
         "active",
-        (s.dataset.color || "").toLowerCase() ===
-          (saved || "#7c18ff").toLowerCase(),
+        (s.dataset.color || "").toLowerCase() === saved.toLowerCase(),
       ),
     );
   });

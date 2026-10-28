@@ -1,18 +1,7 @@
-// File guide: This module records admin actions without interrupting the main request on logging errors.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
-// middleware/admin-activity.js
-// Records what admins do so it shows on  Activity Logs > Admin Activity.
 const query = require("../config/query");
 
 let warned = false;
 
-/**
- *   await logAdminAction(req, 'APPROVE_USER', { targetType: 'user', targetId: 5, details: 'Verified Ann' });
- *   await logAdminAction(req, 'LOGIN', { adminId: user.user_id });   // when the session isn't set yet
- * Never throws: a logging problem must not break the real action.
- */
 async function logAdminAction(req, action, opts = {}) {
   try {
     const adminId = opts.adminId ?? req.session?.user?.user_id;

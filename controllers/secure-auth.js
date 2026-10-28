@@ -1,24 +1,8 @@
-// File guide: This module handles login, registration, logout, rate limits, and session setup.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
-// controllers/secure-auth.js
-// ONE login for everyone (users + admins). The backend reads users.role and decides where to send the person.
-//
-// Brute-force protection (3 layers):
-//   1. IP rate limit      - max 30 failed login attempts per 15 minutes per IP
-//   2. Account lockout    - 5 wrong passwords = 15 min lock, 10 = 1 hour, 15+ = 24 hours
-//   3. Argon2id hashing   - every guess is expensive, even if the database leaks
-// Every failure shows the same message, and unknown emails cost the same time as real ones.
+// MODULES
 const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 const query = require("../config/query");
-const {
-  hashPassword,
-  verifyPassword,
-  checkPasswordStrength,
-  MAX_PASSWORD_LENGTH,
-} = require("../config/password");
+const {hashPassword, verifyPassword, checkPasswordStrength, MAX_PASSWORD_LENGTH,} = require("../config/password");
 const { logAdminAction } = require("../middleware/admin-activity");
 
 const GENERIC_LOGIN_ERROR =
@@ -26,17 +10,19 @@ const GENERIC_LOGIN_ERROR =
 
 const validEmail = (v) =>
   v.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
 const validPhone = (v) => /^\d{10,11}$/.test(v);
+
 const validName = (v) => /^[\p{L}][\p{L}\p{M}\s.'-]{1,79}$/u.test(v);
 
-// ---------- rate limiters ----------
+// RATE LIMITER FOR URL
 const tooMany = (target) => (req, res) => {
   req.flash("error", "Too many attempts. Please wait a while and try again.");
   res.redirect(303, target);
 };
 
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 15 * 60 * 1000, // MILLISECONDS
   limit: 30,
   standardHeaders: true,
   legacyHeaders: false,
@@ -53,26 +39,20 @@ const registerLimiter = rateLimit({
   handler: tooMany("/auth/register"),
 });
 
-// ---------- helpers ----------
+// THESE ARE HELLPERS
+
+// FLASHES
 const flashes = (req, res) => ({
   success: res.locals.success || req.flash("success"),
   error: res.locals.error || req.flash("error"),
 });
 
-const adminCount = async () => {
-  const rows = await query(
-    "SELECT COUNT(*) AS total FROM users WHERE role = 'admin'",
-  );
-  return Number(rows[0].total) || 0;
-};
-
+// IF FAILED RRGISTRATION BUT PICTURE WAS STILL UPLOADED, THIS BLOCK OF CODE WILL CHECK AND REMOVE THE PICTURE UPLOADED BY ITS PATH NAME
 const discardUpload = (req) => {
   if (req.file) fs.unlink(req.file.path, () => {});
 };
 
-// =====================================================
-// LOGIN
-// =====================================================
+// LOG IN
 exports.loginLimiter = loginLimiter;
 exports.registerLimiter = registerLimiter;
 
@@ -83,7 +63,6 @@ exports.getLogin = async (req, res) => {
 
     res.render("login", {
       user: null,
-      allowSetup: (await adminCount()) === 0,
       ...flashes(req, res),
     });
   } catch (err) {
@@ -115,28 +94,23 @@ exports.login = async (req, res) => {
     );
     const user = rows[0];
 
-    // Always run a hash check (even for unknown emails / locked accounts) so timing doesn't leak anything
     const { ok, needsRehash } = await verifyPassword(
       pw,
       user && user.password_hash,
     );
 
     if (!user) return fail();
-    if (Number(user.is_locked)) return fail(); // locked: even the right password is refused
+    if (Number(user.is_locked)) return fail(); 
 
     if (!ok) {
-      // locked_until is computed from the count BEFORE it is incremented (MySQL updates left to right)
       await query(
-        `UPDATE users SET
-                    locked_until = CASE
-                        WHEN failed_login_attempts + 1 >= 15 THEN DATE_ADD(NOW(), INTERVAL 24 HOUR)
-                        WHEN failed_login_attempts + 1 >= 10 THEN DATE_ADD(NOW(), INTERVAL 1 HOUR)
-                        WHEN failed_login_attempts + 1 >= 5  THEN DATE_ADD(NOW(), INTERVAL 15 MINUTE)
-                        ELSE locked_until END,
-                    failed_login_attempts = failed_login_attempts + 1
-                  WHERE user_id = ?`,
-        [user.user_id],
-      );
+        `UPDATE users SET locked_until = CASE
+          WHEN failed_login_attempts + 1 >= 15 THEN DATE_ADD(NOW(), INTERVAL 24 HOUR)
+          WHEN failed_login_attempts + 1 >= 10 THEN DATE_ADD(NOW(), INTERVAL 1 HOUR)
+          WHEN failed_login_attempts + 1 >= 5  THEN DATE_ADD(NOW(), INTERVAL 15 MINUTE)
+          ELSE locked_until END,
+          failed_login_attempts = failed_login_attempts + 1
+          WHERE user_id = ?`, [user.user_id],);
       console.warn(
         `[auth] failed login for user_id=${user.user_id} ip=${req.ip}`,
       );
@@ -169,13 +143,13 @@ exports.login = async (req, res) => {
 
     const isAdmin = user.role === "admin";
 
-    // New session id on login (prevents session fixation)
     req.session.regenerate((err) => {
       if (err) {
         console.error(err);
         return fail("Could not create a secure login session.");
       }
 
+      // SAVING A USER IN A SESSION
       req.session.user = {
         user_id: user.user_id,
         username: user.full_name,
@@ -197,9 +171,9 @@ exports.login = async (req, res) => {
         if (isAdmin)
           await logAdminAction(req, "LOGIN", {
             adminId: user.user_id,
-            details: "Signed in",
-          });
+            details: "Signed in",          });
         req.flash("success", `Welcome back, ${user.full_name}!`);
+
         res.redirect(303, isAdmin ? "/admin" : "/");
       });
     });
@@ -209,9 +183,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// =====================================================
-// REGISTER (regular users; the first admin is created at /admin/register)
-// =====================================================
+// REGISTER (USERS)
 exports.getRegister = (req, res) => {
   const current = req.session && req.session.user;
   if (current) return res.redirect(current.role === "admin" ? "/admin" : "/");
@@ -292,9 +264,7 @@ exports.register = async (req, res) => {
   }
 };
 
-// =====================================================
 // LOGOUT
-// =====================================================
 exports.logout = async (req, res) => {
   try {
     if (req.session && req.session.user && req.session.user.role === "admin") {

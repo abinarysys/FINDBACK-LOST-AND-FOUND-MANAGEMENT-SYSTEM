@@ -1,7 +1,4 @@
 /* File guide: This stylesheet styles the a dm in interface and its page components. It styles classes and elements emitted by related EJS templates; it controls browser presentation and does not save application data. */
-/* Modern typeface shared with the member-facing pages. */
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
-
 /* =====================================================================
    FindBack Admin — ONE stylesheet for the whole admin.
    Sections: 1 tokens · 2 base · 3 layout · 4 sidebar · 5 components ·
@@ -10,18 +7,18 @@
 
 /* 1. TOKENS ----------------------------------------------------------- */
 :root {
-  --primary: #7c18ff;
+  --primary: #7b4aa2;
   --primary-600: color-mix(in srgb, var(--primary) 85%, #000);
   --primary-soft: color-mix(in srgb, var(--primary) 11%, var(--surface));
   --primary-ring: color-mix(in srgb, var(--primary) 22%, transparent);
 
-  --bg: #f5f5f5;
+  --bg: #faf8fc;
   --surface: #ffffff;
-  --surface-2: #faf8fd;
-  --border: #e7e2ed;
-  --text: #17131d;
-  --text-2: #5e5669;
-  --muted: #81768c;
+  --surface-2: #f6f1fa;
+  --border: #e8dfee;
+  --text: #332744;
+  --text-2: #594d68;
+  --muted: #786b83;
 
   --success: #10b981;
   --success-soft: #e4f7f0;
@@ -34,7 +31,7 @@
   --radius-sm: 10px;
   --shadow: 0 1px 2px rgba(23, 19, 29, 0.04), 0 6px 20px rgba(23, 19, 29, 0.05);
   --sidebar-w: 264px;
-  --font: Arial, Helvetica, sans-serif;
+  --font: "Segoe UI", Arial, system-ui, sans-serif;
 }
 
 [data-theme="dark"] {
@@ -1305,34 +1302,34 @@ table.table {
 }
 
 /* =========================================================
-   MODERN ADMIN REFRESH
-   Unified indigo/teal palette, softer surfaces and clearer
+   ADMIN REFRESH
+   Unified soft-purple palette, gentler surfaces and clearer
    hierarchy. Styling only — no markup or behaviour changes.
    ========================================================= */
 
 :root {
-  --accent: #4f46e5;
+  --accent: #7b4aa2;
   --primary: var(--accent);
   --on-primary: #ffffff;
   --primary-600: color-mix(in srgb, var(--primary) 84%, #000);
   --primary-soft: color-mix(in srgb, var(--primary) 9%, var(--surface));
   --primary-ring: color-mix(in srgb, var(--primary) 24%, transparent);
 
-  --secondary: #0ea5a4;
+  --secondary: #aa8cc5;
   --accent-gradient: linear-gradient(
     135deg,
     var(--primary) 0%,
-    color-mix(in srgb, var(--primary) 62%, #8b5cf6) 55%,
-    color-mix(in srgb, var(--secondary) 70%, #38bdf8) 100%
+    color-mix(in srgb, var(--primary) 88%, #fff) 55%,
+    var(--primary) 100%
   );
 
-  --bg: #f6f7fb;
+  --bg: #faf8fc;
   --surface: #ffffff;
-  --surface-2: #f4f6fb;
-  --border: #e4e8f1;
-  --text: #0d1526;
-  --text-2: #47536b;
-  --muted: #6b7793;
+  --surface-2: #f6f1fa;
+  --border: #e8dfee;
+  --text: #332744;
+  --text-2: #594d68;
+  --muted: #786b83;
 
   --success: #047857;
   --success-soft: #e6f6ef;
@@ -1652,7 +1649,7 @@ body {
   background:
     radial-gradient(120% 90% at 0% 0%, rgba(255, 255, 255, 0.2), transparent 62%),
     radial-gradient(90% 80% at 100% 100%, color-mix(in srgb, var(--secondary) 60%, transparent), transparent 70%),
-    linear-gradient(160deg, #312e81 0%, #4f46e5 48%, #0e7490 100%);
+    linear-gradient(160deg, #745391 0%, #9475b2 100%);
 }
 .auth-brand h1 {
   font-weight: 800;

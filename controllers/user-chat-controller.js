@@ -1,29 +1,23 @@
-// File guide: This module serves chat pages and checks participant access for message APIs.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
 
-// controllers/user-chat-controller.js
-// Rules that protect privacy (enforced HERE, on the server):
-//  - the user id ALWAYS comes from the session, never from the browser
-//  - every read/write first checks the user is a participant of that conversation
-//  - a conversation that does not exist and one you are not part of look the same (404)
 const db = require("../config/db");
 const query = require("../config/query");
 
 const MAX_LENGTH = 1000; // characters per message
 const PAGE_SIZE = 50; // messages loaded at once
 
+// RECEIVER
 const toId = (value) => {
   const id = Number(value);
   return Number.isInteger(id) && id > 0 ? id : null;
 };
 
-// type in the URL -> which table holds the item (whitelist, so nothing from the URL reaches the SQL)
+
 const ITEM_SOURCES = {
   found: { table: "found_items", idColumn: "found_item_id" },
   lost: { table: "lost_items", idColumn: "lost_item_id" },
 };
 
+// USER
 const me = (req) => req.session.user.user_id;
 
 // Returns the other person + BOTH read markers (mine and theirs), or null when I am NOT in this conversation.

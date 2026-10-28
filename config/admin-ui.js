@@ -1,10 +1,4 @@
-// File guide: These helpers build safe, consistent display values for admin EJS views.
-// Inputs: Icon names, text, image paths, dates, and action/status values from controllers.
-// Outputs: Escaped strings, SVG/HTML fragments, formatted dates, and CSS badge classes.
-// Connections: admin-middleware.js exposes these helpers as view locals; admin templates call them.
-
-// SVG fragments are keyed by names used in admin templates. icon() wraps a selected fragment
-// in a shared SVG element so templates only need to provide an icon name.
+// ADMIN USER INTERFACE HELPER
 const ICONS = {
   grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',
   users:
@@ -69,9 +63,9 @@ const initials = (name) =>
   String(name || "?")
     .trim()
     .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
+    .slice(0, 2) 
+    .map((w) => w[0]) 
+    .join("") 
     .toUpperCase() || "?";
 
 // Render an image avatar when available; otherwise show escaped initials as the fallback.

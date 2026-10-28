@@ -1,4 +1,5 @@
 /* File guide: This stylesheet styles the a ut h interface and its page components. It styles classes and elements emitted by related EJS templates; it controls browser presentation and does not save application data. */
+@import url("/css/user/scroll-reveal.css");
 /* public/css/auth.css  -  login + register (replaces login.css and register.css)
    Uses the same colour tokens as index.css (/css/user/tokens.css); the fallbacks below keep
    the pages looking right even if that file is missing. */
@@ -1030,5 +1031,174 @@ body.auth-page {
 @media (prefers-reduced-motion: reduce) {
   .auth-shell {
     animation: none;
+  }
+}
+
+/* Calm, compact finishing pass for the shared login and registration screens. */
+body.auth-page {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  background: #f4f2fa;
+  letter-spacing: -0.01em;
+}
+.auth-page .nav {
+  background: rgba(250, 249, 252, 0.88);
+  border-bottom: 1px solid rgba(29, 23, 54, 0.06);
+  backdrop-filter: blur(8px);
+}
+.auth-shell {
+  border: 1px solid rgba(29, 23, 54, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 18px 48px rgba(39, 31, 66, 0.09);
+  animation: authRise 0.45s ease-out both;
+}
+.auth-aside {
+  background: #eee5f5;
+  color: #3f3150;
+}
+[data-theme="dark"] .auth-aside {
+  background: #2b2235;
+  color: var(--text, #e9eefb);
+}
+.auth-aside::after { display: none; }
+.auth-aside p { color: #675775; }
+.aside-points li { color: #493b59; }
+.aside-points span {
+  border-color: #d6c6e4;
+  background: #e4d8ef;
+  color: #694a83;
+}
+[data-theme="dark"] .auth-aside p,
+[data-theme="dark"] .aside-points li { color: var(--text-2, #b7c1d9); }
+.auth-aside h1 {
+  font-size: clamp(24px, 2.7vw, 31px);
+  font-weight: 550;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+}
+.auth-aside p { font-size: 13.5px; line-height: 1.7; }
+.aside-points { font-weight: 400; }
+.auth-card { padding: 46px 42px; }
+.auth-card h2 {
+  font-size: clamp(23px, 2.4vw, 28px);
+  font-weight: 550;
+  letter-spacing: -0.045em;
+}
+.auth-sub { margin-bottom: 26px; font-size: 13.5px; }
+.auth-card label { font-size: 12px; font-weight: 500; }
+.auth-card .input {
+  min-height: 46px;
+  border-radius: 10px;
+  background: #faf9fc;
+}
+.auth-card .input:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary, #7c18ff) 14%, transparent);
+}
+.pw-toggle, .auth-foot a { font-weight: 550; }
+.auth-card .btn {
+  min-height: 48px;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px -12px color-mix(in srgb, var(--primary, #7c18ff) 72%, transparent);
+  font-weight: 550;
+  background: var(--a-primary);
+  box-shadow: 0 8px 18px -12px color-mix(in srgb, var(--a-primary) 65%, transparent);
+}
+.auth-card .btn:hover:not(:disabled) {
+  background: var(--a-primary-600);
+  filter: none;
+}
+.auth-card .btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px -14px color-mix(in srgb, var(--primary, #7c18ff) 72%, transparent);
+}
+.auth-foot { font-size: 12.5px; }
+.auth-page a, .auth-page button, .auth-page input {
+  transition-duration: 160ms;
+}
+[data-theme="dark"] body.auth-page {
+  background: var(--bg, #0a0f1f);
+}
+[data-theme="dark"] .auth-page .nav { background: color-mix(in srgb, var(--surface, #111a30) 90%, transparent); }
+[data-theme="dark"] .auth-card .input { background: var(--surface-2, #16203a); }
+@media (prefers-reduced-motion: reduce) {
+  .auth-shell { animation: none; }
+  .auth-page *, .auth-page *::before, .auth-page *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+}
+
+/* A warmer, richer purple brand panel shared by login and registration. */
+body.auth-page {
+  background: #f7f4fa;
+}
+.auth-shell {
+  grid-template-columns: minmax(270px, 0.86fr) minmax(0, 1.14fr);
+  border-color: #e8e0ed;
+  border-radius: 22px;
+  box-shadow: 0 22px 56px rgba(57, 38, 76, 0.12);
+}
+.auth-aside {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(145deg, #806295 0%, #725286 55%, #684879 100%);
+  color: #fff;
+}
+.auth-aside::after {
+  display: block;
+  z-index: -1;
+  right: -86px;
+  bottom: -110px;
+  width: 250px;
+  height: 250px;
+  border-color: rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 0 0 34px rgba(255, 255, 255, 0.045),
+    0 0 0 72px rgba(255, 255, 255, 0.025);
+}
+.auth-aside h1 {
+  max-width: 420px;
+  color: #fff;
+  font-weight: 600;
+}
+.auth-aside p {
+  max-width: 430px;
+  color: rgba(255, 255, 255, 0.9);
+}
+.aside-points li {
+  color: rgba(255, 255, 255, 0.94);
+}
+.aside-points span {
+  flex: 0 0 24px;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+.auth-card {
+  min-width: 0;
+  background: #fff;
+}
+.auth-card h2 {
+  color: #352840;
+}
+.auth-card .input {
+  background: #faf8fc;
+}
+@media (max-width: 860px) {
+  .auth-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .auth-aside {
+    padding: 30px 28px;
+  }
+}
+@media (max-width: 520px) {
+  .auth-shell {
+    border-radius: 18px;
+  }
+  .auth-aside {
+    padding: 24px 20px;
+  }
+  .auth-aside h1 {
+    font-size: 23px;
+  }
+  .auth-card {
+    padding: 26px 20px;
   }
 }

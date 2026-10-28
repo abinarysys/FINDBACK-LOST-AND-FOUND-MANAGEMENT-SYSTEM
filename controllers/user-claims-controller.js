@@ -1,10 +1,4 @@
-// File guide: This module loads claims and details owned by the signed-in user.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
 
-// controllers/user-claims-controller.js
-// The "View Claim" page. Only the person who made the claim can open it:
-// the query filters on BOTH the claim id and the session user's id.
 const query = require("../config/query");
 
 const sendNotFound = (res) =>
@@ -46,11 +40,9 @@ exports.viewClaim = async (req, res) => {
       [claimId, userId],
     );
 
-    // Same answer whether the claim doesn't exist or belongs to someone else,
-    // so nobody can probe which claim ids exist.
     if (!rows.length) return sendNotFound(res);
 
-    // Opening the claim counts as reading its notifications.
+    // IF YOU OPEN THE CLAIM, IT COUNTS AS READING THE NOTIF
     await query(
       "UPDATE notifications SET is_read = 1 WHERE user_id = ? AND claim_id = ? AND is_read = 0",
       [userId, claimId],
@@ -66,7 +58,6 @@ exports.viewClaim = async (req, res) => {
   }
 };
 
-// "My Claims" tab: every claim the logged-in user has made (filtered by the session user only).
 exports.listClaims = async (req, res) => {
   try {
     const userId = req.session.user?.user_id;

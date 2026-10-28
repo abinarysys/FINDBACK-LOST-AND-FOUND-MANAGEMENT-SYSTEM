@@ -1,8 +1,3 @@
-// File guide: This module validates and stores uploaded image files.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
-// middleware/upload-middleware.js
 const multer = require("multer");
 const crypto = require("crypto");
 const fs = require("fs");

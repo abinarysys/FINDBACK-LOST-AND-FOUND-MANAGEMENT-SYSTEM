@@ -8,6 +8,8 @@
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <link rel="stylesheet" href="/css/user/tokens.css">
     <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <script src="/js/scroll-reveal.js" defer></script>
     <title>Log in | FindBack</title>
 </head>
 <body class="auth-page">
@@ -54,9 +56,6 @@
             </form>
 
             <p class="auth-foot">Don't have an account? <a href="/auth/register">Register here</a></p>
-            <% if (locals.allowSetup) { %>
-                <p class="auth-foot">No admin yet? <a href="/admin/register">Create the first admin</a></p>
-            <% } %>
             <p class="auth-foot secure-note">&#128274; Too many wrong attempts will temporarily lock the account.</p>
         </section>
     </main>

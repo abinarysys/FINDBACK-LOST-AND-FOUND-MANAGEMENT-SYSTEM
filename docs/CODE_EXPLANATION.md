@@ -12,7 +12,7 @@
 The render decorator injects theme script and notification bell into eligible signed-in non-admin HTML via string matching.
 
 ## Database/config
-config/db.js makes mysql2 pool and logs a connection probe. config/query.js converts callback query to Promise. Use SQL ? params for values. config/password.js exports hashPassword, verifyPassword, checkPasswordStrength, MAX_PASSWORD_LENGTH; Argon2id plus optional pepper/legacy verification. Sequence/repeat/keyboard helpers exist but current strength checker does not call them. config/theme.js allowlists theme values. config/notify.js creates durable rows and emits to user room. config/admin-ui.js exports template helpers.
+config/db.js makes mysql2 pool and logs a connection probe. config/query.js converts callback query to Promise. Use SQL ? params for values. config/password.js exports hashPassword, verifyPassword, checkPasswordStrength, MAX_PASSWORD_LENGTH; it uses Argon2id with optional pepper and accepts Argon2 hashes only. config/theme.js allowlists theme values. config/notify.js creates durable rows and emits to user room. config/admin-ui.js exports template helpers.
 
 ## Middleware
 auth-middleware checks req.session.user. admin-middleware.locals populates view helpers; requireAdmin verifies role and rereads active status. csrf.js generates and timing-safely compares tokens; auth-router uses it. upload-middleware saves random filenames, accepts JPG/PNG/WebP up to 5 MiB. user-theme loads DB theme once in session and falls back to default. admin-activity logs best effort.

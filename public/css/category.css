@@ -1,6 +1,4 @@
 /* File guide: This stylesheet styles the c at eg or y interface and its page components. It styles classes and elements emitted by related EJS templates; it controls browser presentation and does not save application data. */
-@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&display=swap");
-
 /* ===== VARIABLES ===== */
 :root {
   --lavender: #dcd0ff;
@@ -1025,16 +1023,16 @@ select:focus-visible {
   --text: #0d1526;
   --muted: #6b7793;
   --border: #e4e8f1;
-  --purple: #4f46e5;
-  --lavender: #eef0ff;
+  --purple: #7b4aa2;
+  --lavender: #f1eafa;
   --lost: #ef4444;
   --found: #0d9488;
   --claimed: #64748b;
   --nav-height: 64px;
-  --cat-bg: #f7f8fc;
+  --cat-bg: #faf8fc;
   --cat-surface: #ffffff;
   --cat-text-2: #47536b;
-  --cat-gradient: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #0ea5a4 100%);
+  --cat-gradient: linear-gradient(135deg, #7b4aa2, #7b4aa2);
   --cat-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 30px -12px rgba(15, 23, 42, 0.16);
   --cat-shadow-lg: 0 2px 4px rgba(15, 23, 42, 0.04), 0 28px 60px -24px rgba(15, 23, 42, 0.3);
 }

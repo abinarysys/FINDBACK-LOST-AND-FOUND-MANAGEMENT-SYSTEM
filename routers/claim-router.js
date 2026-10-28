@@ -1,4 +1,4 @@
-// File guide: This module renders and processes claims for found items.
+// MODULES + EXDPORTS
 // Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
 // Connections: Imports and router mounts in app.js show how other modules call this code.
 
@@ -7,7 +7,7 @@ const router = require("express").Router();
 const query = require("../config/query.js");
 const authMiddleware = require("../middleware/auth-middleware.js");
 
-// SHOW CLAIM PAGE (found items only - lost items can't be claimed)
+// SHOW CLAIM PAGE (PS:FOUND ITEMS ONYL BCS THE LOST ITEM CANNOT BE CLAIMED BY SOMEONE)
 router.get("/:type/:item_id", authMiddleware, async (req, res) => {
   const { type, item_id } = req.params;
 
@@ -41,7 +41,6 @@ router.get("/:type/:item_id", authMiddleware, async (req, res) => {
   }
 });
 
-// SUBMIT A CLAIM -> saved as 'pending' for the admin
 router.post("/:type/:item_id/submit", authMiddleware, async (req, res) => {
   const { type, item_id } = req.params;
   const back = `/claim/${type}/${item_id}`;

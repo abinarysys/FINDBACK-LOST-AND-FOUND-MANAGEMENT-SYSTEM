@@ -711,15 +711,15 @@ select:focus-visible {
    ========================================================= */
 
 :root {
-  --c-primary: #4f46e5;
-  --c-secondary: #0ea5a4;
-  --c-text: #0d1526;
-  --c-text-2: #47536b;
-  --c-muted: #6b7793;
-  --c-border: #e4e8f1;
+  --c-primary: #7b4aa2;
+  --c-secondary: #aa8cc5;
+  --c-text: #332744;
+  --c-text-2: #594d68;
+  --c-muted: #786b83;
+  --c-border: #e8dfee;
   --c-surface: #ffffff;
-  --c-surface-2: #f4f6fb;
-  --c-gradient: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #0ea5a4 100%);
+  --c-surface-2: #f6f1fa;
+  --c-gradient: linear-gradient(135deg, #7b4aa2, #7b4aa2);
   --c-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 30px -12px rgba(15, 23, 42, 0.16);
   --c-shadow-lg: 0 2px 4px rgba(15, 23, 42, 0.04), 0 28px 60px -24px rgba(15, 23, 42, 0.3);
 }

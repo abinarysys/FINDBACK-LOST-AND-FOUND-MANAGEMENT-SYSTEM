@@ -768,6 +768,84 @@ body {
   }
 }
 
+/* Quiet account-page styling: the same clear type and restrained motion as the home page. */
+:root { --font-display: var(--font, "Segoe UI", Arial, sans-serif); }
+body {
+  background: var(--bg);
+  font-family: var(--font, "Segoe UI", Arial, sans-serif);
+}
+.u-hero {
+  padding: calc(var(--nav-h, 60px) + 34px) 0 68px;
+  background: color-mix(in srgb, var(--primary) 13%, var(--bg));
+  border-radius: 0 0 28px 28px;
+}
+[data-theme="dark"] .u-hero { background: color-mix(in srgb, var(--primary) 13%, var(--bg)); }
+.u-hero-in { gap: 24px; }
+.u-hero-avatar {
+  width: 88px;
+  height: 88px;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 22%, transparent);
+  font-weight: 500;
+}
+.u-hero-avatar:hover {
+  transform: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+.u-hero-text h1 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 550;
+  letter-spacing: -0.035em;
+}
+.u-hero-text p { font-size: 15px; font-weight: 400; }
+.u-tabs {
+  gap: 2px;
+  margin-top: -22px;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  backdrop-filter: none;
+}
+.u-tab { font-weight: 500; }
+.u-tab.active {
+  background: var(--primary);
+  font-weight: 500;
+  box-shadow: none;
+}
+.u-main h1,
+.u-main .page-head h1 { font-weight: 550; letter-spacing: -0.03em; }
+.u-main .stat strong { font-weight: 600; }
+.u-main .panel,
+.u-main .stat {
+  border-radius: 14px;
+  border-top: 3px solid #d5c0e5;
+  box-shadow: 0 7px 22px rgba(75, 48, 100, 0.08);
+}
+.u-main .panel-head h2,
+.u-main .user-hero h2 { font-weight: 550; }
+.u-main .table th { font-weight: 550; letter-spacing: 0.025em; }
+.u-main .badge { font-weight: 500; }
+.u-main .btn,
+.u-main .field label { font-weight: 500; }
+.u-main .btn-primary {
+  background: var(--primary);
+  box-shadow: none;
+}
+.u-main .btn-primary:hover { background: var(--primary-600); filter: none; transform: translateY(-1px); }
+.u-main .input,
+.u-main .textarea { border-radius: 10px; }
+@media (max-width: 700px) {
+  .u-hero { padding-top: calc(var(--nav-h, 60px) + 30px); padding-bottom: 58px; }
+  .u-hero-avatar { width: 76px; height: 76px; }
+  .u-tabs { border-radius: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .u-hero-in,
+  .u-tabs { animation: none; }
+  .u-main .btn-primary:hover { transform: none; }
+}
+
 /* Tablet: keep all six dashboard tabs visible without changing their order. */
 @media (max-width: 900px) {
   .u-tabs {
@@ -1149,4 +1227,48 @@ body {
   .u-main .btn-primary:hover {
     transform: none;
   }
+}
+
+/* Final account-page finish (kept after the base refresh rules above). */
+:root { --font-display: var(--font, "Segoe UI", Arial, sans-serif); }
+body { background: var(--bg); font-family: var(--font, "Segoe UI", Arial, sans-serif); }
+.u-hero {
+  padding: calc(var(--nav-h, 60px) + 34px) 0 68px;
+  background: color-mix(in srgb, var(--primary) 15%, var(--bg));
+  border-radius: 0 0 28px 28px;
+}
+[data-theme="dark"] .u-hero { background: color-mix(in srgb, var(--primary) 15%, var(--bg)); }
+.u-hero-in { gap: 24px; }
+.u-hero-avatar {
+  width: 88px;
+  height: 88px;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
+  font-weight: 500;
+}
+.u-hero-text h1 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+.u-tabs {
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 6px 18px rgba(75, 48, 100, 0.08);
+  backdrop-filter: none;
+}
+.u-tab.active { background: var(--primary); box-shadow: none; font-weight: 500; }
+.u-main .panel,
+.u-main .stat {
+  border-top: 3px solid #d5c0e5;
+  border-radius: 14px;
+  box-shadow: 0 7px 22px rgba(75, 48, 100, 0.08);
+}
+.u-main .panel-head h2,
+.u-main .user-hero h2,
+.u-main .page-head h1 { font-weight: 500; }
+@media (max-width: 700px) {
+  .u-hero { padding-top: calc(var(--nav-h, 60px) + 30px); padding-bottom: 58px; }
+  .u-hero-avatar { width: 76px; height: 76px; }
 }

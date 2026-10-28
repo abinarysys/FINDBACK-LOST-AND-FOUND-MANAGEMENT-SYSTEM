@@ -1,15 +1,3 @@
-// File guide: This module creates and verifies session-based CSRF tokens.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
-// middleware/csrf.js
-// Small session-based CSRF protection (no extra package needed).
-//   ensureCsrf  -> makes sure the session has a token and exposes it to views as `csrfToken`
-//   verifyCsrf  -> rejects a POST whose token is missing or wrong
-//
-// In a form add:  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-// For fetch/AJAX send the header:  x-csrf-token: <token>
-// For multipart forms run multer BEFORE verifyCsrf so req.body is filled in.
 const crypto = require("crypto");
 const fs = require("fs");
 

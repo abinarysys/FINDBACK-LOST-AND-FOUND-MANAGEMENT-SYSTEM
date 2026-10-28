@@ -1,8 +1,3 @@
-// File guide: This module loads claims and applies admin claim decisions transactionally.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
-// controllers/admin-claims-controller.js
 const db = require("../config/db");
 const query = require("../config/query");
 const { imgUrl } = require("../config/admin-ui");

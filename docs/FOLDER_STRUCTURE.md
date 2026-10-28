@@ -12,7 +12,7 @@
 ## config/
 - db.js — MySQL pool and connection probe; reads DB_*.
 - query.js — Promise wrapper around db.query.
-- password.js — Argon2id, pepper/legacy handling, password checks.
+- password.js — Argon2id, optional pepper, and password checks.
 - theme.js — valid modes/colors and theme script.
 - notify.js — persistent notification creation and socket emit.
 - global-bell.js — notification widget markup injected into logged-in pages.

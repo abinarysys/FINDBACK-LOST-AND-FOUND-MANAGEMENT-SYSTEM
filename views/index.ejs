@@ -6,6 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/user/tokens.css">
     <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/user/scroll-reveal.css?v=4">
+    <script src="/js/scroll-reveal.js?v=4" defer></script>
+    <style>
+        body.page-home .home-scroll-reveal {
+            opacity: 0;
+            transform: translate3d(0, 38px, 0) scale(.975);
+            filter: blur(2px);
+            transition: opacity 650ms ease-out, transform 780ms cubic-bezier(.2,.75,.25,1), filter 650ms ease-out;
+            transition-delay: var(--home-reveal-delay, 0ms);
+            will-change: opacity, transform, filter;
+        }
+        body.page-home .home-scroll-reveal.home-scroll-visible {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+            filter: blur(0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body.page-home .home-scroll-reveal { transition-duration: 280ms !important; }
+        }
+    </style>
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <title>FINDBACK</title>
 </head>
@@ -38,9 +59,11 @@
                 <p>Report lost or found items and help reunite them with their owners.</p>
             </div>
 
-            <div class="search">
-                <a href="/browse">Search</a>
-            </div>
+            <form class="search" action="/browse" method="GET" role="search">
+                <label class="sr-only" for="homeSearch">Search lost and found items</label>
+                <input id="homeSearch" name="q" type="search" placeholder="Search an item or place" maxlength="80">
+                <button type="submit">Search</button>
+            </form>
 
             <div class="lostFound-button">
                 <a href="/lost">
@@ -69,7 +92,7 @@
         </div>
 
         <div class="right">
-            <img src="#" alt="Lost and Found Together Poster">
+            <img src="/img/local-img/index.png" alt="FindBack's lost and found community illustration">
         </div>
     </div>
 
@@ -77,7 +100,7 @@
     <div class="categories">
         <% categories.forEach(category => { %>
             <a href="/<%= category.category_name %>">
-                <img src="<%= category.category_icon %>" alt="<%= category.category_name %>">
+                <%- include('partials/category-icon', { name: category.category_name }) %>
                 <p><%= category.category_name %></p>
             </a>
         <% }) %>
@@ -207,5 +230,42 @@
             <p>Helping people reunite with their lost belongings.</p>
         </div>
     </footer>
+    <script>
+    (function () {
+        var targets = document.querySelectorAll([
+            ".page-home .top-layer > .left",
+            ".page-home .top-layer > .right",
+            ".page-home .categories > a",
+            ".page-home .recent-head",
+            ".page-home .item-card",
+            ".page-home .feedback > h2",
+            ".page-home .feedback-form",
+            ".page-home .feedback-list > h3",
+            ".page-home .feedback-list > .feedback-sub",
+            ".page-home .feedback-card",
+            ".page-home .feedback-empty",
+            ".page-home .footer .help-band",
+            ".page-home .footer .footer-bar"
+        ].join(","));
+
+        targets.forEach(function (element, index) {
+            element.classList.add("home-scroll-reveal");
+            element.style.setProperty("--home-reveal-delay", Math.min(index % 5, 3) * 55 + "ms");
+        });
+
+        if (!("IntersectionObserver" in window)) {
+            targets.forEach(function (element) { element.classList.add("home-scroll-visible"); });
+            return;
+        }
+
+        var revealObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                entry.target.classList.toggle("home-scroll-visible", entry.isIntersecting);
+            });
+        }, { threshold: 0.08, rootMargin: "0px 0px -7% 0px" });
+
+        targets.forEach(function (element) { revealObserver.observe(element); });
+    })();
+    </script>
 </body>
 </html>

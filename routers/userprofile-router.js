@@ -1,16 +1,14 @@
-// File guide: This module renders and updates profile and item pages for the signed-in user.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
-// MODULES
+// MODULES  AND EXPORTS
 const router = require("express").Router();
 const path = require("path");
 const fs = require("fs");
 const db = require("../config/db.js");
 const query = require("../config/query.js");
+
 // MIDDLEWARES
 const authMiddleware = require("../middleware/auth-middleware.js");
 const upload = require("../middleware/upload-middleware.js");
+
 // VIEW PROFILE
 // Loads only the columns the page needs (never password_hash), plus the user's
 // reported items and claims. Everything is filtered by the SESSION user's id.
@@ -19,11 +17,8 @@ router.get("/profile", authMiddleware, async (req, res) => {
     const userId = req.session.user.user_id;
 
     const users = await query(
-      `SELECT user_id, full_name, email, contact_number, role, profile_image,
-                    account_status, verification_status, created_at
-             FROM users WHERE user_id = ?`,
-      [userId],
-    );
+      `SELECT user_id, full_name, email, contact_number, role, profile_image, account_status, verification_status, created_at
+      FROM users WHERE user_id = ?`, [userId],);
 
     if (!users.length) {
       req.flash("error", "User not found.");
@@ -32,25 +27,15 @@ router.get("/profile", authMiddleware, async (req, res) => {
 
     const [foundRows, lostRows, claimRows] = await Promise.all([
       query(
-        `SELECT fi.*, c.category_name
-                 FROM found_items fi
-                 LEFT JOIN item_categories c ON c.category_id = fi.category_id
-                 WHERE fi.user_id = ?`,
-        [userId],
-      ),
+        `SELECT fi.*, c.category_name FROM found_items fi LEFT JOIN item_categories c ON c.category_id = fi.category_id
+        WHERE fi.user_id = ?`, [userId],),
       query(
-        `SELECT li.*, c.category_name
-                 FROM lost_items li
-                 LEFT JOIN item_categories c ON c.category_id = li.category_id
-                 WHERE li.user_id = ?`,
-        [userId],
-      ),
+        `SELECT li.*, c.category_name FROM lost_items li LEFT JOIN item_categories c ON c.category_id = li.category_id
+        WHERE li.user_id = ?`, [userId],),
       query(
         `SELECT cl.claim_id, cl.status, cl.created_at, cl.reviewed_at, fi.item_name
-                 FROM claims cl
-                 INNER JOIN found_items fi ON fi.found_item_id = cl.found_item_id
-                 WHERE cl.user_id = ?
-                 ORDER BY cl.created_at DESC, cl.claim_id DESC`,
+        FROM claims cl INNER JOIN found_items fi ON fi.found_item_id = cl.found_item_id
+        WHERE cl.user_id = ? ORDER BY cl.created_at DESC, cl.claim_id DESC`,
         [userId],
       ),
     ]);
@@ -88,6 +73,7 @@ router.get("/profile", authMiddleware, async (req, res) => {
     res.redirect("/");
   }
 });
+
 // GO TO EDIT PROFILE PAGE
 router.get("/profile/edit", authMiddleware, (req, res) => {
   const userId = req.session.user.user_id;
@@ -105,6 +91,7 @@ router.get("/profile/edit", authMiddleware, (req, res) => {
     res.render("user/profile_edit", { user: results[0] });
   });
 });
+
 // EDIT PROFILE
 router.post(
   "/profile/update",
@@ -155,7 +142,8 @@ router.post(
     });
   },
 );
-// MY ITEMS (replaces the old "activity logs" page)
+
+// MY ITEMS
 router.get("/items", authMiddleware, async (req, res) => {
   try {
     const userId = req.session.user.user_id;

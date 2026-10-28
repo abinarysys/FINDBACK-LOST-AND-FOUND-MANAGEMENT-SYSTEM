@@ -1,7 +1,3 @@
-// File guide: This module saves feedback submitted by signed-in users.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
 // MODULES
 const router = require("express").Router();
 const db = require("../config/db.js");

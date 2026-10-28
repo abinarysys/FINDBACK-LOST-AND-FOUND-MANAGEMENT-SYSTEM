@@ -1,7 +1,7 @@
 /* File guide: This stylesheet styles the a dm in s id eb ar interface and its page components. It styles classes and elements emitted by related EJS templates; it controls browser presentation and does not save application data. */
 
 :root {
-  --primary: #7c18ff;
+  --primary: #7b4aa2;
   --background: #f5f5f5;
   --border: #e7e2ed;
 }

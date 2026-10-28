@@ -1,9 +1,4 @@
-// File guide: This module saves appearance settings and anonymizes accounts after password verification.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
-// routers/usersettings-router.js
-// Mounted in app.js at /user/settings
+// MODULES AND EXPORTS
 const argon2 = require("argon2");
 const crypto = require("crypto");
 const { verifyPassword } = require("../config/password.js");
@@ -18,13 +13,12 @@ const {
   sanitize,
 } = require("../config/theme.js");
 
-// For fetch() calls: answer 401 JSON instead of redirecting to the login page.
 const apiAuth = (req, res, next) =>
   req.session?.user?.user_id
     ? next()
     : res.status(401).json({ success: false, message: "Please log in." });
 
-// Settings page
+// SETTINGS PAGE
 router.get("/", authMiddleware, (req, res) => {
   res.render("user/settings", {
     user: req.session.user,
@@ -33,7 +27,7 @@ router.get("/", authMiddleware, (req, res) => {
   });
 });
 
-// Save appearance. The user id ALWAYS comes from the session, never from the request body.
+// SAVE THE APPEARANCE, SO WHENEVER THE USER LGOUT WYHEN THEY LOGIN AGAIN, IT'LL HAVE THE SAME APPEARANCEW
 router.post("/theme", apiAuth, async (req, res) => {
   const { mode, color } = req.body || {};
 
@@ -59,14 +53,14 @@ router.post("/theme", apiAuth, async (req, res) => {
   }
 });
 
-/* Show delete-profile confirmation page */
+// SHOW DELETE PROFILE CONFIRMATION PAGE
 router.get("/delete-account", authMiddleware, (req, res) => {
   res.render("user/delete-account", {
     user: req.session.user,
   });
 });
 
-/* Verify password and anonymize the account */
+// VERIFY PASSWORD AND ANONYMIZE ACCOUNT
 router.post("/delete-account", authMiddleware, async (req, res) => {
   const userId = req.session.user.user_id;
   const password = req.body.password;
@@ -96,8 +90,6 @@ router.post("/delete-account", authMiddleware, async (req, res) => {
         error: "Incorrect password. Your account has not been changed.",
       });
     }
-
-    // Generate credentials that the account owner does not know.
     const randomPassword = crypto.randomBytes(48).toString("hex");
     const passwordHash = await argon2.hash(randomPassword);
 
@@ -117,7 +109,7 @@ router.post("/delete-account", authMiddleware, async (req, res) => {
       ],
     );
 
-    // End the session only after the database update succeeds.
+    // END SESSIOBN AFTER ANONYMIZATION
     req.session.destroy((err) => {
       if (err) {
         console.error("Session destruction error:", err);

@@ -1,13 +1,10 @@
 /* File guide: This stylesheet styles the t ok en s interface and its page components. It styles classes and elements emitted by related EJS templates; it controls browser presentation and does not save application data. */
-/* Modern typeface shared by every page that loads these tokens. */
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
-
 /* public/css/user/tokens.css
    ONE source of truth for FindBack colours. Loaded by site-nav.css and user-ui.css.
    To use the same palette in the admin dashboard, copy these two blocks over the
    :root and [data-theme="dark"] blocks at the top of public/css/admin.css.
 
-   Palette: slate neutrals + indigo accent. Every text/background pair below meets
+   Palette: warm neutrals + a soft purple accent. Every text/background pair below meets
    WCAG AA (4.5:1) for normal text, e.g. --text-2 on --surface = 7.5:1, --primary on white = 6.3:1.
 
    Per-user settings (Step 3) change only two things:
@@ -15,31 +12,26 @@
      --accent (set on <html>)        -> accent colour; --primary follows it. */
 
 :root {
-  --accent: #4f46e5; /* user-selectable accent */
+  --accent: #7b4aa2; /* user-selectable accent */
   --primary: var(--accent);
   --on-primary: #ffffff; /* text on top of --primary */
   --primary-600: color-mix(in srgb, var(--primary) 84%, #000);
-  --primary-soft: color-mix(in srgb, var(--primary) 9%, var(--surface));
+  --primary-soft: color-mix(in srgb, var(--primary) 14%, var(--surface));
   --primary-light: var(--primary-soft); /* legacy alias used by older account styles */
   --primary-ring: color-mix(in srgb, var(--primary) 24%, transparent);
 
   /* Secondary accent used in gradients and category tints. */
-  --secondary: #0ea5a4;
-  --secondary-soft: color-mix(in srgb, var(--secondary) 12%, var(--surface));
-  --accent-gradient: linear-gradient(
-    135deg,
-    var(--primary) 0%,
-    color-mix(in srgb, var(--primary) 62%, #8b5cf6) 55%,
-    color-mix(in srgb, var(--secondary) 70%, #38bdf8) 100%
-  );
+  --secondary: #b59acb;
+  --secondary-soft: color-mix(in srgb, var(--secondary) 14%, var(--surface));
+  --accent-gradient: linear-gradient(135deg, var(--primary), var(--primary));
 
-  --bg: #f7f8fc;
+  --bg: #f8f3fb;
   --surface: #ffffff;
-  --surface-2: #f4f6fb;
-  --border: #e4e8f1;
-  --text: #0d1526;
-  --text-2: #47536b;
-  --muted: #6b7793;
+  --surface-2: #f2eaf7;
+  --border: #e5d9ed;
+  --text: #332744;
+  --text-2: #594d68;
+  --muted: #786b83;
 
   --success: #047857;
   --success-soft: #e6f6ef;
@@ -54,7 +46,7 @@
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 30px -12px rgba(15, 23, 42, 0.14);
   --shadow-lg: 0 2px 4px rgba(15, 23, 42, 0.04), 0 28px 60px -24px rgba(15, 23, 42, 0.28);
   --sidebar-w: 264px;
-  --font: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font: "Segoe UI", Arial, system-ui, sans-serif;
 }
 
 [data-theme="dark"] {

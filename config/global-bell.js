@@ -1,12 +1,3 @@
-// File guide: This module provides notification bell markup injected by app.js.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
-// config/global-bell.js
-// The bell markup, injected by app.js into EVERY page a logged-in user sees
-// (home, browse, profile, notifications...). A tiny script moves it INTO the page's top
-// navigation (next to the account/profile picture). If a page has no navigation, it stays
-// as a round floating button in the bottom-right corner.
 module.exports = `
 <link rel="stylesheet" href="/css/user/bell.css">
 <div class="notif-bell-wrap" id="notifWidget">

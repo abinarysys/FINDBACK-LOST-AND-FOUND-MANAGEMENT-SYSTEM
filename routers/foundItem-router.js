@@ -1,7 +1,3 @@
-// File guide: This module renders and processes found-item reports.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
-
 // MODULES
 const router = require("express").Router();
 const db = require("../config/db.js");
@@ -47,20 +43,9 @@ router.post(
     console.log("UPLOADED FILE:", req.file);
     const submitFoundItem = `INSERT INTO found_items (user_id, category_id, 
     item_name, description, location, date_found, photo_path) VALUES (?,?,?,?,?,?,?)`;
-    db.query(
-      submitFoundItem,
-      [
-        userId,
-        category_id,
-        name,
-        description,
-        locFound,
-        dateFound,
-        foundItemPic,
-      ],
-      (err) => {
-        if (err) {
-          req.flash("error", "Unable to submit");
+    db.query(submitFoundItem, [userId, category_id, name, description, locFound, dateFound, foundItemPic,],(err) => {
+      if (err) {
+        req.flash("error", "Unable to submit");
           return res.status(500).send("Error: " + err.message);
         }
         req.flash("success", "Submitted Successfully");
