@@ -1,6 +1,4 @@
-// File guide: This module loads notifications, updates read state, and handles live events.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
+// Loads notifications, marks them read, and handles live notification events.
 
 // public/js/notify.js
 // Loaded by the global bell (config/global-bell.js), which app.js injects into every page for logged-in users.

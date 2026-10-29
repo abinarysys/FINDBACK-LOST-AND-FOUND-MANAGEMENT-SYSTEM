@@ -1,11 +1,8 @@
-// File guide: This module loads chat data and updates the browser chat interface through HTTP and Socket.IO.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
+// Loads conversations and keeps the chat interface current over HTTP and Socket.IO.
 
 // public/js/chat.js  -  the chat page (views/user/chat.ejs).
 // The database is the source of truth: this file only shows what the server returns,
 // and live messages only add to what is already saved.
-//
 // READ RECEIPTS (Messenger-style "Seen"):
 //  - A message counts as READ only when the conversation is open on screen, the browser tab is
 //    visible and focused, and the reader is at the bottom of the thread. Sent, delivered by socket

@@ -1,4 +1,6 @@
-// ADMIN USER INTERFACE HELPER
+// Shared markup helpers for the admin templates.
+
+// SVG path fragments used by the admin navigation and action buttons.
 const ICONS = {
   grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',
   users:
@@ -33,40 +35,30 @@ const ICONS = {
 };
 
 
-// Convert untrusted text to HTML entities before inserting it into generated markup.
+// Escaping HTML SPECIAL CHARACTERS
 const esc = (v) =>
-  String(v ?? "").replace(
-    /[&<>"']/g,
-    (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+    String(v ?? "").replace(/[&<>"']/g, (c) =>({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" 
+    })[
         c
       ],
   );
 
-// Return a shared SVG wrapper around a named icon; unknown names render no icon path.
+// Build an SVG from the built-in icon paths above.
 const icon = (name, cls = "") =>
   `<svg class="ico ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
 
-// "/uploads/x.jpg", "/uploadsx.jpg", "uploads/x.jpg", "x.jpg" -> "/uploads/x.jpg"
-// (your lost_items rows are saved as "/uploads1791...jpg" without the slash)
-// Normalize upload paths, preserve remote/data URLs, and return a browser path for local images.
+// imgUrl() function is used to clean and standardize image paths so your FINDBACK application can display uploaded images correctly.
 const imgUrl = (p) => {
-  if (!p) return "";
-  const s = String(p).trim().replace(/\\/g, "/");
-  if (/^(https?:)?\/\//i.test(s) || s.startsWith("data:")) return s;
-  const file = s.replace(/^\/+/, "").replace(/^uploads\/?/i, "");
-  return file ? "/uploads/" + file : "";
+    if (!p) return "";
+    const s = String(p).trim().replace(/\\/g, "/");
+    if (/^(https?:)?\/\//i.test(s) || s.startsWith("data:")) return s;
+    const file = s.replace(/^\/+/, "").replace(/^uploads\/?/i, "");
+    return file ? "/uploads/" + file : "";
 };
 
 // Build a short initials fallback from the first and last words of a person's name.
 const initials = (name) =>
-  String(name || "?")
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2) 
-    .map((w) => w[0]) 
-    .join("") 
-    .toUpperCase() || "?";
+  String(name || "?").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?";
 
 // Render an image avatar when available; otherwise show escaped initials as the fallback.
 const avatar = (name, img, size = "") => {

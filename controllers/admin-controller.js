@@ -1,3 +1,6 @@
+// Handles admin dashboard pages and user, item, report, and profile actions.
+
+// controllers/admin-controller.js
 const query = require("../config/query");
 const {
   hashPassword,
@@ -5,7 +8,6 @@ const {
   checkPasswordStrength,
 } = require("../config/password");
 const { imgUrl } = require("../config/admin-ui");
-const { ACCENTS } = require("../config/theme");
 const { logAdminAction } = require("../middleware/admin-activity");
 
 const toId = (v) => {
@@ -15,7 +17,7 @@ const toId = (v) => {
 const validPhone = (v) => /^\d{10,11}$/.test(v);
 const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
-
+// Runs a query on admin_activity_logs; if you haven't run sql/admin-update.sql yet
 // the page still opens (empty) instead of crashing.
 let logsMissing = false;
 const safeLogsQuery = async (sql, params = []) => {
@@ -39,11 +41,107 @@ const showError = (res, err, message) => {
   });
 };
 
-// LOG IN
+// =====================================================
+// Admin sign-in, first-account setup, and logout handlers.
+// =====================================================
+const adminCount = async () => {
+  const rows = await query(
+    "SELECT COUNT(*) AS total FROM users WHERE role = 'admin'",
+  );
+  return Number(rows[0].total) || 0;
+};
+
+// Admins no longer have their own login page. Everyone signs in at /auth/login and the backend
+// (controllers/secure-auth.js) sends admins to /admin. These stubs keep old links and routes working.
 exports.getLogin = (req, res) => res.redirect("/auth/login");
 exports.login = (req, res) => res.redirect(303, "/auth/login");
 
-// LOG OUT
+// First-admin setup only. After one admin exists, new admins are added in Settings.
+exports.getRegister = async (req, res) => {
+  try {
+    if ((await adminCount()) > 0) {
+      req.flash(
+        "error",
+        "Admin sign-up is closed. Ask an existing admin to add you in Settings.",
+      );
+      return res.redirect("/admin/login");
+    }
+    res.render("admin/adminRegister");
+  } catch (err) {
+    showError(res, err, "Could not load the setup page.");
+  }
+};
+
+exports.register = async (req, res) => {
+  try {
+    if ((await adminCount()) > 0) {
+      req.flash(
+        "error",
+        "Admin sign-up is closed. Ask an existing admin to add you in Settings.",
+      );
+      return res.redirect("/admin/login");
+    }
+
+    const name = String(req.body.name || "").trim();
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+    const num = String(req.body.num || "").trim();
+    const pw = String(req.body.pw || "");
+
+    if (!name || !email || !pw) {
+      req.flash("error", "Name, email and password are required.");
+      return res.redirect("/admin/register");
+    }
+    if (!validEmail(email)) {
+      req.flash("error", "Please enter a valid email address.");
+      return res.redirect("/admin/register");
+    }
+    if (num && !validPhone(num)) {
+      req.flash("error", "Contact number must be 10 to 11 digits.");
+      return res.redirect("/admin/register");
+    }
+    const weak = checkPasswordStrength(pw, { email, name });
+    if (weak) {
+      req.flash("error", weak);
+      return res.redirect("/admin/register");
+    }
+
+    const result = await query(
+      `INSERT INTO users
+                (full_name, email, password_hash, profile_image, contact_number,
+                 role, account_status, verification_status)
+             VALUES (?, ?, ?, ?, ?, 'admin', 'active', 'verified')`,
+      [
+        name,
+        email,
+        await hashPassword(pw),
+        req.file ? "/uploads/" + req.file.filename : null,
+        num || null,
+      ],
+    );
+
+    await logAdminAction(req, "SETUP_ADMIN", {
+      adminId: result.insertId,
+      targetType: "admin",
+      targetId: result.insertId,
+      details: "Created the first admin account",
+    });
+
+    req.flash("success", "Admin account created. You can sign in now.");
+    res.redirect("/admin/login");
+  } catch (err) {
+    console.error("Admin setup error:", err);
+    req.flash(
+      "error",
+      err.code === "ER_DUP_ENTRY"
+        ? "Email is already registered."
+        : "Setup failed. Please try again.",
+    );
+    res.redirect("/admin/register");
+  }
+};
+
 exports.logout = async (req, res) => {
   await logAdminAction(req, "LOGOUT", { details: "Signed out" });
   req.session.destroy((err) => {
@@ -53,7 +151,9 @@ exports.logout = async (req, res) => {
   });
 };
 
-// DASHBOARD
+// =====================================================
+// Dashboard data and the main admin landing page.
+// =====================================================
 exports.getDashboard = async (req, res) => {
   try {
     const [counts, recentReports, pendingUsers, recentActivity] =
@@ -95,7 +195,9 @@ exports.getDashboard = async (req, res) => {
   }
 };
 
-// USERS
+// =====================================================
+// Admin actions for listing and updating user accounts.
+// =====================================================
 exports.getUsers = async (req, res) => {
   try {
     const users = await query(`
@@ -164,8 +266,9 @@ exports.updateUserStatus = async (req, res) => {
   }
 };
 
-
+// =====================================================
 // ITEMS (lost + found on one page, two tabs)
+// =====================================================
 const loadItems = async () => {
   const [lost, found] = await Promise.all([
     query(`SELECT li.lost_item_id AS id, li.item_name, li.description, li.location,
@@ -209,7 +312,9 @@ const renderItems = (tab) => async (req, res) => {
 exports.getLostItems = renderItems("lost");
 exports.getFoundItems = renderItems("found");
 
-// USER VERIFICATION
+// =====================================================
+// Admin review of user verification records.
+// =====================================================
 exports.getUserVerification = async (req, res) => {
   try {
     const users = await query(`
@@ -281,7 +386,9 @@ exports.updateVerificationStatus = async (req, res) => {
   }
 };
 
-// ANALYTICS
+// =====================================================
+// Summary counts and activity metrics for the analytics page.
+// =====================================================
 exports.getAnalytics = async (req, res) => {
   try {
     const [
@@ -379,7 +486,9 @@ exports.getAnalytics = async (req, res) => {
   }
 };
 
-// REPORTS
+// =====================================================
+// Admin report pages and their supporting data.
+// =====================================================
 exports.getReports = async (req, res) => {
   try {
     const [userCount, lostCount, foundCount, reports, reportCategories] =
@@ -421,7 +530,9 @@ exports.getReports = async (req, res) => {
   }
 };
 
+// =====================================================
 // ACTIVITY LOGS  (tab: admins | accounts)
+// =====================================================
 exports.getActivityLogs = async (req, res) => {
   try {
     const tab = req.query.tab === "accounts" ? "accounts" : "admins";
@@ -482,7 +593,9 @@ exports.getActivityLogs = async (req, res) => {
   }
 };
 
+// =====================================================
 // SETTINGS (appearance + manage admins)
+// =====================================================
 exports.getSettings = async (req, res) => {
   try {
     const [admins, logins] = await Promise.all([
@@ -505,7 +618,6 @@ exports.getSettings = async (req, res) => {
       })),
       currentAdminId: req.admin.user_id,
       currentAdminEmail: req.admin.email,
-      themeAccents: ACCENTS,
     });
   } catch (err) {
     showError(res, err, "Could not load settings.");
@@ -527,6 +639,7 @@ exports.addAdmin = async (req, res) => {
       return res.redirect("/admin/settings");
     };
 
+    // Verify that the person adding an admin really owns the signed-in admin account
     if (!confirmPw)
       return back("Enter your own password to confirm adding a new admin.");
     const me = await query(
@@ -651,7 +764,9 @@ exports.updateAdminStatus = async (req, res) => {
   }
 };
 
-// MY PROFILE
+// =====================================================
+// View and update the signed-in administrator's profile.
+// =====================================================
 exports.getProfile = (req, res) => {
   res.render("admin/admin-profile", {
     title: "My Profile",
@@ -752,7 +867,9 @@ exports.changePassword = async (req, res) => {
   }
 };
 
+// =====================================================
 // 404 inside /admin
+// =====================================================
 exports.notFound = (req, res) => {
   res.status(404).render("admin/admin-error", {
     title: "Page not found",

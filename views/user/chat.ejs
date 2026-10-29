@@ -1,10 +1,8 @@
-<%# Template: Provides the chat page skeleton. Locals: user, openId, draft. Route: GET /user/chat. Browser behavior: public/js/chat.js; styles: public/css/user/chat.css. %>
+<%# Provides the chat layout; browser JavaScript loads conversations and messages. %>
 <%
-    /* Chat page. Expects: user, activePage ('chat'), openId (conversation to open, or null),
-       draft (text to prefill in the message box, or ''). The conversations and messages are loaded by
-       /js/chat.js from the JSON API, so this file only holds the page skeleton. */
+    /* The route may preselect a conversation and prefill its first message. */
 %>
-<%# EJS renders this page skeleton; chat data is fetched by the browser script below. %>
+<%# The server renders the shell while the browser fills in live chat data. %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,10 +13,10 @@
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/user/user-ui.css">
     <link rel="stylesheet" href="/css/user/user-shell.css">
     <link rel="stylesheet" href="/css/user/chat.css">
-    <link rel="stylesheet" href="/css/user/user-polish.css">
 </head>
 <body>
     <%# Shared account navigation; activePage selects the Chat tab. %>
@@ -39,7 +37,6 @@
                  data-draft="<%= draft || '' %>">
 
             <%# The left pane contains search and a conversation list populated from the chat API. %>
-            <!-- left: conversation list -->
             <aside class="chat-list-pane" aria-label="Conversations">
                 <div class="chat-list-head">
                     <div class="search">
@@ -53,7 +50,6 @@
             </aside>
 
             <%# The right pane switches between the empty prompt and the selected conversation thread. %>
-            <!-- right: the open conversation -->
             <section class="chat-thread-pane" aria-label="Messages">
                 <div class="chat-empty" id="chatEmpty">
                     <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>

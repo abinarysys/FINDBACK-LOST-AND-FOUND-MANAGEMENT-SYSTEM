@@ -1,3 +1,8 @@
+// Shows and updates notifications belonging to the signed-in user.
+
+// controllers/user-notifications-controller.js
+// Every query below is filtered by the SESSION user's id, never by an id from the browser,
+// so one user can never read or change another user's notifications.
 const query = require("../config/query");
 
 const CLAIM_RESULT_TYPES = ["claim_verified", "claim_rejected"];
@@ -7,6 +12,8 @@ const toId = (value) => {
   return Number.isInteger(id) && id > 0 ? id : null;
 };
 
+// Where the "View Claim" button goes. Only the claimant's own result
+// notifications get one (other types keep their normal link).
 const actionUrlFor = (n) =>
   n.claim_id && CLAIM_RESULT_TYPES.includes(n.type)
     ? `/user/claims/${n.claim_id}`
@@ -20,6 +27,7 @@ async function countUnread(userId) {
   return Number(rows[0].total);
 }
 
+// ---------- Full notifications page (existing, now adds action_url) ----------
 exports.getNotifications = async (req, res) => {
   try {
     const userId = req.session.user?.user_id;
@@ -86,6 +94,8 @@ exports.getNotifications = async (req, res) => {
     res.redirect("/");
   }
 };
+
+// ---------- JSON API used by the bell (routes are mounted under /user/notifications/api) ----------
 
 // GET /api/list?limit=8  -> latest notifications + unread count
 exports.listApi = async (req, res) => {

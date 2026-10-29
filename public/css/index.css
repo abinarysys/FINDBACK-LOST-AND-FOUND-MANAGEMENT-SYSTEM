@@ -2074,3 +2074,53 @@ body.page-home {
   .page-home .item-card,
   .page-home .feedback-card { transition: none; }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Keep the category heading close to the hero on phone screens. */
+@media (max-width: 900px) {
+  .page-home .top-layer {
+    padding-top: 24px;
+    padding-bottom: 8px;
+  }
+
+  /* The poster is blank on narrow layouts, so don't reserve its tall desktop space. */
+  .page-home .top-layer .right {
+    display: none;
+  }
+
+  .page-home .categories {
+    padding-top: 16px;
+  }
+}
+
+/* Keep the recent items copy and its action on the same left edge on phones. */
+@media (max-width: 600px) {
+  .page-home .recent-head {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .page-home .recent-head > div {
+    width: 100%;
+    text-align: left;
+  }
+
+  .page-home .recent-head h3,
+  .page-home .recent-head p {
+    text-align: left;
+  }
+
+  .page-home .view-all-btn {
+    align-self: flex-start;
+    margin: 0;
+  }
+}

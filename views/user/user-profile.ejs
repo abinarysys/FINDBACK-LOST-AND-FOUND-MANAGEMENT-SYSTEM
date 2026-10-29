@@ -1,4 +1,4 @@
-<%# File guide: This EJS template renders the signed-in user profile page as HTML. Inputs are locals passed by its route/controller; output is HTML. Shared partials and browser assets are linked here or injected by app.js. %>
+<%# Displays the signed-in user's profile information and account links. %>
 <%
     // This setup prepares display values before HTML is sent; locals come from routers/userprofile-router.js.
     // EJS statements calculate values; escaped output displays text safely; includes insert reusable templates.
@@ -28,9 +28,11 @@
     <title>My Profile | FindBack</title>
 
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/user/user-ui.css">
     <link rel="stylesheet" href="/css/user/user-shell.css">
-    <link rel="stylesheet" href="/css/user/user-polish.css">
 </head>
 <%# The body holds visible page content. The shared header is rendered first, then this page main content. %>
 <body>

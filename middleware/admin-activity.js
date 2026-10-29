@@ -1,7 +1,16 @@
+// Records admin actions; a logging failure must not break the main request.
+
+// middleware/admin-activity.js
+// Records what admins do so it shows on  Activity Logs > Admin Activity.
 const query = require("../config/query");
 
 let warned = false;
 
+/**
+ *   await logAdminAction(req, 'APPROVE_USER', { targetType: 'user', targetId: 5, details: 'Verified Ann' });
+ *   await logAdminAction(req, 'LOGIN', { adminId: user.user_id });   // when the session isn't set yet
+ * Never throws: a logging problem must not break the real action.
+ */
 async function logAdminAction(req, action, opts = {}) {
   try {
     const adminId = opts.adminId ?? req.session?.user?.user_id;

@@ -1,6 +1,10 @@
+// Adds admin-only view helpers and checks that the admin account is still active.
+
+// middleware/admin-middleware.js
 const query = require("../config/query");
 const ui = require("../config/admin-ui");
 
+// 1) Runs on EVERY /admin route (including login): view helpers.
 function adminLocals(req, res, next) {
   res.locals.icon = ui.icon;
   res.locals.esc = ui.esc;
@@ -17,6 +21,7 @@ function adminLocals(req, res, next) {
   next();
 }
 
+// 2) Protects every route after it: must be a logged-in, ACTIVE admin.
 async function requireAdmin(req, res, next) {
   const wantsJson =
     req.originalUrl.startsWith("/api/") ||
@@ -42,6 +47,7 @@ async function requireAdmin(req, res, next) {
   }
 
   try {
+    // Re-check the database so a disabled admin is locked out immediately.
     const rows = await query(
       `SELECT user_id, full_name, email, contact_number, profile_image, role, account_status, created_at
                FROM users WHERE user_id = ? LIMIT 1`,

@@ -1,3 +1,7 @@
+// Sends visitors without a signed-in session to the login page.
+
+// Protects a page or action that requires a signed-in user.
+// Input: the Express request/session. Output: continue when signed in, otherwise redirect.
 module.exports = (req, res, next) => {
   if (!req.session.user) {
     req.flash("error", "Please login first");
@@ -5,4 +9,4 @@ module.exports = (req, res, next) => {
   }
 
   next();
-}; // if not user, do not authorized that person to get into this page
+};

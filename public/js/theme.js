@@ -1,6 +1,4 @@
-// File guide: This module applies and saves appearance settings in the browser.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
+// Applies the saved appearance settings and handles theme changes in the browser.
 
 // public/js/theme.js  (Settings page only)
 // Changes apply instantly (preview), then are saved to the database.

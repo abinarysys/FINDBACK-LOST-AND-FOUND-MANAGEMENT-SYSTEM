@@ -1,19 +1,30 @@
+// Handles admin settings, administrator accounts, and activity pages.
+
+// controllers/admin-extras-controller.js
+// Settings, Manage Admins and Activity Logs (user accounts + admin activity).
 const db = require("../config/db"); // mysql2/promise pool
 const { logAdminAction, getAdminId } = require("../middleware/admin-activity");
 
+/* ======================================================================
+   ADJUST HERE: table / column names of YOUR users table
+   ====================================================================== */
 const U = {
   table: "users",
   id: "user_id",
   name: "full_name",
   email: "email",
-  phone: "contact_number", 
-  role: "role",
-  roleValue: "admin",
-  adminRole: "admin_role",
+  phone: "contact_number", // column used by your register form field "num"
+  password: "password", // hashed password column
+  role: "role", // column that marks an admin...
+  roleValue: "admin", // ...and the value it has
+  adminRole: "admin_role", // added by the migration (super_admin | admin)
   status: "account_status",
   created: "created_at",
 };
 
+/* ======================================================================
+   ADJUST HERE: use the SAME hashing your existing admin register/login uses
+   ====================================================================== */
 async function hashPassword(plain) {
   let lib;
   try {
@@ -24,6 +35,7 @@ async function hashPassword(plain) {
   return lib.hash(plain, 10);
 }
 
+/* ---------- helpers ---------- */
 async function currentAdmin(req) {
   const id = getAdminId(req);
   if (!id) return null;
@@ -36,7 +48,7 @@ async function currentAdmin(req) {
 }
 const isSuper = (a) => !!a && a.admin_role === "super_admin";
 
-// ADMIN SETTINGS 
+/* ---------- SETTINGS ---------- */
 exports.getSettings = async (req, res) => {
   try {
     const me = await currentAdmin(req);
@@ -47,7 +59,7 @@ exports.getSettings = async (req, res) => {
   }
 };
 
-// MANAGE ADMINS
+/* ---------- MANAGE ADMINS ---------- */
 exports.getManageAdmins = async (req, res) => {
   try {
     const me = await currentAdmin(req);
@@ -75,7 +87,6 @@ exports.getManageAdmins = async (req, res) => {
   }
 };
 
-// CREATE ADMINS 
 exports.postAddAdmin = async (req, res) => {
   try {
     const me = await currentAdmin(req);
@@ -199,7 +210,7 @@ exports.postAdminStatus = async (req, res) => {
   }
 };
 
-// ACTIVITY LOGS
+/* ---------- ACTIVITY LOGS (tab 1: user accounts, tab 2: admin activity) ---------- */
 exports.getActivityLogs = async (req, res) => {
   try {
     const me = await currentAdmin(req);
@@ -211,6 +222,7 @@ exports.getActivityLogs = async (req, res) => {
       tab = "users";
     }
 
+    // Tab 1 – same fields your current view already uses
     const [logs] = await db.query(
       `SELECT ${U.id} AS user_id, ${U.name} AS full_name, ${U.email} AS email,
               ${U.status} AS account_status

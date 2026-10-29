@@ -1,6 +1,4 @@
-// File guide: This module handles browser-side admin page interactions.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
+// Handles interactive controls on admin pages in the browser.
 
 /* FindBack Admin — shared behaviour (loaded with `defer` on every admin page) */
 (function () {
@@ -171,41 +169,7 @@
   /* ---------- theme (dark mode + accent colour) ---------- */
   const root = document.documentElement;
   const THEME_KEY = "fb-theme",
-    ACCENT_KEY = "fb-accent",
-    DEFAULT_ACCENT = "#4F46E5";
-
-  function currentTheme() {
-    return {
-      mode: root.dataset.theme === "dark" ? "dark" : "light",
-      color:
-        root.style.getPropertyValue("--accent").trim() ||
-        getComputedStyle(root).getPropertyValue("--accent").trim() ||
-        DEFAULT_ACCENT,
-    };
-  }
-
-  async function persistTheme(theme) {
-    try {
-      const response = await fetch("/user/settings/theme", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(theme),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Unable to save appearance.");
-      }
-      return true;
-    } catch (error) {
-      toast("Appearance previewed, but could not be saved to your account.", "error");
-      return false;
-    }
-  }
-
+    ACCENT_KEY = "fb-accent";
   window.FBTheme = {
     isDark: () => root.dataset.theme === "dark",
     setDark(on) {
@@ -214,39 +178,22 @@
       try {
         localStorage.setItem(THEME_KEY, on ? "dark" : "light");
       } catch (e) {}
-      persistTheme(currentTheme());
     },
     setAccent(c) {
-      const color = c || DEFAULT_ACCENT;
-      root.style.setProperty("--accent", color);
-      // Let the active light/dark palette derive --primary from the accent.
-      root.style.removeProperty("--primary");
+      if (c) root.style.setProperty("--primary", c);
+      else root.style.removeProperty("--primary");
       try {
-        localStorage.setItem(ACCENT_KEY, color);
+        c
+          ? localStorage.setItem(ACCENT_KEY, c)
+          : localStorage.removeItem(ACCENT_KEY);
       } catch (e) {}
       $$(".swatch").forEach((s) =>
         s.classList.toggle(
           "active",
-          (s.dataset.color || "").toLowerCase() === color.toLowerCase(),
+          (s.dataset.color || "").toLowerCase() ===
+            (c || "#7c18ff").toLowerCase(),
         ),
       );
-      persistTheme(currentTheme());
-    },
-    reset() {
-      root.removeAttribute("data-theme");
-      root.style.setProperty("--accent", DEFAULT_ACCENT);
-      root.style.removeProperty("--primary");
-      try {
-        localStorage.setItem(THEME_KEY, "light");
-        localStorage.setItem(ACCENT_KEY, DEFAULT_ACCENT);
-      } catch (e) {}
-      $$(".swatch").forEach((s) =>
-        s.classList.toggle(
-          "active",
-          (s.dataset.color || "").toLowerCase() === DEFAULT_ACCENT.toLowerCase(),
-        ),
-      );
-      persistTheme({ mode: "light", color: DEFAULT_ACCENT });
     },
   };
   document.addEventListener("DOMContentLoaded", () => {
@@ -267,15 +214,20 @@
     const reset = $("#resetTheme");
     if (reset)
       reset.addEventListener("click", () => {
-        FBTheme.reset();
+        FBTheme.setAccent(null);
+        FBTheme.setDark(false);
         if (dark) dark.checked = false;
         toast("Appearance reset.", "success");
       });
-    const saved = currentTheme().color;
+    let saved = null;
+    try {
+      saved = localStorage.getItem(ACCENT_KEY);
+    } catch (e) {}
     $$(".swatch").forEach((s) =>
       s.classList.toggle(
         "active",
-        (s.dataset.color || "").toLowerCase() === saved.toLowerCase(),
+        (s.dataset.color || "").toLowerCase() ===
+          (saved || "#7c18ff").toLowerCase(),
       ),
     );
   });

@@ -1,8 +1,9 @@
-/// MODULES AND EXPORTS
+// Public routes for the landing page, item browsing, and category pages.
+
 const router = require("express").Router();
 const db = require("../config/db.js");
 
-// PHOTO UPLOAD HELPER
+// ---------- helpers ----------
 const toPicture = (p) =>
   p
     ? "/uploads/" +
@@ -13,7 +14,8 @@ const toPicture = (p) =>
 
 const day = (value) => (value ? String(value).slice(0, 10) : "");
 
-//  
+// Lost items are never "claimed". A found item is claimed once the admin verifies a claim
+// (admin-claims controller sets found_items.status = 'claimed').
 const mapLost = (item) => ({
   ...item,
   type: "lost",
@@ -47,16 +49,14 @@ const combineItems = (lostRows, foundRows) =>
     (a, b) => new Date(b.sortDate) - new Date(a.sortDate),
   );
 
-// LANDING PAGE
+// ---------- HOME ----------
 router.get("/", (req, res) => {
-  // GET CATEGORY AS BUTTONS IN LANDING PAGE
   const getCategory = "SELECT * FROM item_categories";
   db.query(getCategory, (err, results) => {
     if (err) {
       console.error(err);
       return res.status(500).send("DB error");
     }
-    // SHOW FEEDBACKS
     const feedback = `SELECT feedback.*, users.full_name FROM feedback LEFT JOIN users ON feedback.user_id = users.user_id
             ORDER BY feedback.feedback_id DESC`;
     db.query(feedback, (err, result) => {
@@ -64,7 +64,6 @@ router.get("/", (req, res) => {
         console.error(err);
         return res.status(500).send("Could not load feedback");
       }
-      // SHOW LOST ITEMS
       const lostItems = `SELECT lost_items.*, users.full_name, users.contact_number, item_categories.category_name,
                 lost_items.location, lost_items.date_lost, lost_items.photo_path, lost_items.created_at
                 FROM lost_items LEFT JOIN users ON lost_items.user_id = users.user_id LEFT JOIN item_categories
@@ -74,7 +73,6 @@ router.get("/", (req, res) => {
           console.error(err);
           return res.status(500).send("Could not load lost items");
         }
-        // SHOW FOUND ITEMS
         const foundItems = `SELECT found_items.*, users.full_name, users.contact_number, item_categories.category_name,
                     found_items.location, found_items.date_found, found_items.photo_path, found_items.created_at
                     FROM found_items LEFT JOIN users ON found_items.user_id = users.user_id LEFT JOIN item_categories
@@ -84,7 +82,6 @@ router.get("/", (req, res) => {
             console.error(err);
             return res.status(500).send("Could not load found items");
           }
-          // COMBNINE BOTH AS RECENT ITEMS
           const recentItems = combineItems(lostResults, foundResults).slice(
             0,
             4,
@@ -100,19 +97,16 @@ router.get("/", (req, res) => {
   });
 });
 
-// STATIC CONTACT PAGE
 router.get("/contacts", (req, res) => {
   res.render("contact");
 });
 
-// STATIC HOW IT WORKS PAGE
 router.get("/howitworks", (req, res) => {
   res.render("howitworks");
 });
 
-// BROWSE ITEMS
+// ---------- BROWSE ----------
 router.get("/browse", (req, res) => {
-  // THIS IS TO GO TO EVERY PAGE BY THGE CATEGORY TAPPED IN THE SCREEN
   db.query(
     "SELECT * FROM item_categories ORDER BY category_id",
     (err, categories) => {
@@ -121,7 +115,6 @@ router.get("/browse", (req, res) => {
         return res.status(500).send("DB error");
       }
 
-      // LOST ITEMS
       const lostSql = `SELECT lost_items.*, users.full_name, users.contact_number, item_categories.category_name
             FROM lost_items
             LEFT JOIN users ON lost_items.user_id = users.user_id
@@ -132,7 +125,7 @@ router.get("/browse", (req, res) => {
           console.error(err);
           return res.status(500).send("Could not load lost items");
         }
-        // FOUND ITEMS
+
         const foundSql = `SELECT found_items.*, users.full_name, users.contact_number, item_categories.category_name
                 FROM found_items
                 LEFT JOIN users ON found_items.user_id = users.user_id
@@ -144,13 +137,11 @@ router.get("/browse", (req, res) => {
             return res.status(500).send("Could not load found items");
           }
 
-          // COMBINE THE TWO AS ITEMS (AT THE TOP, WE SPREAD ITEMS AND ADDED ADDITIONAL INFO TO PUT ON THE EJS FILE LATER ON)
           const items = combineItems(lostRows, foundRows);
 
           res.render("browseitems", {
             categories,
             items,
-            searchQuery: String(req.query.q || "").trim().slice(0, 80),
             activeCategory: req.query.category || "all",
             activeType: ["lost", "found", "claimed"].includes(req.query.type)
               ? req.query.type
@@ -162,9 +153,7 @@ router.get("/browse", (req, res) => {
   );
 });
 
-//CATEGORY ROUTES (one route per category)
-
-// ELECTRONICS
+// ---------- CATEGORY ROUTES (one route per category) ----------
 router.get("/Electronics", (req, res) => {
   const getLostElectronics = `SELECT * FROM lost_items WHERE category_id = 1`;
   db.query(getLostElectronics, (err, results) => {
@@ -183,8 +172,6 @@ router.get("/Electronics", (req, res) => {
   });
 });
 
-
-// BAGS
 router.get("/Bags", (req, res) => {
   const getLostBags = `SELECT * FROM lost_items WHERE category_id = 2`;
   db.query(getLostBags, (err, results) => {
@@ -203,7 +190,6 @@ router.get("/Bags", (req, res) => {
   });
 });
 
-// IDs AND CARDS
 router.get("/IDsandCards", (req, res) => {
   const getLostIDs = `SELECT * FROM lost_items WHERE category_id = 3`;
   db.query(getLostIDs, (err, results) => {
@@ -222,7 +208,6 @@ router.get("/IDsandCards", (req, res) => {
   });
 });
 
-// KEYS
 router.get("/Keys", (req, res) => {
   const getLostKeys = `SELECT * FROM lost_items WHERE category_id = 4`;
   db.query(getLostKeys, (err, results) => {
@@ -241,7 +226,6 @@ router.get("/Keys", (req, res) => {
   });
 });
 
-// CLOTHING
 router.get("/Clothing", (req, res) => {
   const getLostClothing = `SELECT * FROM lost_items WHERE category_id = 5`;
   db.query(getLostClothing, (err, results) => {
@@ -260,7 +244,6 @@ router.get("/Clothing", (req, res) => {
   });
 });
 
-// WALLETS
 router.get("/Wallets", (req, res) => {
   const getLostWallets = `SELECT * FROM lost_items WHERE category_id = 6`;
   db.query(getLostWallets, (err, results) => {
@@ -279,7 +262,6 @@ router.get("/Wallets", (req, res) => {
   });
 });
 
-// OTHERS
 router.get("/Others", (req, res) => {
   const getLostOthers = `SELECT * FROM lost_items WHERE category_id = 7`;
   db.query(getLostOthers, (err, results) => {

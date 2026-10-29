@@ -1,17 +1,14 @@
-<%# File guide: This template renders the s ub mi tF ou nd It em page or partial as server-generated HTML. Inputs are locals passed by its route/controller; output is HTML. Shared partials and browser assets are linked here or injected by app.js. %>
+<%# Form for reporting an item that the user has found. %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/user/tokens.css">
     <link rel="stylesheet" href="/css/submitFoundItems.css">
-    <link rel="stylesheet" href="/css/site-polish.css">
-    <script src="/js/scroll-reveal.js" defer></script>
     <title>SUBMIT FOUND ITEM</title>
 </head>
-<body class="page-submit-found" data-theme-aware>
+<body>
     <div class="nav">
         <div class="logo">
             <img src="/img/logo.png" alt="FindBack Logo">
@@ -38,17 +35,17 @@
     </div>
 
     <% if (success && success.length > 0) { %>
-        <div class="flash-message flash-success" role="status">
-            <span class="flash-icon" aria-hidden="true">✓</span>
+        <div class="flash-message flash-success">
+            <span class="flash-icon">✓</span>
             <span class="flash-text"><%= success[0] %></span>
-            <button type="button" class="flash-close" aria-label="Dismiss message" onclick="this.parentElement.remove()">&times;</button>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
         </div>
     <% } %>
     <% if (error && error.length > 0) { %>
-        <div class="flash-message flash-error" role="alert">
-            <span class="flash-icon" aria-hidden="true">!</span>
+        <div class="flash-message flash-error">
+            <span class="flash-icon">!</span>
             <span class="flash-text"><%= error[0] %></span>
-            <button type="button" class="flash-close" aria-label="Dismiss message" onclick="this.parentElement.remove()">&times;</button>
+            <button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>
         </div>
     <% } %> 
 
@@ -89,9 +86,9 @@
         <div class="foundItem-form">
             <h2>Item information</h2>
             <form action="/found/submit" method="POST" enctype="multipart/form-data">
-                <label for="itemName">Item Name *</label>
-                <input type="text" id="itemName" name="name" placeholder="e.g Backpack, Phone, Wallet" required>
-                <label for="category">Category*</label>
+                <label>Item Name *</label>
+                <input type="text" name="name" placeholder="e.g Backpack, Phone, Wallet" required>
+                <label>Category*</label>
                 <select name="category_id" id="category" required>
                     <option value="">-- Select Category --</option>
                     <option value="1">T-Electronics</option>
@@ -103,20 +100,19 @@
                     <option value="7">Others</option>
                 </select>
                 <div class="description-and-photo">
-                    <label for="description">Description</label>
+                    <label>Description</label>
                     <textarea
-                    id="description"
                     name="description"
                     rows="4"
                     placeholder="Enter description..."  
                     ></textarea>
-                    <label for="foundPhoto">Photo*</label>
-                    <input type="file" id="foundPhoto" accept="image/*" name="foundPhoto" required>
+                    <label>Photo*</label>
+                    <input type="file" accept="image/*" name="foundPhoto" required>
                 </div>
-                <label for="locFound">Location Found*</label>
-                <input type="text" id="locFound" name="locFound" placeholder="Phinma UI Canteen near Waffles" required>
-                <label for="dateFound">Date Found*</label>
-                <input type="date" id="dateFound" name="dateFound" required>
+                <label>Location Found*</label>
+                <input type="text" name="locFound" placeholder=" Phinma UI Canteen near Waffles" required>
+                <label>Date Found*</label>
+                <input type="date" name="dateFound" required>
                 <h4>Contact Information</h4>
                 <p><b>Name: </b><%= user.full_name %></p>
                 <p><b>Contact Number: </b><%= user.num %></p>

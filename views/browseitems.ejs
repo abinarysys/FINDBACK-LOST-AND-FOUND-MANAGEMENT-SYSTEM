@@ -1,4 +1,4 @@
-<%# File guide: This template renders the b ro ws ei te ms page or partial as server-generated HTML. Inputs are locals passed by its route/controller; output is HTML. Shared partials and browser assets are linked here or injected by app.js. %>
+<%# Shows item posts and the controls used to browse or filter them. %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +29,7 @@
         </div>
     <% } %>
 
-    <!-- ================= BROWSE ITEMS (start) ================= -->
+    <!-- Item search, filters, and the results list. -->
     <%
         const catStyle = {
             'electronics':   { icon: '📱', color: '#6b6b6b' },
@@ -61,14 +61,14 @@
         <div class="search-wrap">
             <label class="search-bar">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-                <input type="search" id="searchInput" value="<%= searchQuery || '' %>" placeholder="Search for an item (e.g. phone, wallet, backpack...)" autocomplete="off">
+                <input type="search" id="searchInput" placeholder="Search for an item (e.g. phone, wallet, backpack...)" autocomplete="off">
             </label>
         </div>
 
         <section class="categories" aria-label="Categories">
             <% categories.forEach(cat => { const s = styleFor(cat.category_name); %>
                 <button type="button" class="cat" data-category="<%= cat.category_name %>" aria-pressed="false">
-                    <span class="cat-tile" data-color="<%= s.color %>"><%- include('partials/category-icon', { name: cat.category_name }) %></span>
+                    <span class="cat-tile" data-color="<%= s.color %>"><span class="cat-icon"><%= s.icon %></span></span>
                     <span class="cat-name"><%= cat.category_name %></span>
                 </button>
             <% }) %>
@@ -147,7 +147,7 @@
             const state = {
                 type: root.dataset.type,
                 category: root.dataset.category,
-                q: document.getElementById('searchInput').value.trim().toLowerCase()
+                q: ''
             };
             document.querySelectorAll('.cat-tile').forEach(t => { t.style.background = t.dataset.color; });
             const cards = Array.from(document.querySelectorAll('.browse .card'));
@@ -205,7 +205,7 @@
             apply();
         })();
     </script>
-    <!-- ================= BROWSE ITEMS (end) ================= -->
+    <!-- End of the browse results section. -->
 
 </body>
 </html>

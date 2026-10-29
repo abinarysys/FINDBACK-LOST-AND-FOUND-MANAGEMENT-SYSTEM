@@ -1,4 +1,4 @@
-<%# File guide: This template renders the n av ba r page or partial as server-generated HTML. Inputs are locals passed by its route/controller; output is HTML. Shared partials and browser assets are linked here or injected by app.js. %>
+<%# Shared site navigation shown at the top of user-facing pages. %>
 <%
     /* The FindBack top navigation. Include it on any page with:  include('partials/navbar', { user: user })
        Guests see Login / Get Started. Logged-in users see the bell (added automatically by
@@ -11,7 +11,6 @@
 <!-- navbar.css is kept because other pages rely on its .flash-message styles -->
 <link rel="stylesheet" href="/css/user/navbar.css">
 <link rel="stylesheet" href="/css/user/site-nav.css">
-<link rel="stylesheet" href="/css/site-polish.css">
 
 <header class="u-nav" id="uNav">
     <div class="u-wrap u-nav-in">
@@ -99,4 +98,3 @@
     });
 })();
 </script>
-<script src="/js/scroll-reveal.js"></script>

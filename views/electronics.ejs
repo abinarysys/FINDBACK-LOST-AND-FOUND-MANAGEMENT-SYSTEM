@@ -1,12 +1,10 @@
-<%# File guide: This template renders the e le ct ro ni cs page or partial as server-generated HTML. Inputs are locals passed by its route/controller; output is HTML. Shared partials and browser assets are linked here or injected by app.js. %>
+<%# Lists found and lost posts in the electronics category. %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/category.css">
-    <link rel="stylesheet" href="/css/site-polish.css">
-    <script src="/js/scroll-reveal.js" defer></script>
     <title>Electronics</title>
 </head>
 <body>
@@ -49,7 +47,7 @@
         </div>
     <% } %> 
 
-<!-- ELECTRONICS CATEGORY BANNER -->
+<!-- Category name and introduction shown above the listings. -->
 <section class="category-banner">
     <div class="banner-content">
         <h1>Electronics</h1>
@@ -62,10 +60,10 @@
     </div>
 </section>
 
-<!-- ELECTRONICS BODY -->
+<!-- Search controls and the item cards for this category. -->
 <main class="category-content">
 
-    <!-- SEARCH AND STATUS FILTER -->
+    <!-- Let visitors narrow listings by text or report status. -->
     <section class="search-filter-section">
 
         <div class="search-box">
@@ -94,13 +92,13 @@
 
     </section>
 
-    <!-- ITEMS HEADING -->
+    <!-- Heading and count for the matching reports. -->
     <div class="items-heading">
         <h2>Electronics Items</h2>
         <p><span id="resultCount"><%= items.length %></span> items</p>
     </div>
 
-    <!-- ITEM CARDS -->
+    <!-- One card for each matching lost or found report. -->
     <section class="items-container" id="itemsContainer">
 
         <% items.forEach(item => {
@@ -196,7 +194,7 @@
 
     </section>
 
-    <!-- NO RESULTS -->
+    <!-- Shown when the selected filters match no reports. -->
     <section class="empty-state" id="emptyState" hidden>
         <h3>No items found</h3>
         <p>Try another keyword or change the status filter.</p>

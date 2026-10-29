@@ -1,11 +1,11 @@
-<%# Template: Shows the signed-in user's lost/found reports. Locals: user, items, stats. Route: GET /user/items. CSS: user-ui.css and user-shell.css. %>
+<%# Lists the signed-in user's lost and found reports, with counts and type filters. %>
 <%
     // Format database dates for this page; a missing value is shown as a dash.
     const fmtDate = (value) => value
         ? new Date(value).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
         : '—';
 %>
-<%# This EJS template becomes a complete HTML document after server-side rendering. %>
+<%# The server fills this template with the account's item data before sending the page. %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,10 +16,10 @@
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;500;600&display=swap" rel="stylesheet">
     <%# These CSS files provide shared controls and the responsive account-page layout. %>
     <link rel="stylesheet" href="/css/user/user-ui.css">
     <link rel="stylesheet" href="/css/user/user-shell.css">
-    <link rel="stylesheet" href="/css/user/user-polish.css">
 </head>
 <body>
     <%# Reuse the shared header and highlight the My Items account tab. %>

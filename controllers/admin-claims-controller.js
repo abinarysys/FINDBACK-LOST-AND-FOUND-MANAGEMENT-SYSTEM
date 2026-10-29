@@ -1,3 +1,6 @@
+// Loads submitted claims and applies admin decisions inside a transaction.
+
+// controllers/admin-claims-controller.js
 const db = require("../config/db");
 const query = require("../config/query");
 const { imgUrl } = require("../config/admin-ui");

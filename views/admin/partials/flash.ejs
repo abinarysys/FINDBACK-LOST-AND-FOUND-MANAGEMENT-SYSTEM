@@ -1,4 +1,4 @@
-<%# File guide: This template renders the f la sh page or partial as server-generated HTML. Inputs are locals passed by its route/controller; output is HTML. Shared partials and browser assets are linked here or injected by app.js. %>
+<%# Displays one-time success or error messages in admin pages. %>
 <% const _ok = [].concat(locals.success || []).filter(Boolean);
    const _err = [].concat(locals.error || []).filter(Boolean); %>
 <% _ok.forEach(function (m) { %>

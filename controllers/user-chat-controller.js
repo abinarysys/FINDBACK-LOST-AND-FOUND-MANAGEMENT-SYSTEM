@@ -1,23 +1,27 @@
+// Serves chat pages and checks conversation access before returning messages.
 
+// controllers/user-chat-controller.js
+// Rules that protect privacy (enforced HERE, on the server):
+//  - the user id ALWAYS comes from the session, never from the browser
+//  - every read/write first checks the user is a participant of that conversation
+//  - a conversation that does not exist and one you are not part of look the same (404)
 const db = require("../config/db");
 const query = require("../config/query");
 
 const MAX_LENGTH = 1000; // characters per message
 const PAGE_SIZE = 50; // messages loaded at once
 
-// RECEIVER
 const toId = (value) => {
   const id = Number(value);
   return Number.isInteger(id) && id > 0 ? id : null;
 };
 
-
+// type in the URL -> which table holds the item (whitelist, so nothing from the URL reaches the SQL)
 const ITEM_SOURCES = {
   found: { table: "found_items", idColumn: "found_item_id" },
   lost: { table: "lost_items", idColumn: "lost_item_id" },
 };
 
-// USER
 const me = (req) => req.session.user.user_id;
 
 // Returns the other person + BOTH read markers (mine and theirs), or null when I am NOT in this conversation.
@@ -341,7 +345,6 @@ exports.sendMessage = async (req, res) => {
 };
 
 // POST /user/chat/api/conversations/:id/read   body: { upTo: <id of the newest message the browser showed> }
-//
 // Security / correctness rules:
 //  - only MY row (conversation + session user) can change: nobody can mark things read for someone else
 //  - I must be a participant (same 404 as "not found" otherwise)

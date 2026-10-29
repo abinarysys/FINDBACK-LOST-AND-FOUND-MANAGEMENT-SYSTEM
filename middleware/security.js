@@ -1,6 +1,4 @@
-// File guide: This module sets security and no-cache response headers.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
+// Applies security headers and prevents browsers from caching protected pages.
 
 // middleware/security.js
 // applySecurity(app) -> secure HTTP headers (call it BEFORE session and routes)

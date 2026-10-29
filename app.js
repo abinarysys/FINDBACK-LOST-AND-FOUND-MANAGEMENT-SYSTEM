@@ -1,53 +1,49 @@
-require("dotenv").config(); // must be first so process.env is filled
+// Start the web server and connect the application's shared services.
 
-// MODULES
+// Load environment settings before configuring the server.
+require("dotenv").config(); 
 const express = require("express");
 const session = require("express-session");
 const http = require("http");
 const { Server } = require("socket.io");
 const flash = require("connect-flash");
 
-// SECURITY MIDDLEWARE
+
 const { applySecurity } = require("./middleware/security");
 
-// IF THERE IS NO SESSION SECRET IN .env FILE
 if (!process.env.SESSION_SECRET) {
   throw new Error(
     "SESSION_SECRET is missing. Add SESSION_SECRET=<long random text> to your .env file.",
   );
 }
 
-// CREATE EXPRESS APPLICATION
 const app = express();
-
-// WE HAVWE HTTP MODULE BECAUSE SOCKET.IO CANNOT WORK WITHOUT A SERVER
 const server = http.createServer(app);
 const io = new Server(server);
 
-// SECURITY
-app.set("trust proxy", 1);
-applySecurity(app); // secure headers: BEFORE session and routes
+// Trust the first proxy when deployed behind a reverse proxy.
+app.set("trust proxy", 1); 
 
-// BUILT MIDDLEWARWE
+// Limit request-body size before parsing form and JSON submissions.
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(express.json({ limit: "100kb" }));
 
-// CONFIGURE SESSION MIDDLEWARE
+// ---------- session (one config, shared with socket.io) ----------
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
-    httpOnly: true, // JS IN THE CONSOLE CANNOT READ THE COOKIE
-    sameSite: "lax", // BLOCKS CROSS-SITE REQUEST COOKIES
-    secure: process.env.NODE_ENV === "production", // HTTPS ONLY IN PRODUCTION
-    maxAge: 1000 * 60 * 60 * 8, // 8 HOURSY
+    httpOnly: true, // JavaScript in the page can't read the cookie
+    sameSite: "lax", // blocks most cross-site request tricks
+    secure: process.env.NODE_ENV === "production", // HTTPS only in production
+    maxAge: 1000 * 60 * 60 * 8, // 8 hours
   },
 });
 app.use(sessionMiddleware);
-io.engine.use(sessionMiddleware);
+io.engine.use(sessionMiddleware); // needs socket.io 4.6+ (run: npm ls socket.io)
 
-// FLASH (THE MESSSAGE SHOWING IF YOU CREATED A TASK, CAN BE SUCCESS OR ERROR)
+// Make one-time success and error messages available to every template.
 app.use(flash());
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
@@ -55,16 +51,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// FOR UPLOADS
 app.use(express.static("public"));
-
-// EJS IS FOR US TO USE JS INSIDE AN HTML MAKING IT AN EJS OR EMBEDDED JAVASCRIPT FILE
 app.set("view engine", "ejs");
 
 app.set("io", io);
 
-// WEB SOCKET
-// ONLY SESSION USERS CAN CONNECRT TO WEB SOCKET
+// Only a session-authenticated user may open a live socket connection.
 io.use((socket, next) => {
   if (!socket.request.session?.user?.user_id) {
     return next(new Error("unauthorized"));
@@ -82,11 +74,11 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => console.log("A user disconnected:", socket.id));
 });
 
-// MIDDLEWARES
+// Import the account middleware and the upload handler.
 const userMiddleware = require("./middleware/user-middleware.js");
 const upload = require("./middleware/upload-middleware.js");
 
-//using the middleware
+// Apply account middleware before handling page and API routes.
 app.use(userMiddleware);
 
 // currentPath lets the navigation highlight the page you are on; the theme is loaded per user.
@@ -96,17 +88,16 @@ app.use((req, res, next) => {
 });
 app.use(require("./middleware/user-theme.js"));
 
-// Extras added to every page for logged-in users, including admin pages:
+// Extras added to every page for logged-in users (admin pages are skipped):
 //  1. the user's saved theme, applied at the top of <head> so there is no flash of the wrong theme
-//  2. shared appearance overrides, added after each page's own stylesheets
-//  3. the notification bell
+//     (dark mode only on pages built on the new design, i.e. pages that contain the .u-hero banner)
+//  2. the notification bell
 const globalBell = require("./config/global-bell.js");
 const { themeScript } = require("./config/theme.js");
 
 app.use((req, res, next) => {
   const user = req.session?.user;
-  if (!user) return next();
-  const isAdminRoute = req.path.startsWith("/admin");
+  if (!user || req.path.startsWith("/admin")) return next();
 
   const render = res.render.bind(res);
   res.render = (view, options, callback) => {
@@ -122,17 +113,18 @@ app.use((req, res, next) => {
       if (typeof html === "string") {
         const head = html.match(/<head[^>]*>/i);
         if (head) {
-          const script = themeScript(user.theme, true);
+          // Dark mode is opt-in per page: account pages (.u-hero) or any page whose
+          // <body> tag has the data-theme-aware attribute. Guests never reach this code.
+          const darkOk =
+            html.includes('class="u-hero"') ||
+            /<body[^>]*\sdata-theme-aware/i.test(html);
+          const script = themeScript(user.theme, darkOk);
           html = html.replace(head[0], () => head[0] + script);
         }
 
         const end = html.toLowerCase().lastIndexOf("</body>");
-        if (end !== -1) {
-          const themeStyles = '<link id="fb-theme-overrides" rel="stylesheet" href="/css/theme-overrides.css">';
-          const extras =
-            (isAdminRoute || html.includes('id="notifBell"') ? "" : globalBell) +
-            (html.includes('id="fb-theme-overrides"') ? "" : themeStyles);
-          html = html.slice(0, end) + extras + html.slice(end);
+        if (end !== -1 && !html.includes('id="notifBell"')) {
+          html = html.slice(0, end) + globalBell + html.slice(end);
         }
       }
       res.send(html);
@@ -141,9 +133,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// MOUNT ROUTERS
+// Mount each group of routes beneath its public URL prefix.
 app.use("/", require("./routers/landing-router.js"));
-app.use("/auth", require("./routers/auth-router.js")); 
+app.use("/auth", require("./routers/auth-router.js")); // the new secure login/register (see routers/auth-router.js)
 app.use("/fb", require("./routers/feedback-router.js"));
 app.use("/lost", require("./routers/lostItem-router.js"));
 app.use("/found", require("./routers/foundItem-router.js"));

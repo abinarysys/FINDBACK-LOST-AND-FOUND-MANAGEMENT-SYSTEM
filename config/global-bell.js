@@ -1,3 +1,10 @@
+// Markup for the notification bell that app.js adds to signed-in pages.
+
+// config/global-bell.js
+// The bell markup, injected by app.js into EVERY page a logged-in user sees
+// (home, browse, profile, notifications...). A tiny script moves it INTO the page's top
+// navigation (next to the account/profile picture). If a page has no navigation, it stays
+// as a round floating button in the bottom-right corner.
 module.exports = `
 <link rel="stylesheet" href="/css/user/bell.css">
 <div class="notif-bell-wrap" id="notifWidget">
@@ -18,7 +25,6 @@ module.exports = `
         </svg>
         <span id="notifBadge" class="notif-badge" hidden>0</span>
     </button>
-</div>
 <script>
 (function () {
     var widget = document.getElementById('notifWidget');

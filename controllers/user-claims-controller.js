@@ -1,4 +1,4 @@
-
+// Loads a user's claim pages and scopes every lookup to the signed-in account.
 const query = require("../config/query");
 
 const sendNotFound = (res) =>
@@ -40,9 +40,11 @@ exports.viewClaim = async (req, res) => {
       [claimId, userId],
     );
 
+    // Same answer whether the claim doesn't exist or belongs to someone else,
+    // so nobody can probe which claim ids exist.
     if (!rows.length) return sendNotFound(res);
 
-    // IF YOU OPEN THE CLAIM, IT COUNTS AS READING THE NOTIF
+    // Opening the claim counts as reading its notifications.
     await query(
       "UPDATE notifications SET is_read = 1 WHERE user_id = ? AND claim_id = ? AND is_read = 0",
       [userId, claimId],
@@ -58,6 +60,7 @@ exports.viewClaim = async (req, res) => {
   }
 };
 
+// "My Claims" tab: every claim the logged-in user has made (filtered by the session user only).
 exports.listClaims = async (req, res) => {
   try {
     const userId = req.session.user?.user_id;

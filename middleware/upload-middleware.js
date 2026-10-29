@@ -1,3 +1,6 @@
+// Checks uploaded images and stores accepted files for item posts.
+
+// middleware/upload-middleware.js
 const multer = require("multer");
 const crypto = require("crypto");
 const fs = require("fs");

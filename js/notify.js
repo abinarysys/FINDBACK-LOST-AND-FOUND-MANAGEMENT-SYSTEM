@@ -1,6 +1,4 @@
-// File guide: This module is a legacy duplicate outside the Express public static directory.
-// Inputs and outputs: Express requests or configuration enter through its exports; it returns middleware, route responses, query results, or browser behavior as appropriate.
-// Connections: Imports and router mounts in app.js show how other modules call this code.
+// Legacy copy of the browser notification script; the served version is in public/js.
 
 const socket = io();
 
@@ -35,7 +33,7 @@ function showNotificationToast(notification) {
     borderLeft: "4px solid #7C18FF",
     borderRadius: "12px",
     boxShadow: "0 5px 20px rgba(45, 32, 75, 0.12)",
-    fontFamily: "Arial, Helvetica, sans-serif",
+    fontFamily: "Poppins, sans-serif",
     cursor: notification.link ? "pointer" : "default",
   });
 
