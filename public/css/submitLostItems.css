@@ -1651,3 +1651,81 @@ body {
     flex: 1 1 100%;
   }
 }
+
+/* =========================================================
+   BANNER FIX
+   site-polish.css loads after this file and flattens the hero
+   to a pale background, leaving the white headline unreadable.
+   These page-scoped rules keep the intended dark hero.
+   ========================================================= */
+
+html body[data-theme-aware] .top {
+  padding: clamp(54px, 7vw, 84px) max(20px, calc((100% - 1200px) / 2 + 20px));
+  background:
+    linear-gradient(
+      120deg,
+      rgba(11, 19, 42, 0.94) 0%,
+      rgba(49, 46, 129, 0.84) 55%,
+      rgba(13, 47, 63, 0.76) 100%
+    ),
+    url("/img/local-img/submitlost.png") right center / cover no-repeat;
+  border-radius: 0 0 34px 34px;
+  overflow: hidden;
+  text-align: center;
+  color: #ffffff;
+}
+
+html body[data-theme-aware] .top h4 {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.13);
+  color: #ffffff;
+  -webkit-text-fill-color: currentColor;
+}
+
+html body[data-theme-aware] .top h2 {
+  background: linear-gradient(95deg, #ffffff 0%, #ffffff 42%, #a5f3fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+html body[data-theme-aware] .top p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+html[data-theme="dark"] body[data-theme-aware] .top {
+  background:
+    linear-gradient(
+      120deg,
+      rgba(5, 9, 22, 0.96) 0%,
+      rgba(30, 27, 75, 0.9) 55%,
+      rgba(8, 33, 44, 0.86) 100%
+    ),
+    url("/img/local-img/submitlost.png") right center / cover no-repeat;
+}
+
+html[data-theme="dark"] body[data-theme-aware] .top h2 {
+  background: linear-gradient(95deg, #f8fafc 0%, #f8fafc 42%, #a5f3fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Phones/tablets: stronger overlay so the heading stays readable. */
+@media (max-width: 900px) {
+  html body[data-theme-aware] .top {
+    padding: 48px 20px;
+    background:
+      linear-gradient(120deg, rgba(11, 19, 42, 0.94), rgba(49, 46, 129, 0.88)),
+      url("/img/local-img/submitlost.png") center / cover no-repeat;
+    border-radius: 0 0 26px 26px;
+  }
+
+  html[data-theme="dark"] body[data-theme-aware] .top {
+    background:
+      linear-gradient(120deg, rgba(5, 9, 22, 0.96), rgba(30, 27, 75, 0.9)),
+      url("/img/local-img/submitlost.png") center / cover no-repeat;
+  }
+}
