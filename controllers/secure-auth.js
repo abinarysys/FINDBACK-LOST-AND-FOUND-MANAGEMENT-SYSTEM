@@ -1,13 +1,3 @@
-// Handles sign-in, registration, logout, rate limits, and session setup.
-
-// controllers/secure-auth.js
-// ONE login for everyone (users + admins). The backend reads users.role and decides where to send the person.
-// Brute-force protection (3 layers):
-//   1. IP rate limit      - max 30 failed login attempts per 15 minutes per IP
-//   2. Account lockout    - 5 wrong passwords = 15 min lock, 10 = 1 hour, 15+ = 24 hours
-//   3. Argon2id hashing   - every guess is expensive, even if the database leaks
-// Every failure shows the same message, and unknown emails cost the same time as real ones.
-
 // MODULES AND IMPORTS
 const rateLimit = require("express-rate-limit");
 const fs = require("fs");
@@ -18,12 +8,11 @@ const { logAdminAction } = require("../middleware/admin-activity");
 const GENERIC_LOGIN_ERROR =
   "Invalid email or password, or the account is temporarily locked. Please try again.";
 
-const validEmail = (v) =>
-  v.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const validEmail = (v) => v.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const validPhone = (v) => /^\d{10,11}$/.test(v);
 const validName = (v) => /^[\p{L}][\p{L}\p{M}\s.'-]{1,79}$/u.test(v);
 
-// ---------- rate limiters ----------
+// RATE LIMITERS
 const tooMany = (target) => (req, res) => {
   req.flash("error", "Too many attempts. Please wait a while and try again.");
   res.redirect(303, target);
@@ -64,12 +53,11 @@ const discardUpload = (req) => {
   if (req.file) fs.unlink(req.file.path, () => {});
 };
 
-// =====================================================
-// Validate credentials and create the session after a successful login.
-// =====================================================
+// VALIDATE CREDENTIALS
 exports.loginLimiter = loginLimiter;
 exports.registerLimiter = registerLimiter;
 
+// OPEN LOGIN PAGE
 exports.getLogin = async (req, res) => {
   try {
     const current = req.session && req.session.user;
@@ -86,6 +74,7 @@ exports.getLogin = async (req, res) => {
   }
 };
 
+// LOGIN A USER
 exports.login = async (req, res) => {
   const fail = (msg = GENERIC_LOGIN_ERROR) => {
     req.flash("error", msg);
@@ -203,9 +192,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// =====================================================
-// REGISTER (regular users; the first admin is created at /admin/register)
-// =====================================================
+// REGISTER USERS
 exports.getRegister = (req, res) => {
   const current = req.session && req.session.user;
   if (current) return res.redirect(current.role === "admin" ? "/admin" : "/");

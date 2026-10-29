@@ -1,8 +1,7 @@
-// Connects admin URLs to setup and protected admin handlers.
-
-// routers/admin-router.js
+// MODULES
 const router = require("express").Router();
 
+// IMPORTS
 const claimsController = require("../controllers/admin-claims-controller.js");
 const adminMiddleware = require("../middleware/admin-middleware.js");
 const adminController = require("../controllers/admin-controller.js");
@@ -21,9 +20,7 @@ const uploadPfp = (redirectTo) => (req, res, next) =>
 // View helpers (icons, date formatting...) for every admin page, including login
 router.use(adminMiddleware.locals);
 
-// =====================================================
-// PUBLIC ADMIN PAGES (no login needed)
-// =====================================================
+// public admin pages
 router.get("/login", adminController.getLogin);
 router.post("/login/user", adminController.login);
 
@@ -35,9 +32,7 @@ router.post(
   adminController.register,
 );
 
-// =====================================================
-// Require an active admin account for every route registered below.
-// =====================================================
+// requires an admin account
 router.use(adminMiddleware);
 
 // Claims

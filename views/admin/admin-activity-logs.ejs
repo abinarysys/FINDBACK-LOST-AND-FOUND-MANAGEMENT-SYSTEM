@@ -16,10 +16,6 @@
 
     <% if (tab === 'admins') { %>
 
-        <% if (logsMissing) { %>
-            <div class="alert alert-info"><%- icon('clock') %><span>The activity table does not exist yet. Run <b>sql/admin-update.sql</b> once in MySQL, then actions will start appearing here.</span></div>
-        <% } %>
-
         <section class="panel">
             <div class="toolbar">
                 <label class="search">

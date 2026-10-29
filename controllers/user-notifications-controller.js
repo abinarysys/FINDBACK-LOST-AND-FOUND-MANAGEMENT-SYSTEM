@@ -1,8 +1,4 @@
-// Shows and updates notifications belonging to the signed-in user.
-
-// controllers/user-notifications-controller.js
-// Every query below is filtered by the SESSION user's id, never by an id from the browser,
-// so one user can never read or change another user's notifications.
+// module
 const query = require("../config/query");
 
 const CLAIM_RESULT_TYPES = ["claim_verified", "claim_rejected"];

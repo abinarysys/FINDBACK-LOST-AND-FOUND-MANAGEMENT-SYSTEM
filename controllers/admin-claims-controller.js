@@ -1,6 +1,4 @@
-// Loads submitted claims and applies admin decisions inside a transaction.
-
-// controllers/admin-claims-controller.js
+// MODULES AND IMPORTS
 const db = require("../config/db");
 const query = require("../config/query");
 const { imgUrl } = require("../config/admin-ui");
@@ -18,41 +16,17 @@ const toId = (value) => {
 exports.getClaims = async (req, res) => {
   try {
     const sql = `
-            SELECT
-                c.claim_id,
-                c.user_id AS claimant_id,
-                c.found_item_id,
-                c.claim_details,
-                c.status,
-                c.created_at,
-                c.reviewed_at,
-                c.admin_note,
-                fi.item_name,
-                fi.description,
-                fi.location,
-                fi.date_found,
-                fi.photo_path,
-                fi.status AS item_status,
-                fi.user_id AS finder_id,
-                cat.category_name,
-                u.full_name AS claimant,
-                u.email AS claimant_email,
-                u.contact_number AS claimant_contact,
-                u.profile_image AS claimant_image,
-                f.full_name AS finder
-            FROM claims c
-            INNER JOIN found_items fi
-                ON fi.found_item_id = c.found_item_id
-            INNER JOIN users u
-                ON u.user_id = c.user_id
-            LEFT JOIN users f
-                ON f.user_id = fi.user_id
-            LEFT JOIN item_categories cat
-                ON cat.category_id = fi.category_id
-            ORDER BY
-                CASE WHEN c.status = 'pending' THEN 0 ELSE 1 END,
-                c.created_at DESC
-        `;
+            SELECT c.claim_id, c.user_id AS claimant_id, c.found_item_id, c.claim_details,
+                c.status, c.created_at, c.reviewed_at, c.admin_note, fi.item_name,
+                fi.description, fi.location, fi.date_found, fi.photo_path, fi.status AS item_status,
+                fi.user_id AS finder_id, cat.category_name,  u.full_name AS claimant,
+                u.email AS claimant_email, u.contact_number AS claimant_contact,
+                u.profile_image AS claimant_image, f.full_name AS finder
+            FROM claims c INNER JOIN found_items fi ON fi.found_item_id = c.found_item_id
+            INNER JOIN users u ON u.user_id = c.user_id
+            LEFT JOIN users f ON f.user_id = fi.user_id
+            LEFT JOIN item_categories cat ON cat.category_id = fi.category_id
+            ORDER BY CASE WHEN c.status = 'pending' THEN 0 ELSE 1 END, c.created_at DESC`;
 
     const rows = await query(sql);
     const claims = rows.map((row) => ({
@@ -72,8 +46,7 @@ exports.getClaims = async (req, res) => {
   }
 };
 
-// Verify or reject a pending claim.
-// Claim + item + notification are saved in ONE transaction: all succeed or none do.
+// update claim status
 exports.updateClaimStatus = async (req, res) => {
   const claimId = toId(req.params.id);
   const status = String(req.body.status || "")

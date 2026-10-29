@@ -1,10 +1,8 @@
-// Adds admin-only view helpers and checks that the admin account is still active.
-
-// middleware/admin-middleware.js
+// IMPORTS
 const query = require("../config/query");
 const ui = require("../config/admin-ui");
 
-// 1) Runs on EVERY /admin route (including login): view helpers.
+// UI 
 function adminLocals(req, res, next) {
   res.locals.icon = ui.icon;
   res.locals.esc = ui.esc;
@@ -21,7 +19,7 @@ function adminLocals(req, res, next) {
   next();
 }
 
-// 2) Protects every route after it: must be a logged-in, ACTIVE admin.
+// must be admin function
 async function requireAdmin(req, res, next) {
   const wantsJson =
     req.originalUrl.startsWith("/api/") ||

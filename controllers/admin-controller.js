@@ -8,7 +8,11 @@ const {
   checkPasswordStrength,
 } = require("../config/password");
 const { imgUrl } = require("../config/admin-ui");
-const { logAdminAction } = require("../middleware/admin-activity");
+const {
+  logAdminAction,
+  readAdminActivity,
+  getAdminLoginTimes,
+} = require("../middleware/admin-activity");
 
 const toId = (v) => {
   const n = Number(v);
@@ -16,21 +20,6 @@ const toId = (v) => {
 };
 const validPhone = (v) => /^\d{10,11}$/.test(v);
 const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-
-// Runs a query on admin_activity_logs; if you haven't run sql/admin-update.sql yet
-// the page still opens (empty) instead of crashing.
-let logsMissing = false;
-const safeLogsQuery = async (sql, params = []) => {
-  try {
-    return await query(sql, params);
-  } catch (err) {
-    if (err.code === "ER_NO_SUCH_TABLE") {
-      logsMissing = true;
-      return [];
-    }
-    throw err;
-  }
-};
 
 const showError = (res, err, message) => {
   console.error(message, err);
@@ -177,9 +166,7 @@ exports.getDashboard = async (req, res) => {
         query(`SELECT user_id, full_name, email, profile_image, created_at
                      FROM users WHERE role = 'user' AND verification_status = 'pending'
                     ORDER BY created_at DESC LIMIT 5`),
-        safeLogsQuery(`SELECT l.log_id, l.action, l.details, l.created_at, u.full_name AS admin_name
-                             FROM admin_activity_logs l LEFT JOIN users u ON u.user_id = l.admin_id
-                            ORDER BY l.created_at DESC, l.log_id DESC LIMIT 6`),
+        readAdminActivity().then((entries) => entries.slice(0, 6)),
       ]);
 
     res.render("admin/adminDashboard", {
@@ -541,32 +528,14 @@ exports.getActivityLogs = async (req, res) => {
       action: String(req.query.action || ""),
     };
 
-    const where = [];
-    const params = [];
-    if (filters.admin) {
-      where.push("l.admin_id = ?");
-      params.push(filters.admin);
-    }
-    if (filters.action) {
-      where.push("l.action = ?");
-      params.push(filters.action);
-    }
-
-    logsMissing = false;
     const [adminLogs, actionOptions, adminOptions, accounts] =
       await Promise.all([
-        safeLogsQuery(
-          `SELECT l.log_id, l.admin_id, l.action, l.target_type, l.target_id, l.details,
-                        l.ip_address, l.created_at, u.full_name AS admin_name, u.email AS admin_email,
-                        u.profile_image AS admin_image
-                   FROM admin_activity_logs l LEFT JOIN users u ON u.user_id = l.admin_id
-                   ${where.length ? "WHERE " + where.join(" AND ") : ""}
-                  ORDER BY l.created_at DESC, l.log_id DESC LIMIT 500`,
-          params,
-        ),
-        safeLogsQuery(
-          "SELECT DISTINCT action FROM admin_activity_logs ORDER BY action",
-        ),
+        readAdminActivity().then((entries) => entries.filter((entry) =>
+          (!filters.admin || Number(entry.admin_id) === Number(filters.admin)) &&
+          (!filters.action || entry.action === filters.action),
+        ).slice(0, 500)),
+        readAdminActivity().then((entries) => [...new Set(entries.map((entry) => entry.action))]
+          .sort().map((action) => ({ action }))),
         query(
           "SELECT user_id, full_name FROM users WHERE role = 'admin' ORDER BY full_name",
         ),
@@ -586,7 +555,6 @@ exports.getActivityLogs = async (req, res) => {
       actionOptions,
       adminOptions,
       accounts,
-      logsMissing,
     });
   } catch (err) {
     showError(res, err, "Could not load activity logs.");
@@ -602,12 +570,9 @@ exports.getSettings = async (req, res) => {
       query(`SELECT user_id, full_name, email, contact_number, profile_image,
                           account_status, created_at
                      FROM users WHERE role = 'admin' ORDER BY created_at ASC`),
-      safeLogsQuery(`SELECT admin_id, MAX(created_at) AS last_login
-                             FROM admin_activity_logs WHERE action = 'LOGIN' GROUP BY admin_id`),
+      getAdminLoginTimes(),
     ]);
-    const lastLogin = Object.fromEntries(
-      logins.map((l) => [l.admin_id, l.last_login]),
-    );
+    const lastLogin = logins;
 
     res.render("admin/admin-settings", {
       title: "Settings",

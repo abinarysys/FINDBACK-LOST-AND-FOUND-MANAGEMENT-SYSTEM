@@ -3,7 +3,11 @@
 // controllers/admin-extras-controller.js
 // Settings, Manage Admins and Activity Logs (user accounts + admin activity).
 const db = require("../config/db"); // mysql2/promise pool
-const { logAdminAction, getAdminId } = require("../middleware/admin-activity");
+const {
+  logAdminAction,
+  getAdminId,
+  readAdminActivity,
+} = require("../middleware/admin-activity");
 
 /* ======================================================================
    ADJUST HERE: table / column names of YOUR users table
@@ -239,37 +243,21 @@ exports.getActivityLogs = async (req, res) => {
     };
 
     if (tab === "admins") {
-      const where = [],
-        params = [];
-      if (filters.admin) {
-        where.push("l.admin_id = ?");
-        params.push(Number(filters.admin));
-      }
-      if (filters.action) {
-        where.push("l.action = ?");
-        params.push(filters.action);
-      }
-
-      [adminLogs] = await db.query(
-        `SELECT l.log_id, l.admin_id, l.action, l.target_type, l.target_id, l.details,
-                l.ip_address, l.created_at,
-                u.${U.name} AS admin_name, u.${U.email} AS admin_email
-           FROM admin_activity_logs l
-           LEFT JOIN ${U.table} u ON u.${U.id} = l.admin_id
-          ${where.length ? "WHERE " + where.join(" AND ") : ""}
-          ORDER BY l.created_at DESC, l.log_id DESC
-          LIMIT 500`,
-        params,
-      );
+      adminLogs = (await readAdminActivity())
+        .filter((entry) =>
+          (!filters.admin || Number(entry.admin_id) === Number(filters.admin)) &&
+          (!filters.action || entry.action === filters.action),
+        )
+        .slice(0, 500);
 
       [adminOptions] = await db.query(
         `SELECT ${U.id} AS id, ${U.name} AS name FROM ${U.table}
           WHERE ${U.role} = ? ORDER BY ${U.name}`,
         [U.roleValue],
       );
-      [actionOptions] = await db.query(
-        `SELECT DISTINCT action FROM admin_activity_logs ORDER BY action`,
-      );
+      actionOptions = [...new Set((await readAdminActivity()).map((entry) => entry.action))]
+        .sort()
+        .map((action) => ({ action }));
     }
 
     res.render("admin/admin-activity-logs", {
