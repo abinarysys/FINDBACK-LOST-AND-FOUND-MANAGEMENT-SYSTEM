@@ -1,4 +1,4 @@
-<%# File guide: This template renders the r eg is te r page or partial as server-generated HTML. Inputs are locals passed by its route/controller; output is HTML. Shared partials and browser assets are linked here or injected by app.js. %>
+<%# Displays the form for creating a user account. %>
 <% const f = locals.form || {}; %>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,8 +9,6 @@
     <link rel="icon" type="image/svg+xml" href="/img/icon/icon.svg">
     <link rel="stylesheet" href="/css/user/tokens.css">
     <link rel="stylesheet" href="/css/auth.css">
-    <link rel="stylesheet" href="/css/responsive.css">
-    <script src="/js/scroll-reveal.js" defer></script>
     <title>Create account | FindBack</title>
 </head>
 <body class="auth-page">
@@ -21,7 +19,7 @@
         <aside class="auth-aside">
             <img class="aside-logo" src="/img/logo.png" alt="FindBack Logo">
             <h1>Join FindBack and help reunite lost items.</h1>
-            <p>Create your account in a minute. An admin will verify it before you can post reports and claims.</p>
+            <p>together, we can help lost items find their way home.</p>
             <ul class="aside-points">
                 <li><span>&#10003;</span> Report lost and found items</li>
                 <li><span>&#10003;</span> Message finders and owners</li>
